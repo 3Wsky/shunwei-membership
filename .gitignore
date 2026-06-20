@@ -1,0 +1,37 @@
+# IDE / editor
+.cursor/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Dependencies & build outputs
+node_modules/
+dist/
+build/
+coverage/
+*.log
+*.tar.gz
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Uni-app compile output
+shunwei-app-v2/unpackage/
+
+# Backend runtime data
+CMB/shunwei-api/data/
+CMB/shunwei-api/artifacts/
+
+# Legacy / unrelated projects (not part of active development)
+CMB/CMB-backend/
+cmbline/
+shunwei/
+tools/
+Data/
+dazhuanpan/

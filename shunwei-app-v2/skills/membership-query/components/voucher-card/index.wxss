@@ -1,0 +1,34 @@
+.card {
+
+  padding: 28rpx;
+
+  background: linear-gradient(135deg, #1a1f36 0%, #2d3561 100%);
+
+  border-radius: 24rpx;
+
+  color: #fff;
+
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);
+
+}
+
+.title { font-size: 24rpx; opacity: 0.75; }
+
+.balance {
+
+  display: block;
+
+  font-size: 56rpx;
+
+  font-weight: 800;
+
+  margin: 12rpx 0;
+
+  color: #d4af37;
+
+}
+
+.gold { color: #d4af37; }
+
+.hint { font-size: 22rpx; opacity: 0.65; }
+

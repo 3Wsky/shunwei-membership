@@ -1,0 +1,28 @@
+<view class="card">
+  <view class="card-header">
+    <text class="label">会员身份</text>
+    <text class="tier {{tierClass}}">{{data.tierLabel || '普通用户'}}</text>
+  </view>
+  <view class="row" wx:if="{{data.nickname}}">
+    <text class="muted">昵称</text>
+    <text class="val">{{data.nickname}}</text>
+  </view>
+  <view class="row" wx:if="{{data.isMemberActive}}">
+    <text class="muted">有效期至</text>
+    <text class="val gold">{{data.expireText}}</text>
+  </view>
+  <view class="integral-row">
+    <view class="integral-item">
+      <text class="num gold">{{data.integralTotal || 0}}</text>
+      <text class="sub">总积分</text>
+    </view>
+    <view class="integral-item">
+      <text class="num">{{data.giftRemaining || 0}}</text>
+      <text class="sub">赠送</text>
+    </view>
+    <view class="integral-item">
+      <text class="num">{{data.rechargeRemaining || 0}}</text>
+      <text class="sub">充值</text>
+    </view>
+  </view>
+</view>

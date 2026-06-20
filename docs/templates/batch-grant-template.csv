@@ -1,0 +1,4 @@
+uid,action,amount,tier,remark
+10001,integral,1000,,示例：发放1000积分
+10002,cash_voucher,500,,示例：发放500元现金券
+10003,membership,,SW199,示例：开通199会员
