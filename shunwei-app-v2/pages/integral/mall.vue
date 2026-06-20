@@ -150,7 +150,7 @@
 
         <view class="ex-qr-wrap" v-if="exchangeResult.verifyCode">
 
-          <view class="qr-glow" />
+          <view class="qr-glow anim-glow" />
 
           <SwQrCode
 

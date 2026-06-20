@@ -26,7 +26,12 @@
     <!-- 券批次列表 -->
     <view v-if="wallet.batches && wallet.batches.length" class="batch-section">
       <text class="section-title">我的现金券</text>
-      <view v-for="b in wallet.batches" :key="b.id" class="batch-card">
+      <view
+        v-for="(b, bidx) in wallet.batches"
+        :key="b.id"
+        class="batch-card anim-fade-in"
+        :style="{ animationDelay: bidx * 0.06 + 's' }"
+      >
         <view class="batch-left">
           <text class="batch-amount">¥{{ b.remainAmount }}</text>
           <text class="batch-total">/ {{ b.totalAmount }}</text>

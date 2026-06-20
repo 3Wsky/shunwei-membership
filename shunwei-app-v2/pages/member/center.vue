@@ -48,10 +48,11 @@
         </view>
 
         <view
-            class="plan-card"
-            v-for="p in plans"
+            class="plan-card btn-tap anim-fade-in"
+            v-for="(p, pidx) in plans"
             :key="p.code || p.id"
             :class="{ 'plan-premium': isPremium(p) }"
+            :style="{ animationDelay: pidx * 0.08 + 's' }"
             @click="goPurchase(p)"
         >
             <view class="plan-left">

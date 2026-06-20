@@ -59,4 +59,24 @@ page {
 .anim-scale-pop {
   animation: scalePop 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
+
+/* 核销码光晕扩散 */
+@keyframes glowPulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+}
+
+.anim-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
 </style>
