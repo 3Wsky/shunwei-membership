@@ -10,7 +10,7 @@ export const MENU_MODULES: MenuModuleConfig[] = [
   { key: 'data', label: '数据', routes: ['dashboard'] },
   { key: 'member', label: '会员', routes: ['members', 'staff'] },
   { key: 'ops', label: '运营', routes: ['approval', 'integral-mall', 'lottery'] },
-  { key: 'merchant', label: '商家', routes: ['merchant', 'products'] },
+  { key: 'merchant', label: '商户', routes: ['merchant', 'products'] },
   {
     key: 'finance',
     label: '财务',

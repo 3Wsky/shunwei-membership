@@ -1,11 +1,20 @@
 <template>
-  <div class="stat-card" :class="['stat-' + type, { clickable: clickable }]" @click="$emit('click')">
-    <div class="stat-icon-wrap">
-      <el-icon :size="22"><component :is="icon" /></el-icon>
+  <div class="stat-card" :class="{ clickable }" @click="$emit('click')">
+    <div class="stat-top">
+      <span class="stat-title">{{ title }}</span>
+      <span class="stat-icon" :class="'tone-' + type">
+        <el-icon :size="16"><component :is="icon" /></el-icon>
+      </span>
     </div>
-    <div class="stat-body">
-      <div class="stat-title">{{ title }}</div>
-      <div class="stat-num">{{ displayValue }}</div>
+    <div class="stat-num num">{{ displayValue }}</div>
+    <div class="stat-foot">
+      <span v-if="hasDelta" class="delta" :class="deltaDir">
+        <el-icon :size="12">
+          <component :is="deltaDir === 'down' ? 'CaretBottom' : 'CaretTop'" />
+        </el-icon>
+        {{ Math.abs(delta as number) }}{{ deltaSuffix }}
+      </span>
+      <span class="stat-hint">{{ hint }}</span>
     </div>
   </div>
 </template>
@@ -19,10 +28,20 @@ const props = defineProps<{
   title: string
   value: string | number | null | undefined
   prefix?: string
+  delta?: number | null
+  deltaSuffix?: string
+  hint?: string
   clickable?: boolean
 }>()
 
 defineEmits<{ click: [] }>()
+
+const hasDelta = computed(() => typeof props.delta === 'number' && Number.isFinite(props.delta))
+const deltaDir = computed(() => {
+  const d = props.delta as number
+  if (!hasDelta.value || d === 0) return 'flat'
+  return d > 0 ? 'up' : 'down'
+})
 
 const displayValue = computed(() => {
   if (props.value === null || props.value === undefined || props.value === '--') return '--'
@@ -36,53 +55,78 @@ const displayValue = computed(() => {
 
 <style scoped>
 .stat-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: #fff;
-  border-radius: 2px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: box-shadow 0.2s, border-color 0.2s;
-  cursor: default;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
   height: 100%;
   box-sizing: border-box;
 }
-.stat-card.clickable { cursor: pointer; }
-.stat-card.clickable:hover {
-  border-color: #d9d9d9;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.stat-card.clickable {
+  cursor: pointer;
 }
-
-.stat-member .stat-icon-wrap { background: #e6f7ff; color: #1890ff; }
-.stat-newuser .stat-icon-wrap { background: #f6ffed; color: #52c41a; }
-.stat-grant .stat-icon-wrap { background: #fff7e6; color: #fa8c16; }
-.stat-consume .stat-icon-wrap { background: #fff1f0; color: #f5222d; }
-.stat-verify .stat-icon-wrap { background: #f9f0ff; color: #722ed1; }
-.stat-approval .stat-icon-wrap { background: #e6fffb; color: #13c2c2; }
-
-.stat-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 2px;
+.stat-card.clickable:hover {
+  border-color: var(--ink-300);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+.stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.stat-title {
+  font-size: 13px;
+  color: var(--ink-500);
+  font-weight: 500;
+}
+.stat-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-.stat-title {
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.45);
-  line-height: 22px;
-}
+.tone-member { background: #eff4ff; color: #2563eb; }
+.tone-newuser { background: #ecfdf3; color: #16a34a; }
+.tone-grant { background: #fff7ed; color: #d97706; }
+.tone-consume { background: #fef2f2; color: #dc2626; }
+.tone-verify { background: #f5f3ff; color: #7c3aed; }
+.tone-approval { background: #f0fdfa; color: #0d9488; }
+
 .stat-num {
-  font-size: 30px;
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--ink-900);
+  line-height: 1.25;
+  margin: 10px 0 6px;
+}
+.stat-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 18px;
+}
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.85);
-  margin-top: 4px;
-  line-height: 38px;
   font-variant-numeric: tabular-nums;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+.delta.up { color: var(--ok); background: var(--ok-soft); }
+.delta.down { color: var(--err); background: var(--err-soft); }
+.delta.flat { color: var(--ink-500); background: var(--neutral-soft); }
+.stat-hint {
+  font-size: 12px;
+  color: var(--ink-400);
 }
 </style>
