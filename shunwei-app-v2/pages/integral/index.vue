@@ -4,15 +4,15 @@
     <view class="summary-card">
       <view class="total-section">
         <text class="total-label">可用积分</text>
-        <text class="total-num">{{ summary.totalIntegral || 0 }}</text>
+        <text class="total-num"><CountUp :value="summary.totalIntegral || 0" /></text>
       </view>
       <view class="summary-row">
         <view class="summary-item">
-          <text class="si-num">{{ summary.giftRemaining || 0 }}</text>
+          <text class="si-num"><CountUp :value="summary.giftRemaining || 0" /></text>
           <text class="si-label">赠送</text>
         </view>
         <view class="summary-item">
-          <text class="si-num">{{ summary.rechargeRemaining || 0 }}</text>
+          <text class="si-num"><CountUp :value="summary.rechargeRemaining || 0" /></text>
           <text class="si-label">充值</text>
         </view>
         <view class="summary-item" v-if="summary.expiringIn7Days > 0">
@@ -73,9 +73,10 @@
 <script>
 import { getMyIntegral, getIntegralLog, getIntegralMallOrders } from '@/api/membership.js'
 import SwQrCode from '@/components/SwQrCode/SwQrCode.vue'
+import CountUp from '@/components/CountUp/CountUp.vue'
 
 export default {
-  components: { SwQrCode },
+  components: { SwQrCode, CountUp },
   data() {
     return {
       summary: {},

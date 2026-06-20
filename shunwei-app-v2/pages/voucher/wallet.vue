@@ -17,7 +17,7 @@
     <!-- 余额卡片 -->
     <view class="balance-card">
       <text class="balance-label">现金券余额</text>
-      <text class="balance-num">¥{{ wallet.balance || 0 }}</text>
+      <text class="balance-num">¥<CountUp :value="wallet.balance || 0" :decimals="2" /></text>
       <view class="balance-meta" v-if="wallet.expiringSoon > 0">
         <text class="expiring-warn">{{ wallet.expiringSoon }}元即将过期(30天内)</text>
       </view>
@@ -61,9 +61,10 @@ import { getVoucherWallet, getVoucherLedger } from '@/api/voucher.js'
 import { getMyMembership } from '@/api/membership.js'
 import { useUserStore } from '@/store/user'
 import SwQrCode from '@/components/SwQrCode/SwQrCode.vue'
+import CountUp from '@/components/CountUp/CountUp.vue'
 
 export default {
-  components: { SwQrCode },
+  components: { SwQrCode, CountUp },
   data() {
     return { wallet: {}, ledger: [], loading: true, notLogged: false, customerUid: 0 }
   },

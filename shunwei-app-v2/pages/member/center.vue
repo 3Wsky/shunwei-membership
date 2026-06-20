@@ -25,17 +25,17 @@
             </view>
             <view class="integral-row">
                 <view class="ir-item">
-                    <view class="ir-num">{{ integral.total || 0 }}</view>
+                    <view class="ir-num"><CountUp :value="integral.total || 0" /></view>
                     <view class="ir-label">总积分</view>
                 </view>
                 <view class="ir-divider" />
                 <view class="ir-item">
-                    <view class="ir-num ir-num-gift">{{ integral.gift || 0 }}</view>
+                    <view class="ir-num ir-num-gift"><CountUp :value="integral.gift || 0" /></view>
                     <view class="ir-label">赠送</view>
                 </view>
                 <view class="ir-divider" />
                 <view class="ir-item">
-                    <view class="ir-num ir-num-recharge">{{ integral.recharge || 0 }}</view>
+                    <view class="ir-num ir-num-recharge"><CountUp :value="integral.recharge || 0" /></view>
                     <view class="ir-label">充值</view>
                 </view>
             </view>
@@ -74,8 +74,10 @@
 
 <script>
 import { getPlans, getMyMembership, getIntegralSummary } from '@/api/membership.js'
+import CountUp from '@/components/CountUp/CountUp.vue'
 
 export default {
+    components: { CountUp },
     data() {
         return {
             plans: [],
