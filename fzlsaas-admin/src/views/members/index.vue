@@ -79,7 +79,7 @@
         >
           <el-button>用户导入</el-button>
         </el-upload>
-        <el-button @click="exportData">数据导出</el-button>
+        <el-button :loading="exporting" @click="exportData">数据导出</el-button>
       </div>
       <div class="toolbar-right">
         <span class="select-hint">全选({{ selectedRows.length }})</span>
@@ -233,6 +233,7 @@ import PageShell from '@/components/PageShell.vue'
 import TableEmpty from '@/components/TableEmpty.vue'
 import MemberDetailDrawer from './components/MemberDetailDrawer.vue'
 import MemberTag from '@/components/MemberTag.vue'
+import { exportToCsv, fetchAllRows } from '@/utils/export'
 
 const loading = ref(false)
 const list = ref<any[]>([])
@@ -402,8 +403,56 @@ async function handleCsvImport(file: File) {
   return false
 }
 
-function exportData() {
-  ElMessage.info('导出功能开发中，可先使用列表筛选后批量操作')
+const exporting = ref(false)
+
+function tierLabel(code?: string) {
+  if (code === 'SW199') return '199会员'
+  if (code === 'SW299') return '299会员'
+  return '普通用户'
+}
+
+const ROLE_LABELS: Record<string, string> = { staff: '店员', manager: '店长', merchant: '商家' }
+
+async function exportData() {
+  if (exporting.value) return
+  exporting.value = true
+  const loadingMsg = ElMessage({ message: '正在导出，请稍候…', type: 'info', duration: 0 })
+  try {
+    let rows = await fetchAllRows(async (p, ps) => {
+      const data = await request.get('/api/admin/members/list', {
+        params: {
+          page: p,
+          pageSize: ps,
+          keyword: filters.value.keyword || undefined,
+          tag: filters.value.tag || undefined
+        }
+      })
+      return { list: data?.list || [], total: data?.total || 0 }
+    })
+    if (filters.value.paidOnly === 'yes') rows = rows.filter((r: any) => !!r.tierCode)
+    else if (filters.value.paidOnly === 'no') rows = rows.filter((r: any) => !r.tierCode)
+    if (!rows.length) {
+      ElMessage.warning('当前筛选无数据可导出')
+      return
+    }
+    exportToCsv('会员列表', [
+      { label: 'UID', value: (r: any) => r.uid },
+      { label: '昵称', value: (r: any) => r.nickname || '' },
+      { label: '手机号', value: (r: any) => maskPhone(r.phone) },
+      { label: '付费会员', value: (r: any) => (r.tierCode ? '是' : '否') },
+      { label: '会员等级', value: (r: any) => tierLabel(r.tierCode) },
+      { label: '分组', value: (r: any) => roleTags(r).map((t: string) => ROLE_LABELS[t] || t).join('/') },
+      { label: '归属店员', value: (r: any) => r.spreadNickname || (r.spreadUid ? `#${r.spreadUid}` : '') },
+      { label: '积分余额', value: (r: any) => r.integralBalance ?? 0 },
+      { label: '现金券余额', value: (r: any) => r.cashVoucherBalance ?? 0 }
+    ], rows)
+    ElMessage.success(`已导出 ${rows.length} 条会员数据`)
+  } catch {
+    ElMessage.error('导出失败，请重试')
+  } finally {
+    loadingMsg.close()
+    exporting.value = false
+  }
 }
 </script>
 

@@ -147,6 +147,7 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import PageShell from '@/components/PageShell.vue'
 import TableEmpty from '@/components/TableEmpty.vue'
 import ProductCollectDialog from '@/components/ProductCollectDialog.vue'
+import { exportToCsv } from '@/utils/export'
 
 const router = useRouter()
 const loading = ref(false)
@@ -263,7 +264,26 @@ async function batchShow(cmd: 'on' | 'off') {
   } catch { /* handled */ }
 }
 
-function exportData() { ElMessage.info('导出功能开发中') }
+function exportData() {
+  const rows = filteredList.value
+  if (!rows.length) {
+    ElMessage.warning('当前筛选无数据可导出')
+    return
+  }
+  exportToCsv('积分商品', [
+    { label: 'ID', value: (r: any) => r.id },
+    { label: '商品名称', value: (r: any) => r.title || '' },
+    { label: '关联商品ID', value: (r: any) => r.productId ?? '' },
+    { label: '兑换积分', value: (r: any) => r.price ?? 0 },
+    { label: '库存', value: (r: any) => r.stock ?? 0 },
+    { label: '销量', value: (r: any) => r.sales ?? 0 },
+    { label: '单次限购', value: (r: any) => r.onceNum ?? '' },
+    { label: '总限购', value: (r: any) => r.num ?? '' },
+    { label: '排序', value: (r: any) => r.sort ?? '' },
+    { label: '状态', value: (r: any) => (r.isShow ? '销售中' : '仓库') }
+  ], rows)
+  ElMessage.success(`已导出 ${rows.length} 条积分商品数据`)
+}
 </script>
 
 <style scoped>
