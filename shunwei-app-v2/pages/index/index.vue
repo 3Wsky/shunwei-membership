@@ -24,7 +24,7 @@
               </view>
             </view>
             <view class="id-integral">
-              <text class="id-integral-num">{{ integralBalance }}</text>
+              <text class="id-integral-num"><CountUp :value="integralBalance" /></text>
               <text class="id-integral-label">可用积分</text>
             </view>
           </view>
@@ -125,6 +125,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/store/user'
 import { getProductList } from '@/api/products'
 import { getMembershipPlans, getMyMembership, getMyIntegral } from '@/api/membership'
+import CountUp from '@/components/CountUp/CountUp.vue'
 
 const userStore = useUserStore()
 const products = ref([])
