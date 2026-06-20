@@ -21,7 +21,7 @@ export default {
     mounted() {
         this.animateTo(this.toNum(this.value));
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this._timer) clearInterval(this._timer);
     },
     methods: {
