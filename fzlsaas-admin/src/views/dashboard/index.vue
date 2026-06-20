@@ -122,7 +122,7 @@ const statCards = computed(() => [
     icon: 'UserFilled',
     title: '今日新注册',
     value: cards.value.newUsersToday,
-    hint: rangeLabel.value + '新进会员',
+    hint: '今日新进会员',
   },
   {
     key: 'consume',

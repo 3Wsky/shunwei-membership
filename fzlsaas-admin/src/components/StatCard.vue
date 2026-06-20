@@ -10,7 +10,7 @@
     <div class="stat-foot">
       <span v-if="hasDelta" class="delta" :class="deltaDir">
         <el-icon :size="12">
-          <component :is="deltaDir === 'down' ? 'CaretBottom' : 'CaretTop'" />
+          <component :is="deltaDir === 'down' ? 'CaretBottom' : deltaDir === 'up' ? 'CaretTop' : 'Minus'" />
         </el-icon>
         {{ Math.abs(delta as number) }}{{ deltaSuffix }}
       </span>
