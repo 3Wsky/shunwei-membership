@@ -30,6 +30,9 @@
           <el-button link type="primary" @click="openDetail(row.uid)">详情/名片</el-button>
         </template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Avatar" title="暂无店员" hint="在会员详情中为用户授予店长 / 店员角色后，会出现在这里。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -72,6 +75,7 @@ import { ref, computed, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 
 const loading = ref(false)
 const list = ref<any[]>([])

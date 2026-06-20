@@ -62,9 +62,10 @@
           </template>
         </template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Stamp" title="暂无审批单" hint="门店发起的会员开通申请会在此等待处理。" />
+      </template>
     </el-table>
-
-    <div v-if="!loading && !tableData.length" class="empty">暂无数据</div>
 
     <template v-if="activeTab === 'all'" #footer>
       <el-pagination
@@ -93,6 +94,7 @@ import { useRoute } from 'vue-router'
 import request from '@/utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import ApprovalStatusTag from './components/ApprovalStatusTag.vue'
 import ApprovalDetailDialog from './components/ApprovalDetailDialog.vue'
 import ApprovalSettingsDrawer from './components/ApprovalSettingsDrawer.vue'

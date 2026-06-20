@@ -25,6 +25,15 @@
             <el-button link type="primary" @click="openEdit(row)">编辑</el-button>
           </template>
         </el-table-column>
+        <template #empty>
+          <TableEmpty
+            icon="Shop"
+            title="暂无异业商家"
+            hint="开通异业商家后，可支持其核销会员权益并生成结算台账。"
+            action-text="开通商家"
+            @action="activeTab = 'create'"
+          />
+        </template>
       </el-table>
     </template>
 
@@ -54,6 +63,9 @@
           <el-table-column prop="customerUid" label="客户" width="80" />
           <el-table-column prop="amount" label="金额" width="80" />
           <el-table-column prop="createdAt" label="时间" :formatter="fmtTime" />
+          <template #empty>
+            <TableEmpty icon="Document" title="暂无核销记录" />
+          </template>
         </el-table>
       </el-tab-pane>
     </el-tabs>
@@ -65,6 +77,7 @@ import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 
 const activeTab = ref('list')
 const loading = ref(false)

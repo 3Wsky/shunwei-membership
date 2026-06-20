@@ -50,6 +50,9 @@
       <el-table-column label="创建时间" width="165">
         <template #default="{ row }">{{ fmtUnixTime(row.createdAt) }}</template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Coin" title="暂无充值记录" hint="会员积分充值订单会在此展示。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -68,6 +71,7 @@
 import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import { fmtUnixTime, fmtMoney } from '@/utils/format'
 
 const loading = ref(false)

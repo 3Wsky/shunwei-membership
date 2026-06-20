@@ -20,6 +20,9 @@
       <el-table-column prop="targetId" label="目标ID" width="100" />
       <el-table-column prop="resultStatus" label="结果" width="80" />
       <el-table-column prop="createdAt" label="时间" :formatter="fmtTime" width="160" />
+      <template #empty>
+        <TableEmpty icon="Document" title="暂无审计日志" hint="管理员的发券、核销、审批等操作会记录在此，便于追溯。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -40,6 +43,7 @@
 import { ref, computed, onMounted } from 'vue'
 import request from '@/utils/request'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 
 const loading = ref(false)
 const list = ref<any[]>([])

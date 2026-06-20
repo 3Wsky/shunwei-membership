@@ -49,6 +49,9 @@
       <el-table-column label="时间" width="165">
         <template #default="{ row }">{{ fmtUnixTime(row.createdAt) }}</template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Wallet" title="暂无现金券流水" hint="现金券的发放与核销记录会在此展示。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -67,6 +70,7 @@
 import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import { fmtUnixTime, fmtMoney } from '@/utils/format'
 
 const loading = ref(false)
