@@ -37,13 +37,21 @@
     <!-- 待核销兑换单 -->
     <view v-if="pendingOrders.length" class="orders-section">
       <text class="section-title">待核销兑换</text>
-      <view v-for="order in pendingOrders" :key="order.orderId" class="order-card">
+      <view
+        v-for="(order, oidx) in pendingOrders"
+        :key="order.orderId"
+        class="order-card anim-fade-in"
+        :style="{ animationDelay: oidx * 0.06 + 's' }"
+      >
         <view class="order-head">
           <text class="order-name">{{ order.productName }}</text>
           <text class="order-cost">{{ order.integralCost }} 积分</text>
         </view>
-        <view class="order-qr" v-if="order.verifyCode">
-          <SwQrCode :cid="'order-qr-' + order.orderId" :text="'sw-verify:' + order.verifyCode" :size="220" />
+        <view class="order-qr anim-scale-pop" v-if="order.verifyCode">
+          <view class="qr-halo anim-glow" />
+          <view class="qr-body">
+            <SwQrCode :cid="'order-qr-' + order.orderId" :text="'sw-verify:' + order.verifyCode" :size="220" />
+          </view>
         </view>
         <text class="order-code">核销码 {{ order.verifyCode }}</text>
         <text class="order-hint">出示二维码给店员扫码核销</text>
@@ -256,12 +264,28 @@ export default {
 .order-name { font-size: 28rpx; font-weight: 600; color: $sw-text; }
 .order-cost { font-size: 24rpx; color: $sw-gold; font-weight: 600; }
 .order-qr {
+  position: relative;
   display: flex;
   justify-content: center;
   padding: 24rpx;
   background: linear-gradient(135deg, #FBF6E8, #FFFDF5);
   margin: 0 20rpx;
   border-radius: $sw-radius-sm;
+}
+.qr-halo {
+  position: absolute;
+  width: 260rpx;
+  height: 260rpx;
+  top: 50%;
+  left: 50%;
+  margin: -130rpx 0 0 -130rpx;
+  background: radial-gradient(circle, rgba(201, 162, 39, 0.22) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.qr-body {
+  position: relative;
+  z-index: 1;
 }
 .order-code {
   display: block;
