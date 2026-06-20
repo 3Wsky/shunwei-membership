@@ -150,6 +150,9 @@
           <el-button link type="primary" @click="openDetail(row.uid)">编辑</el-button>
         </template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="User" title="暂无会员" hint="未找到符合条件的会员，请调整筛选条件后重试。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -227,6 +230,7 @@ import type { TableInstance } from 'element-plus'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import MemberDetailDrawer from './components/MemberDetailDrawer.vue'
 import MemberTag from '@/components/MemberTag.vue'
 

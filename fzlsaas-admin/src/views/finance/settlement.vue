@@ -51,6 +51,9 @@
           </el-button>
         </template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Money" title="暂无待结算商家" hint="商家产生核销后会在此累计待结算金额，线下结算后可标记。" />
+      </template>
     </el-table>
 
     <el-table v-else :data="records" v-loading="recordsLoading" size="small">
@@ -70,6 +73,9 @@
       <el-table-column label="结算时间" width="165">
         <template #default="{ row }">{{ fmtUnixTime(row.settledAt || row.createdAt) }}</template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Tickets" title="暂无结算记录" hint="标记结算后的记录会在此归档。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -105,6 +111,7 @@ import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import { fmtUnixTime, fmtMoney } from '@/utils/format'
 
 const loading = ref(false)

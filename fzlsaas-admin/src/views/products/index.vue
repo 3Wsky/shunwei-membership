@@ -125,6 +125,15 @@
           <el-button link type="primary" @click="toggleShow(row)">{{ row.isShow ? '下架' : '上架' }}</el-button>
         </template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty
+          icon="Goods"
+          title="暂无商品"
+          hint="从价签库采集商品后，可在此管理上下架与展示。"
+          action-text="采集商品"
+          @action="openCollect"
+        />
+      </template>
     </el-table>
 
     <template #footer>
@@ -174,6 +183,7 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import ProductCollectDialog from '@/components/ProductCollectDialog.vue'
 import ImageUrlInput from '@/components/ImageUrlInput.vue'
 import ImageListInput from '@/components/ImageListInput.vue'

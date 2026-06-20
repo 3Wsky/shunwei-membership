@@ -59,6 +59,9 @@
       <el-table-column label="时间" width="165">
         <template #default="{ row }">{{ fmtUnixTime(row.createdAt) }}</template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty icon="Tickets" title="暂无积分流水" hint="会员积分的发放、兑换、过期等变动会在此逐笔记录。" />
+      </template>
     </el-table>
 
     <template #footer>
@@ -77,6 +80,7 @@
 import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import { fmtUnixTime } from '@/utils/format'
 
 const loading = ref(false)

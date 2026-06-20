@@ -98,6 +98,15 @@
           <el-button link type="primary" @click="toggleShow(row)">{{ row.isShow ? '下架' : '上架' }}</el-button>
         </template>
       </el-table-column>
+      <template #empty>
+        <TableEmpty
+          icon="Goods"
+          title="暂无积分商品"
+          hint="添加或从价签库采集商品后，会员即可在小程序用积分兑换。"
+          action-text="添加商品"
+          @action="goCreate"
+        />
+      </template>
     </el-table>
 
     <template #footer>
@@ -136,6 +145,7 @@ import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 import PageShell from '@/components/PageShell.vue'
+import TableEmpty from '@/components/TableEmpty.vue'
 import ProductCollectDialog from '@/components/ProductCollectDialog.vue'
 
 const router = useRouter()
