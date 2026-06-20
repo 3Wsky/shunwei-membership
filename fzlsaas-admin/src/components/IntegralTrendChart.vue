@@ -1,8 +1,10 @@
 <template>
-  <div ref="chartRef" class="trend-chart">
+  <div class="trend-chart">
+    <div ref="chartRef" class="trend-canvas"></div>
     <div v-if="!ready" class="chart-placeholder">
       <el-skeleton animated :rows="4" />
     </div>
+    <div v-else-if="empty" class="chart-empty">暂无趋势数据</div>
   </div>
 </template>
 
@@ -17,6 +19,7 @@ const props = defineProps<{
 
 const chartRef = ref<HTMLElement | null>(null)
 const ready = ref(false)
+const empty = ref(false)
 
 type EchartsCore = typeof import('echarts/core')
 type EChartsInstance = import('echarts/core').ECharts
@@ -53,10 +56,13 @@ async function loadEcharts() {
 async function render() {
   if (!chartRef.value) return
   const echarts = await loadEcharts()
+  // The element may have been unmounted while echarts was loading async
+  // (e.g. during the page-fade route transition).
+  if (!chartRef.value) return
   ready.value = true
   if (!chart) chart = echarts.init(chartRef.value)
 
-  const hasData = props.granted.some((v) => v > 0) || props.consumed.some((v) => v > 0)
+  empty.value = !(props.granted.some((v) => v > 0) || props.consumed.some((v) => v > 0))
 
   chart.setOption({
     tooltip: { trigger: 'axis' },
@@ -64,12 +70,6 @@ async function render() {
     grid: { left: 48, right: 24, top: 24, bottom: 48 },
     xAxis: { type: 'category', data: props.labels, boundaryGap: false },
     yAxis: { type: 'value' },
-    graphic: hasData ? undefined : [{
-      type: 'text',
-      left: 'center',
-      top: 'middle',
-      style: { text: '暂无趋势数据', fill: '#9CA3AF', fontSize: 14 }
-    }],
     series: [
       {
         name: '积分新增',
@@ -95,10 +95,16 @@ function handleResize() {
   chart?.resize()
 }
 
-watch(() => [props.labels, props.granted, props.consumed], () => { render() }, { deep: true })
+function safeRender() {
+  render().catch((e) => {
+    if (import.meta.env.DEV) console.warn('[IntegralTrendChart] render skipped:', e)
+  })
+}
+
+watch(() => [props.labels, props.granted, props.consumed], () => { safeRender() }, { deep: true })
 
 onMounted(() => {
-  render()
+  safeRender()
   window.addEventListener('resize', handleResize)
 })
 
@@ -115,10 +121,24 @@ onBeforeUnmount(() => {
   height: 320px;
   position: relative;
 }
+.trend-canvas {
+  width: 100%;
+  height: 100%;
+}
 .chart-placeholder {
   position: absolute;
   inset: 0;
   padding: 24px 48px;
   box-sizing: border-box;
+}
+.chart-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #9ca3af;
+  pointer-events: none;
 }
 </style>

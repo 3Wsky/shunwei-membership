@@ -144,7 +144,7 @@ async function handleLogin() {
 
   overflow: hidden;
 
-  background: linear-gradient(135deg, #1890ff 0%, #096dd9 50%, #0050b3 100%);
+  background: radial-gradient(1200px 600px at 80% -10%, #1e293b 0%, #0f172a 45%, #0b1120 100%);
 
 }
 
@@ -168,7 +168,9 @@ async function handleLogin() {
 
   border-radius: 50%;
 
-  background: rgba(232, 67, 110, 0.08);
+  background: rgba(37, 99, 235, 0.16);
+
+  filter: blur(8px);
 
 }
 
@@ -198,7 +200,7 @@ async function handleLogin() {
 
   left: -60px;
 
-  background: rgba(123, 79, 212, 0.06);
+  background: rgba(37, 99, 235, 0.10);
 
 }
 
@@ -209,9 +211,10 @@ async function handleLogin() {
   z-index: 1;
   width: 400px;
   background: #fff;
-  border-radius: 4px;
-  padding: 40px 40px 32px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  padding: 40px 40px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
 }
 
 
@@ -228,15 +231,15 @@ async function handleLogin() {
 
 .login-logo {
 
-  width: 56px;
+  width: 54px;
 
-  height: 56px;
+  height: 54px;
 
   margin: 0 auto 16px;
 
-  background: linear-gradient(135deg, #409eff, #1890ff);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
 
-  border-radius: 14px;
+  border-radius: 13px;
 
   display: flex;
 
@@ -244,7 +247,7 @@ async function handleLogin() {
 
   justify-content: center;
 
-  font-size: 28px;
+  font-size: 27px;
 
   font-weight: 800;
 
@@ -252,16 +255,18 @@ async function handleLogin() {
 
   letter-spacing: -1px;
 
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.55);
+
 }
 
 
 
 .login-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.85);
+  font-size: 21px;
+  font-weight: 650;
+  color: var(--ink-900);
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 
@@ -270,9 +275,9 @@ async function handleLogin() {
 
   font-size: 13px;
 
-  color: #9CA3AF;
+  color: var(--ink-400);
 
-  margin: 10px 0 0;
+  margin: 8px 0 0;
 
 }
 
@@ -282,9 +287,9 @@ async function handleLogin() {
 
   width: 100%;
 
-  height: 44px;
+  height: 42px;
 
-  font-size: 16px;
+  font-size: 15px;
 
   font-weight: 600;
 

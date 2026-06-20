@@ -44,8 +44,8 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item :command="true">批量上架</el-dropdown-item>
-              <el-dropdown-item :command="false">批量下架</el-dropdown-item>
+              <el-dropdown-item command="on">批量上架</el-dropdown-item>
+              <el-dropdown-item command="off">批量下架</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -240,8 +240,9 @@ async function toggleShow(row: any) {
   } catch { /* handled */ }
 }
 
-async function batchShow(isShow: boolean) {
+async function batchShow(cmd: 'on' | 'off') {
   if (!selected.value.length) return
+  const isShow = cmd === 'on'
   try {
     await request.patch('/api/admin/integral-mall/products/batch-show', {
       ids: selected.value.map((r) => r.id),

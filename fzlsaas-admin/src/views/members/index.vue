@@ -91,10 +91,11 @@
       :data="list"
       v-loading="loading"
       row-key="uid"
+      stripe
       @selection-change="onSelect"
     >
       <el-table-column type="selection" width="48" />
-      <el-table-column prop="uid" label="UID" width="88" />
+      <el-table-column prop="uid" label="UID" width="88" class-name="col-num" />
       <el-table-column label="头像" width="72" align="center">
         <template #default="{ row }">
           <el-avatar :size="36" :src="row.avatar">
@@ -137,10 +138,10 @@
           {{ row.spreadNickname || (row.spreadUid ? `#${row.spreadUid}` : '—') }}
         </template>
       </el-table-column>
-      <el-table-column label="积分" width="100" align="right">
+      <el-table-column label="积分" width="104" class-name="col-num">
         <template #default="{ row }">{{ formatNum(row.integralBalance) }}</template>
       </el-table-column>
-      <el-table-column label="现金券" width="90" align="right">
+      <el-table-column label="现金券" width="96" class-name="col-num">
         <template #default="{ row }">¥{{ row.cashVoucherBalance ?? 0 }}</template>
       </el-table-column>
       <el-table-column label="操作" width="120" fixed="right" align="center">
@@ -408,15 +409,15 @@ function exportData() {
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
-  padding: 10px 14px;
-  background: #e6f7ff;
-  border: 1px solid #91d5ff;
-  border-radius: 2px;
+  padding: 9px 14px;
+  background: var(--brand-soft);
+  border: 1px solid #cfdcfb;
+  border-radius: var(--r-sm);
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.65);
+  color: var(--ink-600);
 }
 .selection-count strong {
-  color: var(--el-color-primary);
+  color: var(--brand);
   font-weight: 600;
 }
 .filter-form :deep(.el-form-item) {
@@ -439,19 +440,19 @@ function exportData() {
   font-size: 13px;
 }
 .select-hint {
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--ink-400);
 }
 .text-muted {
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--ink-300);
 }
 .batch-results {
   max-height: 160px;
   overflow: auto;
   font-size: 12px;
   margin-top: 12px;
-  background: #fafafa;
+  background: var(--bg-subtle);
   padding: 8px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
 }
-.batch-results .fail { color: #ff4d4f; }
+.batch-results .fail { color: var(--err); }
 </style>

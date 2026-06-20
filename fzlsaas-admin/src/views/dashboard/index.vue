@@ -8,18 +8,21 @@
       </el-radio-group>
     </template>
 
-    <el-row :gutter="16" v-loading="loading" class="stat-row">
-      <el-col :xs="24" :sm="12" :md="8" v-for="card in statCards" :key="card.key">
-        <StatCard
-          :type="card.type"
-          :icon="card.icon"
-          :title="card.title"
-          :value="card.value"
-          :clickable="!!card.onClick"
-          @click="card.onClick?.()"
-        />
-      </el-col>
-    </el-row>
+    <div v-loading="loading" class="kpi-grid">
+      <StatCard
+        v-for="card in statCards"
+        :key="card.key"
+        :type="card.type"
+        :icon="card.icon"
+        :title="card.title"
+        :value="card.value"
+        :delta="card.delta"
+        :delta-suffix="card.deltaSuffix"
+        :hint="card.hint"
+        :clickable="!!card.onClick"
+        @click="card.onClick?.()"
+      />
+    </div>
 
     <div class="chart-section">
       <div class="section-head">
@@ -66,19 +69,70 @@ const trend = ref({ labels: [] as string[], integralGranted: [] as number[], int
 
 let timer: ReturnType<typeof setInterval> | null = null
 
+// 由趋势数组计算环比（末值 vs 前一日），用于 KPI 卡片箭头
+function dod(arr: number[]): number | null {
+  if (!arr || arr.length < 2) return null
+  const last = Number(arr[arr.length - 1] || 0)
+  const prev = Number(arr[arr.length - 2] || 0)
+  if (prev === 0) return last > 0 ? 100 : null
+  return Math.round(((last - prev) / prev) * 100)
+}
+
 const statCards = computed(() => [
-  { key: 'member', type: 'member', icon: 'User', title: '会员总数', value: cards.value.memberTotal },
-  { key: 'newuser', type: 'newuser', icon: 'UserFilled', title: '今日新注册', value: cards.value.newUsersToday },
-  { key: 'grant', type: 'grant', icon: 'TrendCharts', title: '今日积分新增', value: cards.value.integralGrantedToday },
-  { key: 'consume', type: 'consume', icon: 'Minus', title: '今日积分消耗', value: cards.value.integralConsumedToday },
-  { key: 'verify', type: 'verify', icon: 'Checked', title: '今日核销', value: cards.value.verifyToday },
+  {
+    key: 'member',
+    type: 'member',
+    icon: 'User',
+    title: '会员总数',
+    value: cards.value.memberTotal,
+    delta: Number(cards.value.newUsersToday) || 0,
+    deltaSuffix: '',
+    hint: '今日新增',
+  },
+  {
+    key: 'grant',
+    type: 'grant',
+    icon: 'TrendCharts',
+    title: '积分发放',
+    value: cards.value.integralGrantedToday,
+    delta: dod(trend.value.integralGranted),
+    deltaSuffix: '%',
+    hint: '较前一日',
+  },
+  {
+    key: 'verify',
+    type: 'verify',
+    icon: 'Checked',
+    title: '今日核销',
+    value: cards.value.verifyToday,
+    hint: '兑换订单核销',
+  },
   {
     key: 'approval',
     type: 'approval',
-    icon: 'Document',
-    title: '待审批',
+    icon: 'Stamp',
+    title: '待审批订单',
     value: cards.value.pendingApproval,
-    onClick: () => router.push('/approval?tab=pending')
+    hint: '点击前往处理',
+    onClick: () => router.push('/approval?tab=pending'),
+  },
+  {
+    key: 'newuser',
+    type: 'newuser',
+    icon: 'UserFilled',
+    title: '今日新注册',
+    value: cards.value.newUsersToday,
+    hint: rangeLabel.value + '新进会员',
+  },
+  {
+    key: 'consume',
+    type: 'consume',
+    icon: 'SoldOut',
+    title: '积分消耗',
+    value: cards.value.integralConsumedToday,
+    delta: dod(trend.value.integralConsumed),
+    deltaSuffix: '%',
+    hint: '较前一日',
   },
 ])
 
@@ -116,11 +170,22 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.stat-row { margin-bottom: 4px; }
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 4px;
+}
+@media (max-width: 1180px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+}
 .chart-section {
-  margin-top: 8px;
+  margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--line);
 }
 .section-head {
   display: flex;
@@ -129,23 +194,23 @@ onBeforeUnmount(() => {
   margin-bottom: 16px;
 }
 .section-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.85);
+  color: var(--ink-800);
 }
 .section-desc {
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--ink-400);
 }
 .quick-section {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px dashed #f0f0f0;
+  border-top: 1px dashed var(--line);
 }
 .quick-label {
   display: block;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--ink-400);
   margin-bottom: 10px;
 }
 </style>
