@@ -1,5 +1,8 @@
 <template>
   <PageShell title="商家结算" subtitle="异业商家核销台账，线下结算后在此标记">
+    <template #actions>
+      <el-button :loading="exporting" @click="exportData">数据导出</el-button>
+    </template>
     <template #toolbar>
       <div class="summary-bar">
         <span>全平台待结算 <b class="pending">{{ fmtMoney(summary.pendingTotal) }}</b></span>
@@ -113,6 +116,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
 import TableEmpty from '@/components/TableEmpty.vue'
 import { fmtUnixTime, fmtMoney } from '@/utils/format'
+import { exportToCsv, fetchAllRows } from '@/utils/export'
 
 const loading = ref(false)
 const recordsLoading = ref(false)
@@ -215,6 +219,62 @@ function openMark(row: any) {
     remark: '线下已结算',
   }
   markOpen.value = true
+}
+
+const exporting = ref(false)
+
+async function exportData() {
+  if (exporting.value) return
+  exporting.value = true
+  const loadingMsg = ElMessage({ message: '正在导出，请稍候…', type: 'info', duration: 0 })
+  try {
+    if (activeTab.value === 'records') {
+      const rows = await fetchAllRows(async (p, ps) => {
+        const data = await request.get('/api/admin/finance/settlement/records', {
+          params: { page: p, pageSize: ps }
+        })
+        return { list: data?.list || [], total: data?.total || 0 }
+      })
+      if (!rows.length) {
+        ElMessage.warning('当前无数据可导出')
+        return
+      }
+      exportToCsv('结算记录', [
+        { label: 'ID', value: (r: any) => r.id },
+        { label: '商家', value: (r: any) => r.merchantName || '' },
+        { label: '结算金额', value: (r: any) => fmtMoney(r.amount) },
+        { label: '状态', value: (r: any) => (r.status === 'settled' ? '已结算' : '待结算') },
+        { label: '备注', value: (r: any) => r.remark || '' },
+        { label: '结算时间', value: (r: any) => fmtUnixTime(r.settledAt || r.createdAt) }
+      ], rows)
+      ElMessage.success(`已导出 ${rows.length} 条结算记录`)
+    } else {
+      const rows = await fetchAllRows(async (p, ps) => {
+        const data = await request.get('/api/admin/finance/settlement/list', {
+          params: { page: p, pageSize: ps, keyword: filters.value.keyword || undefined }
+        })
+        return { list: data?.list || [], total: data?.total || 0 }
+      })
+      if (!rows.length) {
+        ElMessage.warning('当前无数据可导出')
+        return
+      }
+      exportToCsv('待结算商家', [
+        { label: 'ID', value: (r: any) => r.id },
+        { label: '商家名称', value: (r: any) => r.merchantName || '' },
+        { label: '类目', value: (r: any) => r.category || '' },
+        { label: '电话', value: (r: any) => r.contactPhone || '' },
+        { label: '待结算', value: (r: any) => fmtMoney(r.pendingSettlement) },
+        { label: '累计已结算', value: (r: any) => fmtMoney(r.settledTotal) }
+      ], rows)
+      ElMessage.success(`已导出 ${rows.length} 条商家数据`)
+    }
+  } catch {
+    ElMessage.error('导出失败，请重试')
+  } finally {
+    loadingMsg.close()
+    exporting.value = false
+  }
 }
 
 async function submitMark() {

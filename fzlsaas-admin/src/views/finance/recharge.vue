@@ -1,5 +1,8 @@
 <template>
   <PageShell title="积分充值" subtitle="对应 CRMEB「充值记录」，微信支付购买积分订单">
+    <template #actions>
+      <el-button :loading="exporting" @click="exportData">数据导出</el-button>
+    </template>
     <template #filter>
       <el-form :inline="true" @submit.prevent="search">
         <el-form-item label="用户UID">
@@ -70,9 +73,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
+import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
 import TableEmpty from '@/components/TableEmpty.vue'
 import { fmtUnixTime, fmtMoney } from '@/utils/format'
+import { exportToCsv, fetchAllRows } from '@/utils/export'
 
 const loading = ref(false)
 const list = ref<any[]>([])
@@ -124,6 +129,48 @@ function search() {
 function reset() {
   filters.value = { keyword: '' }
   search()
+}
+
+const exporting = ref(false)
+
+async function exportData() {
+  if (exporting.value) return
+  exporting.value = true
+  const loadingMsg = ElMessage({ message: '正在导出，请稍候…', type: 'info', duration: 0 })
+  try {
+    const rows = await fetchAllRows(async (p, ps) => {
+      const data = await request.get('/api/admin/finance/recharge/list', {
+        params: {
+          page: p,
+          pageSize: ps,
+          uid: filters.value.uid || undefined,
+          keyword: filters.value.keyword || undefined
+        }
+      })
+      return { list: data?.list || [], total: data?.total || 0 }
+    })
+    if (!rows.length) {
+      ElMessage.warning('当前筛选无数据可导出')
+      return
+    }
+    exportToCsv('积分充值', [
+      { label: '订单号', value: (r: any) => r.orderNo || '' },
+      { label: '用户昵称', value: (r: any) => r.userNickname || '' },
+      { label: 'UID', value: (r: any) => r.uid },
+      { label: '支付金额', value: (r: any) => fmtMoney(r.payAmount) },
+      { label: '获得积分', value: (r: any) => r.integralAmount ?? '' },
+      { label: '汇率', value: (r: any) => `1元=${r.exchangeRate}积分` },
+      { label: '状态', value: (r: any) => payStatusText(r.payStatus) },
+      { label: '支付时间', value: (r: any) => fmtUnixTime(r.paidAt) },
+      { label: '创建时间', value: (r: any) => fmtUnixTime(r.createdAt) }
+    ], rows)
+    ElMessage.success(`已导出 ${rows.length} 条充值记录`)
+  } catch {
+    ElMessage.error('导出失败，请重试')
+  } finally {
+    loadingMsg.close()
+    exporting.value = false
+  }
 }
 </script>
 

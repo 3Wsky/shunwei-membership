@@ -185,6 +185,7 @@ import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
 import TableEmpty from '@/components/TableEmpty.vue'
 import ProductCollectDialog from '@/components/ProductCollectDialog.vue'
+import { exportToCsv } from '@/utils/export'
 import ImageUrlInput from '@/components/ImageUrlInput.vue'
 import ImageListInput from '@/components/ImageListInput.vue'
 import LazyRichTextEditor from '@/components/LazyRichTextEditor'
@@ -379,7 +380,26 @@ async function batchShow(cmd: 'on' | 'off') {
   } catch { /* handled */ }
 }
 
-function exportData() { ElMessage.info('导出功能开发中') }
+function exportData() {
+  const rows = filteredList.value
+  if (!rows.length) {
+    ElMessage.warning('当前筛选无数据可导出')
+    return
+  }
+  exportToCsv('展示商品', [
+    { label: 'ID', value: (r: any) => r.id },
+    { label: '商品名称', value: (r: any) => r.storeName || '' },
+    { label: '简介', value: (r: any) => r.storeInfo || '' },
+    { label: '品牌', value: (r: any) => r.brand || '' },
+    { label: '售价', value: (r: any) => r.price ?? '' },
+    { label: 'SKU数', value: (r: any) => skuCount(r) },
+    { label: '参数项数', value: (r: any) => (r.paramsList || []).length },
+    { label: '来源', value: (r: any) => sourceLabel(r.source) },
+    { label: '状态', value: (r: any) => (r.isShow ? '销售中' : '仓库') },
+    { label: '排序', value: (r: any) => r.sort ?? '' }
+  ], rows)
+  ElMessage.success(`已导出 ${rows.length} 条商品数据`)
+}
 </script>
 
 <style scoped>
