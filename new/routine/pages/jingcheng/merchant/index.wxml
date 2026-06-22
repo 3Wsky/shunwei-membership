@@ -1,0 +1,21 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+  <view class="merchant-head"><view><label>商家工作台</label><text>{{merchantName}}</text></view><view class="role">{{isManager ? '店长' : '店员'}}</view></view>
+  <view class="verify-card" bindtap="openVerify"><view><text>现金券核销</text><label>扫码识别顾客并输入核销金额</label></view><view class="scan">扫一扫 ›</view></view>
+
+  <block wx:if="{{isManager}}">
+    <view class="title">核销数据</view>
+    <view class="stats"><view><text>¥{{todayAmount}}</text><label>今日</label></view><view><text>¥{{weekAmount}}</text><label>本周</label></view><view><text>¥{{monthAmount}}</text><label>本月</label></view><view><text>¥{{totalAmount}}</text><label>累计</label></view></view>
+
+    <view class="withdraw-card">
+      <view class="withdraw-head"><view><label>可提现金额</label><text>¥{{availableAmount}}</text></view><view><label>提现中</label><text class="small">¥{{withdrawingAmount}}</text></view></view>
+      <view class="arrival">提现申请审核打款后，预计 <b>T+3</b> 到账</view>
+      <button class="all" bindtap="withdrawAll" disabled="{{availableAmount <= 0}}">全部提现 ¥{{availableAmount}}</button>
+      <view class="custom"><input type="digit" value="{{customAmount}}" bindinput="onAmountInput" placeholder="输入自定义提现金额"/><button bindtap="withdrawCustom">申请提现</button></view>
+    </view>
+
+    <view class="title">提现记录</view>
+    <view wx:for="{{withdrawals}}" wx:key="id" class="withdraw-row"><view><text>¥{{item.amount}}</text><label>申请 {{item.createdText}} · 预计 {{item.expectedText}} 到账</label></view><view class="{{item.status === 'settled' ? 'settled' : 'pending'}}">{{item.status === 'settled' ? '已到账' : '处理中'}}</view></view>
+    <view wx:if="{{!loading && !withdrawals.length}}" class="empty">暂无提现记录</view>
+  </block>
+</view>

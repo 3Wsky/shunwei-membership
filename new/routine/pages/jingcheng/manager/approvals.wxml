@@ -1,0 +1,10 @@
+<view class="page">
+  <view wx:for="{{list}}" wx:key="requestId" class="card">
+    <view class="head"><text>申请单 #{{item.requestId}}</text><text class="pending">待店长审批</text></view>
+    <view class="row"><text>会员 UID</text><text>{{item.customerUid}}</text></view>
+    <view class="row"><text>申请店员 UID</text><text>{{item.clerkUid}}</text></view>
+    <view class="benefit"><text>{{item.matchedTierCode === 'SW299' ? '299会员' : '199会员'}}</text><text>{{item.matchedIntegral}} 积分</text><text>¥{{item.matchedVoucher}} 现金券</text></view>
+    <view class="buttons"><button class="reject" data-index="{{index}}" data-action="reject" bindtap="review">驳回</button><button class="approve" data-index="{{index}}" data-action="approve" bindtap="review">通过</button></view>
+  </view>
+  <view wx:if="{{!loading && !list.length}}" class="empty">暂无待审批申请</view>
+</view>

@@ -44,7 +44,7 @@
             <el-col :span="8">
               <div class="benefit-box">
                 <div class="benefit-label">匹配档位</div>
-                <div class="benefit-value">{{ detail.matchedTierCode || '—' }}</div>
+                <div class="benefit-value">{{ formatTier(detail.matchedTierCode) }}</div>
               </div>
             </el-col>
             <el-col :span="8">
@@ -81,6 +81,12 @@
           <h4>终审操作</h4>
           <el-input v-model="comment" placeholder="审批意见（选填）" />
         </section>
+
+        <section v-else-if="detail.canRevoke" class="detail-section">
+          <h4>撤销终批</h4>
+          <p class="text-muted">终批通过后 24 小时内可撤销，将回滚已发放的权益。</p>
+          <el-button type="danger" plain @click="emitRevoke">撤销终批</el-button>
+        </section>
       </template>
     </div>
 
@@ -100,7 +106,7 @@ import ApprovalStatusTag from './ApprovalStatusTag.vue'
 
 const props = defineProps<{ requestId: number | null; showActions?: boolean }>()
 const visible = defineModel<boolean>({ default: false })
-const emit = defineEmits<{ approve: [detail: any, comment: string]; reject: [detail: any] }>()
+const emit = defineEmits<{ approve: [detail: any, comment: string]; reject: [detail: any]; revoke: [detail: any] }>()
 
 const router = useRouter()
 const loading = ref(false)
@@ -134,7 +140,7 @@ const timelineItems = computed(() => {
   for (const step of detail.value.steps || []) {
     const role = roleLabel[step.stepRole] || step.stepRole || '操作人'
     const time = fmtTime(step.createdAt)
-    const action = step.action === 'approve' ? '通过' : step.action === 'reject' ? '驳回' : step.action || '处理'
+    const action = step.action === 'approve' ? '通过' : step.action === 'reject' ? '驳回' : step.action === 'revoke' ? '撤销' : step.action || '处理'
     const suffix = step.comment ? ` 「${step.comment}」` : ''
     items.push({ text: `${time}  ${role} ${action}${suffix}`, type: step.action === 'reject' ? 'danger' : 'primary' })
   }
@@ -157,6 +163,12 @@ function formatNum(v: any) {
   return Number.isFinite(n) ? n.toLocaleString('zh-CN') : '0'
 }
 
+function formatTier(code?: string) {
+  if (code === 'SW199') return '锦程199会员'
+  if (code === 'SW299') return '锦程299会员'
+  return code || '—'
+}
+
 function goMember(uid: number) {
   visible.value = false
   router.push(`/members?uid=${uid}`)
@@ -168,6 +180,10 @@ function emitApprove() {
 
 function emitReject() {
   if (detail.value) emit('reject', detail.value)
+}
+
+function emitRevoke() {
+  if (detail.value) emit('revoke', detail.value)
 }
 </script>
 

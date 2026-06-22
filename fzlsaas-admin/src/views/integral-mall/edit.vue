@@ -15,16 +15,66 @@
         </div>
       </div>
 
-      <!-- Step 0: 选择商品 -->
+      <!-- Step 0: 创建方式 -->
       <div v-show="current === 0" class="step-body">
         <el-form label-width="110px">
-          <el-form-item label="选择商品" required>
+          <el-form-item label="创建方式" required>
+            <el-radio-group v-model="createMode">
+              <el-radio value="manual">手动创建（独立上架）</el-radio>
+              <el-radio value="ai">AI 拍照生成（门店实拍）</el-radio>
+              <el-radio value="import">从展示商品导入</el-radio>
+            </el-radio-group>
+            <p class="field-hint block-hint">{{ createModeHint }}</p>
+          </el-form-item>
+          <el-form-item v-if="createMode === 'import'" label="选择商品" required>
             <div class="pick-box" @click="selectOpen = true">
               <el-image v-if="form.image" :src="form.image" style="width:80px;height:80px" fit="cover" />
-              <div v-else class="pick-placeholder"><el-icon><Goods /></el-icon><span>点击选择 CRMEB 商品</span></div>
+              <div v-else class="pick-placeholder"><el-icon><Goods /></el-icon><span>点击选择已上架展示商品</span></div>
             </div>
-            <p v-if="form.productId" class="hint">已关联商品 ID：{{ form.productId }} · {{ form.title }}</p>
+            <p v-if="form.showcaseId" class="hint">展示商品 ID：{{ form.showcaseId }} · {{ form.title }}</p>
+            <p v-if="form.productId" class="hint muted">关联 CRMEB ID：{{ form.productId }}</p>
           </el-form-item>
+
+          <template v-if="createMode === 'ai'">
+            <el-form-item label="门店实拍照片" required>
+              <ImageUrlInput v-model="aiPhoto" placeholder="上传门店实拍照片或粘贴图片 URL" />
+              <p class="field-hint block-hint">上传你店里拍的商品照片（背景可杂乱），AI 会基于真实商品生成纯白底电商主图与竖版详情长图。</p>
+            </el-form-item>
+            <el-form-item label="商品名称">
+              <el-input v-model="form.title" maxlength="80" show-word-limit style="width: 480px" placeholder="如：华为 Mate 70 Pro 玻光绿（可留空）" />
+            </el-form-item>
+            <el-form-item label="店内售价(元)">
+              <el-input-number v-model="aiStorePrice" :min="0" :step="50" />
+              <span class="field-hint">你店里的实际售价，用于换算积分价</span>
+            </el-form-item>
+            <el-form-item label="积分倍率">
+              <el-input-number v-model="aiMultiplier" :min="1" :max="1000" />
+              <span class="field-hint">积分价 = 店内售价 × 倍率（默认 ×10，下一步仍可手动改）</span>
+            </el-form-item>
+            <el-form-item label="详情图数量">
+              <el-input-number v-model="aiDetailCount" :min="0" :max="4" />
+              <span class="field-hint">竖版 AI 详情长图 0~4 张，数量越多耗时越长</span>
+            </el-form-item>
+            <el-form-item label=" ">
+              <el-button type="primary" :loading="aiGenerating" :disabled="!aiConfigured || !aiPhoto" @click="generateAi">
+                {{ aiGenerating ? '生成中…' : '开始 AI 生成' }}
+              </el-button>
+              <span v-if="!aiConfigured" class="field-hint" style="color:#e6a23c">AI 生图服务未配置，请联系管理员在后端设置图片接口</span>
+              <span v-else-if="aiDone" class="field-hint" style="color:#67c23a">✓ 已生成，点「下一步」查看并调整积分价/库存</span>
+            </el-form-item>
+            <el-form-item v-if="aiGenerating" label=" ">
+              <div class="ai-progress-bar">
+                <el-progress :percentage="aiTotalSteps ? Math.round(aiStep / aiTotalSteps * 100) : 0" :stroke-width="10" />
+                <span class="ai-progress-text">{{ aiProgress }}</span>
+              </div>
+            </el-form-item>
+            <el-form-item v-if="aiDone" label="生成预览">
+              <div class="ai-preview">
+                <el-image :src="form.image" fit="cover" class="ai-main" />
+                <el-image v-for="(img, i) in aiDetailPreview" :key="i" :src="img" fit="cover" class="ai-thumb" />
+              </div>
+            </el-form-item>
+          </template>
         </el-form>
       </div>
 
@@ -120,17 +170,17 @@
       </div>
     </div>
 
-    <CrmebProductSelectDialog v-model="selectOpen" @select="onProductSelected" />
+    <ShowcaseProductSelectDialog v-model="selectOpen" @select="onProductSelected" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, Goods } from '@element-plus/icons-vue'
-import CrmebProductSelectDialog from '@/components/CrmebProductSelectDialog.vue'
+import ShowcaseProductSelectDialog from '@/components/ShowcaseProductSelectDialog.vue'
 import ImageUrlInput from '@/components/ImageUrlInput.vue'
 import ImageListInput from '@/components/ImageListInput.vue'
 import LazyRichTextEditor from '@/components/LazyRichTextEditor'
@@ -140,14 +190,36 @@ const router = useRouter()
 const productId = computed(() => route.params.id ? Number(route.params.id) : null)
 const isEdit = computed(() => !!productId.value)
 
-const stepList = ['选择积分商品', '填写基础信息', '修改商品详情']
+const stepList = ['创建方式', '填写基础信息', '修改商品详情']
 const current = ref(0)
 const saving = ref(false)
 const selectOpen = ref(false)
+const createMode = ref<'manual' | 'import' | 'ai'>('manual')
 const skuList = ref<any[]>([])
 const selectedSkus = ref<any[]>([])
 
+// AI 拍照生成相关
+const aiPhoto = ref('')
+const aiStorePrice = ref(0)
+const aiMultiplier = ref(10)
+const aiDetailCount = ref(2)
+const aiGenerating = ref(false)
+const aiConfigured = ref(true)
+const aiDone = ref(false)
+const aiDetailPreview = ref<string[]>([])
+const aiProgress = ref('')
+const aiStep = ref(0)
+const aiTotalSteps = ref(0)
+let aiPollTimer: ReturnType<typeof setInterval> | null = null
+
+const createModeHint = computed(() => {
+  if (createMode.value === 'ai') return '上传门店实拍照片，AI 自动生成纯白底电商主图与竖版详情长图，并按店内售价×倍率换算积分价，一步生成积分礼品。'
+  if (createMode.value === 'import') return '从已上架展示商品快速导入信息，可在此基础上调整积分价与库存。'
+  return '无需先在商品管理上架，直接填写标题、主图、积分价与库存即可独立上架积分商品。'
+})
+
 const defaultForm = () => ({
+  showcaseId: '',
   productId: 0,
   title: '',
   image: '',
@@ -172,8 +244,94 @@ onMounted(async () => {
   if (productId.value) {
     current.value = 1
     await loadProduct()
+  } else {
+    checkAiStatus()
   }
 })
+
+onUnmounted(() => { stopAiPoll() })
+
+async function checkAiStatus() {
+  try {
+    const data = await request.get('/api/admin/integral-mall/ai-gift/status')
+    aiConfigured.value = !!data?.configured
+  } catch {
+    aiConfigured.value = false
+  }
+}
+
+function stopAiPoll() {
+  if (aiPollTimer) { clearInterval(aiPollTimer); aiPollTimer = null }
+}
+
+function applyAiResult(data: any) {
+  form.value.image = data.mainImage || ''
+  form.value.images = Array.isArray(data.sliderImages) && data.sliderImages.length
+    ? data.sliderImages
+    : (data.mainImage ? [data.mainImage] : [])
+  form.value.description = data.description || ''
+  form.value.specType = 0
+  if (data.suggestedIntegral > 0) form.value.price = data.suggestedIntegral
+  if (!form.value.stock) form.value.stock = 100
+  aiDetailPreview.value = Array.isArray(data.detailImages) ? data.detailImages : []
+  aiDone.value = true
+  ElMessage.success('AI 生成完成，请点「下一步」核对积分价与库存')
+}
+
+async function pollAiTask(taskId: string) {
+  stopAiPoll()
+  aiPollTimer = setInterval(async () => {
+    try {
+      const data = await request.get(`/api/admin/integral-mall/ai-gift/task/${taskId}`)
+      aiProgress.value = data.progress || ''
+      aiStep.value = data.step || 0
+      aiTotalSteps.value = data.totalSteps || 0
+
+      if (data.status === 'done' && data.result) {
+        stopAiPoll()
+        aiGenerating.value = false
+        applyAiResult(data.result)
+      } else if (data.status === 'failed') {
+        stopAiPoll()
+        aiGenerating.value = false
+        ElMessage.error(data.error || 'AI 生成失败')
+      }
+    } catch {
+      // 网络抖动不中断轮询，等下一轮重试
+    }
+  }, 3000)
+}
+
+async function generateAi() {
+  if (!aiPhoto.value) {
+    ElMessage.warning('请先上传门店实拍照片')
+    return
+  }
+  aiGenerating.value = true
+  aiDone.value = false
+  aiProgress.value = '提交中…'
+  aiStep.value = 0
+  aiTotalSteps.value = 0
+  try {
+    const data = await request.post('/api/admin/integral-mall/ai-gift/generate', {
+      photo: aiPhoto.value,
+      productName: form.value.title || '',
+      storePrice: aiStorePrice.value || 0,
+      multiplier: aiMultiplier.value || 10,
+      detailCount: aiDetailCount.value
+    })
+    if (data.taskId) {
+      aiTotalSteps.value = data.totalSteps || 0
+      aiProgress.value = '任务已提交，等待生成…'
+      pollAiTask(data.taskId)
+    } else {
+      aiGenerating.value = false
+      ElMessage.error('提交失败：未返回任务 ID')
+    }
+  } catch {
+    aiGenerating.value = false
+  }
+}
 
 async function loadProduct() {
   const data = await request.get(`/api/admin/integral-mall/products/${productId.value}`)
@@ -196,7 +354,8 @@ async function loadSkus(crmebId: number, savedAttrs: any[] = []) {
 }
 
 function onProductSelected(detail: any) {
-  form.value.productId = detail.id
+  form.value.showcaseId = detail.id
+  form.value.productId = Number(detail.crmebId || 0)
   form.value.title = detail.storeName
   form.value.image = detail.image
   form.value.images = detail.sliderImages?.length ? [...detail.sliderImages] : (detail.image ? [detail.image] : [])
@@ -204,16 +363,13 @@ function onProductSelected(detail: any) {
   form.value.sort = detail.sort || 0
   form.value.description = detail.description || detail.storeInfo || ''
   form.value.specType = detail.specType || 0
-  if (detail.specType === 0) {
+  if (detail.specType === 0 || !detail.crmebId) {
     form.value.price = Math.max(1000, Number(detail.price || 0) * 10)
-    form.value.stock = detail.stock || 0
+    form.value.stock = detail.stock || 100
     skuList.value = []
+    form.value.specType = 0
   } else {
-    skuList.value = (detail.skus || []).map((s: any) => ({
-      ...s,
-      integralPrice: Math.max(1000, Number(s.price || 0) * 10),
-      integralQuota: 1
-    }))
+    loadSkus(Number(detail.crmebId))
   }
 }
 
@@ -230,26 +386,46 @@ function prev() {
 }
 
 function next() {
-  if (current.value === 0 && !form.value.productId) {
-    ElMessage.warning('请先选择商品')
+  if (current.value === 0 && createMode.value === 'import' && !form.value.showcaseId) {
+    ElMessage.warning('请先选择已上架展示商品，或切换为「手动创建」')
+    return
+  }
+  if (current.value === 0 && createMode.value === 'ai' && !aiDone.value) {
+    ElMessage.warning('请先点「开始 AI 生成」生成商品图片')
     return
   }
   if (current.value === 1 && !form.value.title.trim()) {
     ElMessage.warning('请填写商品标题')
     return
   }
+  if (current.value === 1 && createMode.value !== 'import' && !form.value.image?.trim() && !form.value.images.filter(Boolean).length) {
+    ElMessage.warning('请上传商品主图')
+    return
+  }
   if (current.value < 2) current.value += 1
 }
 
 async function save() {
-  if (!form.value.productId) {
-    ElMessage.warning('请先选择商品')
+  if (createMode.value === 'import' && !form.value.showcaseId) {
+    ElMessage.warning('请先选择已上架展示商品，或切换为「手动创建」')
     current.value = 0
+    return
+  }
+  if (!form.value.title.trim()) {
+    ElMessage.warning('请填写商品标题')
+    current.value = 1
+    return
+  }
+  if (!form.value.image?.trim() && !form.value.images.filter(Boolean).length) {
+    ElMessage.warning('请上传商品主图')
+    current.value = 1
     return
   }
   saving.value = true
   const payload: any = {
     ...form.value,
+    productId: form.value.productId || undefined,
+    showcaseId: createMode.value === 'import' ? form.value.showcaseId : undefined,
     images: form.value.images.filter(Boolean),
     image: form.value.image || form.value.images[0] || ''
   }
@@ -303,10 +479,16 @@ async function save() {
 }
 .pick-placeholder { text-align: center; color: #999; font-size: 12px; }
 .field-hint { margin-left: 12px; font-size: 12px; color: rgba(0,0,0,0.45); }
+.block-hint { display: block; margin: 8px 0 0; margin-left: 0 !important; max-width: 520px; line-height: 1.6; }
 .detail-preview {
   width: 280px; min-height: 400px; border: 1px solid #f0f0f0; border-radius: 8px;
   padding: 12px; background: #fafafa; overflow: auto; font-size: 13px;
 }
 .step-footer { display: flex; justify-content: center; gap: 12px; padding-top: 24px; border-top: 1px solid #f0f0f0; margin-top: 16px; }
 .hint { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 8px; }
+.ai-preview { display: flex; flex-wrap: wrap; gap: 10px; }
+.ai-preview .ai-main { width: 120px; height: 120px; border-radius: 6px; border: 2px solid var(--el-color-primary); }
+.ai-preview .ai-thumb { width: 90px; height: 120px; border-radius: 6px; border: 1px solid #f0f0f0; }
+.ai-progress-bar { display: flex; align-items: center; gap: 12px; width: 400px; }
+.ai-progress-text { font-size: 13px; color: rgba(0,0,0,0.65); white-space: nowrap; }
 </style>

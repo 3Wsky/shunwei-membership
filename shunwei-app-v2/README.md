@@ -1,4 +1,4 @@
-# 顺为会员小程序 v2（重构版）
+# 锦程数码会员小程序 v2（重构版）
 
 uni-app (Vue3) 工程。重构方案见 `../docs/REBUILD_MASTER_PLAN.md`。
 

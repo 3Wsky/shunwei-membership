@@ -6,7 +6,7 @@ param(
     [string]$DbUser = "root",
     [string]$DbPassword = "root",
     [string]$Database = "so1988_shunwei",
-    [string]$MigrationsDir = "F:\shunweiapp\CMB\shunwei-api\migrations\mvp1"
+    [string]$MigrationsDir = (Join-Path (Split-Path $PSScriptRoot -Parent) "CMB\shunwei-api\migrations\mvp1")
 )
 
 $ErrorActionPreference = "Stop"
@@ -24,7 +24,7 @@ $scripts = @(
 foreach ($name in $scripts) {
     $file = Join-Path $MigrationsDir $name
     Write-Host "Run: $name" -ForegroundColor Yellow
-    Get-Content -Raw -Encoding UTF8 $file | & $MySqlBin -h $DbHost -P $DbPort -u $DbUser -p"$DbPassword" $Database
+    Get-Content -Raw -Encoding UTF8 $file | & $MySqlBin --default-character-set=utf8mb4 -h $DbHost -P $DbPort -u $DbUser -p"$DbPassword" $Database
     if ($LASTEXITCODE -ne 0) { Write-Error "Failed: $name" }
 }
 

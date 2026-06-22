@@ -4,7 +4,7 @@
     "description": "顺为会员小程序（重构版 v2）— uni-app(Vue3)。会员/积分商城/现金券/商品展示，业务走 shunwei-api，登录支付走 CRMEB 网关。",
     "scripts": {
         "dev:mp-weixin": "uni -p mp-weixin",
-        "build:mp-weixin": "uni build -p mp-weixin",
+        "build:mp-weixin": "node scripts/build-mp-weixin.mjs",
         "patch:ai": "node scripts/patch-mp-ai.mjs dev",
         "patch:ai:build": "node scripts/patch-mp-ai.mjs build",
         "dev:h5": "uni",

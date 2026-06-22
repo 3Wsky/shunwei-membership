@@ -33,3 +33,20 @@ export function bindStaffSpread(staffUid) {
     data: { staffUid },
   })
 }
+
+export function getStaffStats() {
+  return swRequest('/api/staff/stats')
+}
+
+export function getStaffMembers(params = {}) {
+  const query = new URLSearchParams()
+  if (params.page) query.set('page', String(params.page))
+  if (params.pageSize) query.set('pageSize', String(params.pageSize))
+  if (params.keyword) query.set('keyword', params.keyword)
+  const qs = query.toString()
+  return swRequest(`/api/staff/members${qs ? '?' + qs : ''}`)
+}
+
+export function getTierOptions() {
+  return swRequest('/api/approval/tier-options')
+}

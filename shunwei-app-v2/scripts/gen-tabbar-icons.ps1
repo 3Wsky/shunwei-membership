@@ -1,5 +1,5 @@
 # Generate TabBar icons for shunwei-app-v2 (81x81 PNG)
-# Inactive: #999999  Active: #E8436E (brand)
+# Inactive: #999999  Active: #C9A227 (brand gold)
 
 Add-Type -AssemblyName System.Drawing
 
@@ -37,7 +37,7 @@ function DrawIcon([string]$name, [System.Drawing.Color]$color, [scriptblock]$dra
 }
 
 $inactive = ColorFromHex "#999999"
-$active = ColorFromHex "#E8436E"
+$active = ColorFromHex "#C9A227"
 
 # Home icon
 DrawIcon "home" $inactive {

@@ -7,7 +7,8 @@ const listQuerySchema = z.object({
   keyword: z.string().trim().max(80).optional().default(''),
   brand: z.string().trim().max(40).optional().default(''),
   status: z.enum(['all', 'shown', 'hidden']).optional().default('all'),
-  source: z.string().trim().max(40).optional().default('')
+  source: z.string().trim().max(40).optional().default(''),
+  categoryId: z.string().trim().max(40).optional().default('')
 });
 
 const idParamsSchema = z.object({
@@ -16,12 +17,34 @@ const idParamsSchema = z.object({
 
 const collectFromCrmebSchema = z.object({
   ids: z.array(z.coerce.number().int().min(1)).max(200).optional(),
-  isShow: z.boolean().optional()
+  isShow: z.boolean().optional(),
+  categoryId: z.string().trim().max(40).optional()
+});
+
+const collectOfficialSchema = z.object({
+  models: z.array(z.string().trim().min(1).max(80)).min(1).max(8),
+  isShow: z.boolean().optional(),
+  categoryId: z.string().trim().max(40).optional()
 });
 
 const importSchema = z.object({
   isShow: z.boolean().optional(),
-  dataDir: z.string().trim().max(260).optional()
+  dataDir: z.string().trim().max(260).optional(),
+  brands: z.array(z.string().trim().max(40)).max(20).optional(),
+  sources: z.array(z.enum(['phone', 'dji'])).max(2).optional(),
+  categoryId: z.string().trim().max(40).optional()
+});
+
+const importCsvSchema = z.object({
+  csv: z.string().trim().min(1).max(500000),
+  fileName: z.string().trim().max(128).optional(),
+  isShow: z.boolean().optional(),
+  categoryId: z.string().trim().max(40).optional()
+});
+
+const collectPreviewSchema = z.object({
+  dataDir: z.string().trim().max(260).optional(),
+  sources: z.string().trim().max(40).optional()
 });
 
 const collectUrlSchema = z.object({
@@ -38,30 +61,72 @@ const batchShowSchema = z.object({
   isShow: z.boolean()
 });
 
+const batchCategorySchema = z.object({
+  ids: z.array(z.string().trim().min(1).max(80)).min(1).max(500),
+  categoryId: z.string().trim().max(40).optional().default('')
+});
+
+const reorderSchema = z.object({
+  ids: z.array(z.string().trim().min(1).max(80)).min(1).max(500)
+});
+
+const skuPriceSchema = z.array(z.object({
+  version: z.string().trim().max(60).optional(),
+  price: z.union([z.string(), z.number()]).optional(),
+  sbomCode: z.string().trim().max(60).optional(),
+  colors: z.array(z.string().trim().max(40)).max(20).optional()
+})).max(50).optional();
+
+const paramsListSchema = z.array(z.object({
+  name: z.string().trim().min(1).max(40),
+  value: z.string().trim().min(1).max(240),
+  sort: z.coerce.number().int().min(0).max(9999).optional(),
+  status: z.boolean().optional()
+})).max(80).optional();
+
 const updateProductSchema = z.object({
   storeName: z.string().trim().min(1).max(120).optional(),
   storeInfo: z.string().trim().max(240).optional(),
   keyword: z.string().trim().max(240).optional(),
+  brand: z.string().trim().max(40).optional(),
+  model: z.string().trim().max(80).optional(),
+  categoryId: z.string().trim().max(40).optional(),
   price: z.union([z.string(), z.number()]).optional(),
   otPrice: z.union([z.string(), z.number()]).optional(),
   unitName: z.string().trim().min(1).max(12).optional(),
   image: z.string().trim().max(1000).optional(),
   sliderImages: z.array(z.string().trim().max(1000)).max(12).optional(),
   recommendImage: z.string().trim().max(1000).optional(),
+  colors: z.array(z.string().trim().max(40)).max(20).optional(),
   isShow: z.boolean().optional(),
   isHot: z.boolean().optional(),
   isBest: z.boolean().optional(),
   isNew: z.boolean().optional(),
+  specType: z.union([z.coerce.number().int().min(0).max(1), z.boolean()]).optional(),
   sort: z.coerce.number().int().min(-999999).max(999999).optional(),
   features: z.array(z.string().trim().max(160)).max(30).optional(),
   specs: z.record(z.string(), z.string()).optional(),
-  paramsList: z.array(z.object({
-    name: z.string().trim().min(1).max(40),
-    value: z.string().trim().min(1).max(240),
-    sort: z.coerce.number().int().min(0).max(9999).optional(),
-    status: z.boolean().optional()
-  })).max(80).optional(),
+  skuPrices: skuPriceSchema,
+  paramsList: paramsListSchema,
   description: z.string().trim().max(4000).optional()
+});
+
+const createProductSchema = updateProductSchema.extend({
+  storeName: z.string().trim().min(1).max(120)
+});
+
+const categoryCreateSchema = z.object({
+  name: z.string().trim().min(1).max(40),
+  sort: z.coerce.number().int().min(-9999).max(9999).optional()
+});
+
+const categoryUpdateSchema = z.object({
+  name: z.string().trim().min(1).max(40).optional(),
+  sort: z.coerce.number().int().min(-9999).max(9999).optional()
+});
+
+const categoryIdParamsSchema = z.object({
+  id: z.string().trim().min(1).max(40)
 });
 
 function registerProductRoutes(app) {
@@ -109,6 +174,24 @@ function registerProductRoutes(app) {
     }
   });
 
+  app.get('/api/admin/products/collect/preview', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = collectPreviewSchema.safeParse(request.query || {});
+    if (!parsed.success) return fail(reply, 400, '预览参数错误', parsed.error.flatten());
+    const sources = String(parsed.data.sources || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s === 'phone' || s === 'dji');
+    try {
+      return ok(await service.previewCollectBrands({
+        dataDir: parsed.data.dataDir,
+        sources: sources.length ? sources : undefined
+      }));
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '品牌预览失败');
+    }
+  });
+
   app.post('/api/admin/products/collect-from-crmeb', async (request, reply) => {
     if (!requireAdmin(request, reply)) return reply;
     const parsed = collectFromCrmebSchema.safeParse(request.body || {});
@@ -117,6 +200,17 @@ function registerProductRoutes(app) {
       return ok(await service.importFromCrmeb(parsed.data), 'CRMEB 商品导入完成');
     } catch (error) {
       return fail(reply, error.statusCode || 500, error.message || 'CRMEB 商品导入失败');
+    }
+  });
+
+  app.post('/api/admin/products/collect-from-official', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = collectOfficialSchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '官网采集参数错误', parsed.error.flatten());
+    try {
+      return ok(await service.collectFromOfficial(parsed.data), '官网采集完成');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '官网采集失败');
     }
   });
 
@@ -143,6 +237,24 @@ function registerProductRoutes(app) {
     }
   });
 
+  app.get('/api/admin/products/import-csv/template', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const csv = '商品名称,品牌,售价,简介,主图,来源链接,型号\n华为 Mate 70 Pro,华为,6999,旗舰手机,,,\n';
+    return reply.type('text/csv; charset=utf-8').send('\ufeff' + csv);
+  });
+
+  app.post('/api/admin/products/import-csv', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = importCsvSchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '导入参数错误', parsed.error.flatten());
+
+    try {
+      return ok(await service.importFromCsv(parsed.data), 'CSV 导入完成');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || 'CSV 导入失败');
+    }
+  });
+
   app.patch('/api/admin/products/:id/show', async (request, reply) => {
     if (!requireAdmin(request, reply)) return reply;
     const parsedParams = idParamsSchema.safeParse(request.params || {});
@@ -164,6 +276,39 @@ function registerProductRoutes(app) {
     return ok(await service.batchUpdateShow(parsed.data.ids, parsed.data.isShow), '批量状态已更新');
   });
 
+  app.patch('/api/admin/products/batch-category', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = batchCategorySchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '批量分类参数错误', parsed.error.flatten());
+    try {
+      return ok(await service.batchUpdateCategory(parsed.data.ids, parsed.data.categoryId), '批量分类已更新');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '批量分类失败');
+    }
+  });
+
+  app.patch('/api/admin/products/reorder', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = reorderSchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '排序参数错误', parsed.error.flatten());
+    try {
+      return ok(await service.reorderProducts(parsed.data.ids), '排序已保存');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '排序保存失败');
+    }
+  });
+
+  app.post('/api/admin/products', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = createProductSchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '商品创建参数错误', parsed.error.flatten());
+    try {
+      return ok(await service.createProduct(parsed.data), '商品已创建');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '商品创建失败');
+    }
+  });
+
   app.put('/api/admin/products/:id', async (request, reply) => {
     if (!requireAdmin(request, reply)) return reply;
     const parsedParams = idParamsSchema.safeParse(request.params || {});
@@ -175,6 +320,62 @@ function registerProductRoutes(app) {
       return ok(await service.updateProduct(parsedParams.data.id, parsedBody.data), '商品已保存');
     } catch (error) {
       return fail(reply, error.statusCode || 500, error.message || '商品保存失败');
+    }
+  });
+
+  app.delete('/api/admin/products/:id', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsedParams = idParamsSchema.safeParse(request.params || {});
+    if (!parsedParams.success) return fail(reply, 400, '商品参数错误', parsedParams.error.flatten());
+    try {
+      return ok(await service.deleteProduct(parsedParams.data.id), '商品已删除');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '商品删除失败');
+    }
+  });
+
+  // ── 商品分类管理 ──
+  app.get('/api/admin/product-categories', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    try {
+      return ok(await service.listCategories());
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '分类加载失败');
+    }
+  });
+
+  app.post('/api/admin/product-categories', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsed = categoryCreateSchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '分类参数错误', parsed.error.flatten());
+    try {
+      return ok(await service.createCategory(parsed.data), '分类已创建');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '分类创建失败');
+    }
+  });
+
+  app.put('/api/admin/product-categories/:id', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsedParams = categoryIdParamsSchema.safeParse(request.params || {});
+    if (!parsedParams.success) return fail(reply, 400, '分类参数错误', parsedParams.error.flatten());
+    const parsedBody = categoryUpdateSchema.safeParse(request.body || {});
+    if (!parsedBody.success) return fail(reply, 400, '分类参数错误', parsedBody.error.flatten());
+    try {
+      return ok(await service.updateCategory(parsedParams.data.id, parsedBody.data), '分类已更新');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '分类更新失败');
+    }
+  });
+
+  app.delete('/api/admin/product-categories/:id', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return reply;
+    const parsedParams = categoryIdParamsSchema.safeParse(request.params || {});
+    if (!parsedParams.success) return fail(reply, 400, '分类参数错误', parsedParams.error.flatten());
+    try {
+      return ok(await service.deleteCategory(parsedParams.data.id), '分类已删除');
+    } catch (error) {
+      return fail(reply, error.statusCode || 500, error.message || '分类删除失败');
     }
   });
 }

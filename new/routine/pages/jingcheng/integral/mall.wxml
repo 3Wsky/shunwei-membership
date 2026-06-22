@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="balance">可用积分 <text class="num">{{balance}}</text></view>
+  <view wx:if="{{products.length}}" class="grid">
+    <view
+      wx:for="{{products}}"
+      wx:key="id"
+      class="card {{item.canExchange ? '' : 'disabled'}}"
+      data-id="{{item.id}}"
+      bindtap="exchange"
+    >
+      <image wx:if="{{item.image}}" class="cover" src="{{item.image}}" mode="aspectFill" />
+      <view wx:else class="cover placeholder">兑</view>
+      <view class="name">{{item.title}}</view>
+      <view class="price">{{item.price}} 积分</view>
+      <view wx:if="{{!item.canExchange}}" class="mask">{{item.stockHint || '暂不可兑'}}</view>
+    </view>
+  </view>
+  <view wx:elif="{{!loading}}" class="empty">积分商城暂无商品</view>
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+</view>

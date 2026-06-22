@@ -1,83 +1,89 @@
 <template>
   <view class="home-page">
-    <!-- 磁吸会员身份条 -->
-    <view class="identity-bar">
-      <view class="identity-inner" @tap="goMember">
-        <view class="id-left">
-          <view class="avatar-wrap">
-            <image
-              v-if="userStore.avatar"
-              class="avatar"
-              :src="userStore.avatar"
-              mode="aspectFill"
-            />
-            <view v-else class="avatar-placeholder">
-              <text>{{ userStore.nickname?.charAt(0) || '?' }}</text>
-            </view>
-          </view>
-          <view class="id-info">
-            <view class="id-name-row">
-              <text class="id-name">{{ userStore.nickname || '欢迎光临' }}</text>
-              <view class="tier-badge" :class="tierBadgeClass">
-                <text class="tier-icon">{{ tierIcon }}</text>
-                <text class="tier-text">{{ memberLabel }}</text>
-              </view>
-            </view>
-            <view class="id-integral">
-              <text class="id-integral-num">{{ integralBalance }}</text>
-              <text class="id-integral-label">可用积分</text>
-            </view>
-          </view>
+    <!-- 用户信息条 -->
+    <view class="user-bar" @tap="goUser">
+      <view class="user-bar-left">
+        <view class="user-avatar-sm">
+          <image v-if="userStore.avatar" class="avatar-img" :src="userStore.avatar" mode="aspectFill" />
+          <view v-else class="avatar-ph"><text>{{ (userStore.nickname || '?').charAt(0) }}</text></view>
         </view>
-        <view class="id-arrow">›</view>
+        <text class="user-greet">{{ userStore.isLoggedIn ? userStore.nickname : '点击登录' }}</text>
+      </view>
+      <view class="user-bar-right" v-if="userStore.isLoggedIn">
+        <view class="stat-chip">
+          <text class="stat-val">{{ integralBalance }}</text>
+          <text class="stat-lbl">积分</text>
+        </view>
+        <view class="stat-divider" />
+        <view class="stat-chip">
+          <text class="stat-val">¥{{ voucherBalance }}</text>
+          <text class="stat-lbl">现金券</text>
+        </view>
       </view>
     </view>
 
-    <!-- 快捷入口 -->
-    <view class="quick-nav anim-fade-in">
-      <view class="quick-item btn-tap" @tap="goMember">
-        <view class="quick-icon quick-icon-member">👑</view>
-        <text class="quick-label">会员</text>
-      </view>
-      <view class="quick-item btn-tap" @tap="goIntegral">
-        <view class="quick-icon quick-icon-integral">✦</view>
-        <text class="quick-label">积分</text>
-      </view>
-      <view class="quick-item btn-tap" @tap="goVoucher">
-        <view class="quick-icon quick-icon-voucher">◈</view>
-        <text class="quick-label">现金券</text>
-      </view>
-      <view class="quick-item btn-tap" @tap="goProductList">
-        <view class="quick-icon quick-icon-shop">◇</view>
-        <text class="quick-label">好物</text>
+    <!-- 搜索栏 -->
+    <view class="search-bar">
+      <view class="search-inner" @tap="goSearch">
+        <text class="search-icon">🔍</text>
+        <text class="search-placeholder">搜索商品</text>
       </view>
     </view>
 
-    <!-- 会员套餐 -->
-    <view class="section anim-fade-in">
-      <view class="section-header">
-        <text class="section-title">会员套餐</text>
-        <text class="section-sub">开通即赠积分</text>
-      </view>
-      <view class="plan-cards">
-        <view
-          v-for="plan in plans"
-          :key="plan.code"
-          class="plan-card btn-tap"
-          :class="{ premium: plan.code === 'SW299' }"
-          @tap="goPlan(plan)"
-        >
-          <view v-if="plan.code === 'SW299'" class="plan-ribbon">尊享</view>
-          <text class="plan-price">¥{{ plan.price }}</text>
-          <text class="plan-name">{{ plan.name }}</text>
-          <text class="plan-gift">赠 {{ plan.giftIntegral }} 积分</text>
-          <view class="plan-btn">立即开通</view>
+    <!-- Banner 轮播 -->
+    <view class="banner-wrap" v-if="plans.length">
+      <swiper class="banner-swiper" circular autoplay :interval="4000" indicator-dots indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#fff">
+        <swiper-item v-for="plan in plans" :key="plan.tierCode || plan.code" @tap="goPlan(plan)">
+          <view class="banner-card" :class="{ premium: (plan.tierCode || plan.code) === 'SW299' }">
+            <view class="banner-left">
+              <text class="banner-title">{{ plan.title || plan.name }}</text>
+              <text class="banner-gift">赠 {{ plan.giftIntegral }} 积分</text>
+              <view class="banner-btn">立即开通</view>
+            </view>
+            <view class="banner-right">
+              <text class="banner-price">¥{{ plan.price }}</text>
+            </view>
+          </view>
+        </swiper-item>
+      </swiper>
+    </view>
+
+    <!-- 宫格导航 -->
+    <view class="nav-grid">
+      <view class="nav-item btn-tap" @tap="goMember">
+        <view class="nav-icon" style="background: linear-gradient(135deg, #FBF6E8, #F5E6A3);">
+          <text>👑</text>
         </view>
+        <text class="nav-label">会员中心</text>
+      </view>
+      <view class="nav-item btn-tap" @tap="goIntegral">
+        <view class="nav-icon" style="background: linear-gradient(135deg, #FBF6E8, #FFF8E7);">
+          <text>✦</text>
+        </view>
+        <text class="nav-label">我的积分</text>
+      </view>
+      <view class="nav-item btn-tap" @tap="goVoucher">
+        <view class="nav-icon" style="background: linear-gradient(135deg, #ECFDF3, #D4F5E0);">
+          <text>◈</text>
+        </view>
+        <text class="nav-label">现金券</text>
+      </view>
+      <view class="nav-item btn-tap" @tap="goMall">
+        <view class="nav-icon" style="background: linear-gradient(135deg, #F0ECFF, #E8DAEF);">
+          <text>🎁</text>
+        </view>
+        <text class="nav-label">积分商城</text>
+      </view>
+      <view class="nav-item btn-tap" @tap="goProductList">
+        <view class="nav-icon" style="background: linear-gradient(135deg, #F0F0F5, #E8E8F0);">
+          <text>◇</text>
+        </view>
+        <text class="nav-label">精选好物</text>
       </view>
     </view>
 
     <!-- 精选好物 · 两列瀑布流 -->
-    <view class="section anim-fade-in">
+    <view class="section">
       <view class="section-header">
         <text class="section-title">精选好物</text>
         <text class="section-more btn-tap" @tap="goProductList">查看全部 ›</text>
@@ -86,21 +92,15 @@
         <view
           v-for="(item, idx) in products"
           :key="item.id"
-          class="product-card btn-tap"
-          :style="{ animationDelay: idx * 0.06 + 's' }"
+          class="product-card btn-tap anim-fade-in"
+          :style="{ animationDelay: idx * 0.05 + 's' }"
           @tap="goProductDetail(item)"
         >
           <view class="product-img-wrap">
-            <image
-              v-if="item.image"
-              class="product-img"
-              :src="item.image"
-              mode="aspectFill"
-            />
+            <image v-if="item.image" class="product-img" :src="item.image" mode="aspectFill" />
             <view v-else class="product-img-placeholder">
               <text>{{ (item.storeName || '').slice(0, 2) }}</text>
             </view>
-            <view class="member-tag">会员专属</view>
           </view>
           <view class="product-info">
             <text class="product-name">{{ item.storeName }}</text>
@@ -111,53 +111,39 @@
         </view>
       </view>
       <view v-else class="empty-state">
-        <text class="empty-icon">✦</text>
         <text class="empty-text">暂无在售商品</text>
         <text class="empty-hint">精彩好物即将上架</text>
-        <view class="empty-btn btn-tap" @tap="goProductList">去逛逛</view>
       </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/user'
 import { getProductList } from '@/api/products'
-import { getMembershipPlans, getMyMembership, getMyIntegral } from '@/api/membership'
+import { getMembershipPlans, getMyIntegral } from '@/api/membership'
+import { getVoucherWallet } from '@/api/voucher'
 
 const userStore = useUserStore()
 const products = ref([])
 const plans = ref([])
-const membership = ref(null)
 const integralBalance = ref(0)
-
-const memberLabel = computed(() => {
-  if (!membership.value) return '普通用户'
-  return membership.value.planName || '会员'
-})
-
-const tierBadgeClass = computed(() => {
-  const label = memberLabel.value
-  if (label.includes('299') || label.includes('尊享')) return 'tier-premium'
-  if (membership.value) return 'tier-gold'
-  return 'tier-default'
-})
-
-const tierIcon = computed(() => {
-  if (tierBadgeClass.value === 'tier-premium') return '◆'
-  if (tierBadgeClass.value === 'tier-gold') return '★'
-  return '○'
-})
+const voucherBalance = ref(0)
 
 onMounted(async () => {
-  await Promise.allSettled([loadProducts(), loadPlans(), loadMembership(), loadIntegral()])
+  await Promise.allSettled([loadProducts(), loadPlans()])
+})
+
+onShow(() => {
+  if (userStore.isLoggedIn) loadUserStats()
 })
 
 async function loadProducts() {
   try {
     const data = await getProductList()
-    products.value = (data.list || data || []).slice(0, 6)
+    products.value = (data.list || data || []).slice(0, 20)
   } catch { /* silent */ }
 }
 
@@ -168,23 +154,43 @@ async function loadPlans() {
   } catch { /* silent */ }
 }
 
-async function loadMembership() {
-  if (!userStore.isLoggedIn) return
+async function loadUserStats() {
   try {
-    membership.value = await getMyMembership()
+    const data = await getMyIntegral()
+    integralBalance.value = data?.totalIntegral || data?.balance || data?.total || 0
+  } catch { /* silent */ }
+  try {
+    const voucher = await getVoucherWallet()
+    voucherBalance.value = Number(voucher?.balance || 0)
   } catch { /* silent */ }
 }
 
-async function loadIntegral() {
-  if (!userStore.isLoggedIn) return
-  try {
-    const data = await getMyIntegral()
-    integralBalance.value = data.balance || data.integral || data.totalIntegral || 0
-  } catch { /* silent */ }
+function goUser() {
+  if (!userStore.isLoggedIn) {
+    uni.navigateTo({ url: '/pages/login/index' })
+  } else {
+    uni.switchTab({ url: '/pages/user/index' })
+  }
+}
+
+function goSearch() {
+  uni.switchTab({ url: '/pages/products/list' })
 }
 
 function goMember() {
   uni.navigateTo({ url: '/pages/member/center' })
+}
+
+function goIntegral() {
+  uni.navigateTo({ url: '/pages/integral/index' })
+}
+
+function goVoucher() {
+  uni.navigateTo({ url: '/pages/voucher/wallet' })
+}
+
+function goMall() {
+  uni.navigateTo({ url: '/pages/integral/mall' })
 }
 
 function goPlan(plan) {
@@ -198,14 +204,6 @@ function goProductList() {
 function goProductDetail(item) {
   uni.navigateTo({ url: `/pages/products/detail?id=${item.id}` })
 }
-
-function goIntegral() {
-  uni.navigateTo({ url: '/pages/integral/index' })
-}
-
-function goVoucher() {
-  uni.navigateTo({ url: '/pages/voucher/wallet' })
-}
 </script>
 
 <style lang="scss" scoped>
@@ -213,295 +211,250 @@ function goVoucher() {
 
 .home-page {
   min-height: 100vh;
+  background: #F8F8F8;
   padding-bottom: 40rpx;
 }
 
-/* ── 磁吸身份条 ── */
-.identity-bar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: $sw-bg-dark;
-  padding: 24rpx $sw-page-pad 28rpx;
-  box-shadow: 0 8rpx 32rpx rgba(26, 31, 54, 0.35);
-}
-
-.identity-inner {
+/* ── 用户信息条 ── */
+.user-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%);
+  padding: 24rpx 28rpx;
 }
 
-.id-left {
+.user-bar-left {
   display: flex;
   align-items: center;
-  flex: 1;
-  min-width: 0;
+  gap: 16rpx;
 }
 
-.avatar-wrap {
-  margin-right: 20rpx;
+.user-avatar-sm {
+  width: 64rpx;
+  height: 64rpx;
   flex-shrink: 0;
 }
 
-.avatar, .avatar-placeholder {
+.avatar-img {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(212, 175, 55, 0.5);
+}
+
+.avatar-ph {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(201, 162, 39, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #F5E6A3;
+  font-weight: 600;
+}
+
+.user-greet {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.user-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stat-chip {
+  text-align: center;
+  padding: 0 20rpx;
+}
+
+.stat-val {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #F5E6A3;
+}
+
+.stat-lbl {
+  display: block;
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 40rpx;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── 搜索栏 ── */
+.search-bar {
+  background: #fff;
+  padding: 16rpx 24rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.search-inner {
+  display: flex;
+  align-items: center;
+  background: #F5F5F5;
+  border-radius: 36rpx;
+  height: 68rpx;
+  padding: 0 24rpx;
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.search-placeholder {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* ── Banner ── */
+.banner-wrap {
+  padding: 20rpx 24rpx 0;
+}
+
+.banner-swiper {
+  height: 240rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.banner-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 32rpx 40rpx;
+  background: linear-gradient(135deg, $sw-gold, $sw-gold-dark);
+  border-radius: 20rpx;
+
+  &.premium {
+    background: $sw-bg-dark-deep;
+  }
+}
+
+.banner-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.banner-gift {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8rpx;
+}
+
+.banner-btn {
+  display: inline-block;
+  margin-top: 20rpx;
+  padding: 10rpx 28rpx;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: #fff;
+  font-weight: 500;
+  border: 1rpx solid rgba(255, 255, 255, 0.4);
+}
+
+.banner-right {
+  text-align: right;
+}
+
+.banner-price {
+  font-size: 60rpx;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* ── 宫格导航 ── */
+.nav-grid {
+  display: flex;
+  flex-wrap: wrap;
+  background: #fff;
+  margin: 20rpx 24rpx 0;
+  border-radius: 20rpx;
+  padding: 24rpx 0 16rpx;
+}
+
+.nav-item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.nav-icon {
   width: 88rpx;
   height: 88rpx;
   border-radius: 50%;
-  border: 3rpx solid rgba(212, 175, 55, 0.5);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.25);
-}
-
-.avatar-placeholder {
-  background: linear-gradient(135deg, $sw-dark-mid, $sw-dark);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36rpx;
-  font-weight: 700;
-  color: $sw-gold-light;
 }
 
-.id-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.id-name-row {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  flex-wrap: wrap;
-}
-
-.id-name {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #fff;
-  max-width: 240rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tier-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6rpx;
-  padding: 4rpx 14rpx;
-  border-radius: 999rpx;
-  font-size: 20rpx;
-  font-weight: 600;
-
-  &.tier-default {
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.75);
-  }
-  &.tier-gold {
-    background: linear-gradient(135deg, rgba(201, 162, 39, 0.35), rgba(212, 175, 55, 0.2));
-    color: $sw-gold-light;
-    border: 1rpx solid rgba(212, 175, 55, 0.4);
-  }
-  &.tier-premium {
-    background: linear-gradient(135deg, rgba(123, 79, 212, 0.4), rgba(201, 162, 39, 0.25));
-    color: #E8DAEF;
-    border: 1rpx solid rgba(212, 175, 55, 0.35);
-  }
-}
-
-.tier-icon {
-  font-size: 18rpx;
-}
-
-.id-integral {
-  display: flex;
-  align-items: baseline;
-  gap: 8rpx;
-  margin-top: 10rpx;
-}
-
-.id-integral-num {
-  font-size: 40rpx;
-  font-weight: 800;
-  color: $sw-gold-light;
-  line-height: 1;
-}
-
-.id-integral-label {
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.id-arrow {
-  font-size: 40rpx;
-  color: rgba(255, 255, 255, 0.4);
-  font-weight: 300;
-  flex-shrink: 0;
-  margin-left: 12rpx;
-}
-
-/* ── 快捷入口 ── */
-.quick-nav {
-  display: flex;
-  justify-content: space-around;
-  margin: $sw-gap $sw-page-pad 0;
-  background: $sw-bg-card;
-  border-radius: $sw-radius-card;
-  padding: 28rpx 16rpx;
-  box-shadow: $sw-shadow-card;
-}
-
-.quick-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10rpx;
-}
-
-.quick-icon {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32rpx;
-  color: $sw-gold;
-}
-
-.quick-icon-member { background: linear-gradient(135deg, #FBF6E8, #F5E6A3); }
-.quick-icon-integral { background: linear-gradient(135deg, #FBF6E8, #FFF8E7); }
-.quick-icon-voucher { background: linear-gradient(135deg, $sw-voucher-soft, #D4F5E0); }
-.quick-icon-shop { background: linear-gradient(135deg, #F0F0F5, #E8E8F0); color: $sw-dark-mid; }
-
-.quick-label {
+.nav-label {
   font-size: 24rpx;
-  color: $sw-text-secondary;
+  color: #333;
+  margin-top: 10rpx;
   font-weight: 500;
 }
 
 /* ── 区块 ── */
 .section {
-  margin: 36rpx $sw-page-pad 0;
+  margin: 20rpx 24rpx 0;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 20rpx;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding: 0 4rpx;
 }
 
 .section-title {
-  font-size: 34rpx;
-  font-weight: 800;
-  color: $sw-text;
-}
-
-.section-sub {
-  font-size: 24rpx;
-  color: $sw-text-muted;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333;
 }
 
 .section-more {
   font-size: 26rpx;
-  color: $sw-gold-dark;
-  font-weight: 500;
-}
-
-/* ── 会员套餐卡 ── */
-.plan-cards {
-  display: flex;
-  gap: 20rpx;
-}
-
-.plan-card {
-  flex: 1;
-  position: relative;
-  background: $sw-bg-card;
-  border-radius: $sw-radius-card;
-  padding: 32rpx 20rpx 24rpx;
-  text-align: center;
-  box-shadow: $sw-shadow-card;
-  border: 2rpx solid rgba(201, 162, 39, 0.12);
-  overflow: hidden;
-
-  &.premium {
-    background: $sw-bg-dark-deep;
-    border-color: rgba(212, 175, 55, 0.35);
-    box-shadow: 0 12rpx 40rpx rgba(26, 31, 54, 0.35);
-
-    .plan-price { color: $sw-gold-light; }
-    .plan-name { color: rgba(255, 255, 255, 0.9); }
-    .plan-gift { color: rgba(255, 255, 255, 0.55); }
-    .plan-btn {
-      background: linear-gradient(135deg, $sw-gold, $sw-gold-dark);
-      color: #fff;
-    }
-  }
-}
-
-.plan-ribbon {
-  position: absolute;
-  top: 16rpx;
-  right: -28rpx;
-  background: linear-gradient(135deg, $sw-gold, $sw-gold-dark);
-  color: #fff;
-  font-size: 20rpx;
-  font-weight: 700;
-  padding: 4rpx 36rpx;
-  transform: rotate(45deg);
-  letter-spacing: 2rpx;
-}
-
-.plan-price {
-  display: block;
-  font-size: 48rpx;
-  font-weight: 800;
-  color: $sw-gold-dark;
-  line-height: 1.2;
-}
-
-.plan-name {
-  display: block;
-  font-size: 26rpx;
-  color: $sw-text-secondary;
-  margin-top: 8rpx;
-  font-weight: 600;
-}
-
-.plan-gift {
-  display: block;
-  font-size: 22rpx;
-  color: $sw-text-muted;
-  margin-top: 6rpx;
-}
-
-.plan-btn {
-  display: inline-block;
-  margin-top: 20rpx;
-  font-size: 24rpx;
-  font-weight: 600;
-  color: $sw-gold-dark;
-  background: $sw-integral-soft;
-  padding: 10rpx 28rpx;
-  border-radius: 999rpx;
+  color: #999;
 }
 
 /* ── 商品瀑布流 ── */
 .product-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  gap: 16rpx;
 }
 
 .product-card {
-  width: calc(50% - 10rpx);
-  background: $sw-bg-card;
-  border-radius: $sw-radius-card;
+  width: calc(50% - 8rpx);
+  background: #fff;
+  border-radius: 16rpx;
   overflow: hidden;
-  box-shadow: $sw-shadow-card;
-  animation: fadeSlideUp 0.45s $sw-ease both;
 }
 
 .product-img-wrap {
@@ -518,36 +471,22 @@ function goVoucher() {
 .product-img-placeholder {
   width: 100%;
   height: 340rpx;
-  background: linear-gradient(135deg, #E8E6E1, #F5F3F0);
+  background: #F5F5F5;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 48rpx;
-  font-weight: 700;
-  color: rgba(26, 31, 54, 0.15);
-}
-
-.member-tag {
-  position: absolute;
-  top: 12rpx;
-  left: 12rpx;
-  font-size: 20rpx;
-  font-weight: 600;
-  color: $sw-gold-dark;
-  background: rgba(255, 255, 255, 0.92);
-  padding: 4rpx 12rpx;
-  border-radius: 6rpx;
-  letter-spacing: 1rpx;
+  color: #ddd;
 }
 
 .product-info {
-  padding: 20rpx;
+  padding: 16rpx 20rpx 20rpx;
 }
 
 .product-name {
   display: block;
   font-size: 26rpx;
-  color: $sw-text;
+  color: #333;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -560,52 +499,28 @@ function goVoucher() {
 
 .product-price {
   font-size: 34rpx;
-  font-weight: 800;
-  color: $sw-gold;
+  font-weight: 700;
+  color: #e93b3d;
 }
 
 /* ── 空状态 ── */
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
   padding: 80rpx 0;
-  background: $sw-bg-card;
-  border-radius: $sw-radius-card;
-  box-shadow: $sw-shadow-card;
-}
-
-.empty-icon {
-  font-size: 64rpx;
-  color: $sw-gold;
-  opacity: 0.5;
+  background: #fff;
+  border-radius: 16rpx;
 }
 
 .empty-text {
+  display: block;
   font-size: 28rpx;
-  color: $sw-text-secondary;
-  margin-top: 16rpx;
-  font-weight: 500;
+  color: #999;
 }
 
 .empty-hint {
+  display: block;
   font-size: 24rpx;
-  color: $sw-text-muted;
+  color: #ccc;
   margin-top: 8rpx;
-}
-
-.empty-btn {
-  margin-top: 28rpx;
-  font-size: 26rpx;
-  font-weight: 600;
-  color: $sw-gold-dark;
-  background: $sw-integral-soft;
-  padding: 14rpx 40rpx;
-  border-radius: 999rpx;
-}
-
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(24rpx); }
-  to { opacity: 1; transform: translateY(0); }
 }
 </style>

@@ -1,0 +1,12 @@
+<view class="page">
+  <view class="member"><image src="{{member.avatar || '/static/images/def_avatar.png'}}"/><view><view class="name">{{member.nickname || '未设置昵称'}}</view><view class="meta">UID {{member.uid}} · {{member.phone}}</view></view></view>
+  <view class="assets"><view><text>{{member.integral || 0}}</text><label>当前积分</label></view><view><text>¥{{member.cashVoucher || 0}}</text><label>现金券</label></view></view>
+  <view class="heading">请选择固定权益档位</view>
+  <view wx:for="{{rules}}" wx:key="id" class="rule" data-index="{{index}}" bindtap="chooseRule">
+    <view class="range">{{item.maxAmount ? item.minAmount + '–' + item.maxAmount + '元档' : item.minAmount + '元以上档'}}</view>
+    <view class="tier">{{item.tierCode === 'SW299' ? '299会员' : '199会员'}}</view>
+    <view class="gift"><text>{{item.giftIntegral}} 积分</text><text>¥{{item.voucherAmount}} 现金券</text></view>
+    <view class="select">选择 ›</view>
+  </view>
+  <view class="tip">提交后依次由店长和超管审批，终审通过后权益到账。</view>
+</view>

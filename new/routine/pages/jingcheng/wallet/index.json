@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的现金券",
+  "usingComponents": {
+    "zb-code": "/components/zb-code/zb-code"
+  }
+}

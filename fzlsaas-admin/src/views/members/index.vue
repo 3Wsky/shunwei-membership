@@ -38,6 +38,12 @@
               <el-option label="否" value="no" />
             </el-select>
           </el-form-item>
+          <el-form-item label="归属店员UID">
+            <el-input-number v-model="filters.spreadUid" :min="0" controls-position="right" style="width: 140px" />
+          </el-form-item>
+          <el-form-item label="无归属">
+            <el-switch v-model="filters.unownedOnly" />
+          </el-form-item>
         </template>
         <el-form-item class="filter-actions">
           <el-button type="primary" @click="search">查询</el-button>
@@ -71,6 +77,9 @@
         <el-button :disabled="!selectedRows.length" @click="openBatch('membership')">
           批量设置
         </el-button>
+        <el-button :disabled="!selectedRows.length" @click="openSpreadBatch">
+          批量指定归属
+        </el-button>
         <el-button @click="downloadTemplate">查看导入模板</el-button>
         <el-upload
           :show-file-list="false"
@@ -86,13 +95,20 @@
       </div>
     </template>
 
+    <TableSkeleton v-if="loading && !list.length" :cols="8" />
     <el-table
+      v-else
       ref="tableRef"
       :data="list"
-      v-loading="loading"
+      v-loading="loading && list.length > 0"
       row-key="uid"
       @selection-change="onSelect"
     >
+      <template #empty>
+        <el-empty description="暂无会员">
+          <el-button type="primary" @click="downloadTemplate">查看导入模板</el-button>
+        </el-empty>
+      </template>
       <el-table-column type="selection" width="48" />
       <el-table-column prop="uid" label="UID" width="88" />
       <el-table-column label="头像" width="72" align="center">
@@ -126,11 +142,6 @@
       </el-table-column>
       <el-table-column label="手机号" width="120">
         <template #default="{ row }">{{ maskPhone(row.phone) }}</template>
-      </el-table-column>
-      <el-table-column label="用户类型" width="96" align="center">
-        <template #default>
-          <span>小程序</span>
-        </template>
       </el-table-column>
       <el-table-column label="归属店员" min-width="108">
         <template #default="{ row }">
@@ -200,6 +211,30 @@
     </template>
   </el-dialog>
 
+  <el-dialog v-model="spreadOpen" title="批量指定归属店员" width="480px" destroy-on-close>
+    <p class="batch-tip">将已勾选的会员归属到指定店员；默认跳过已有归属的会员。</p>
+    <el-form label-width="120px">
+      <el-form-item label="归属店员 UID" required>
+        <el-input-number v-model="spreadTargetUid" :min="1" controls-position="right" style="width: 100%" />
+      </el-form-item>
+      <el-form-item label="仅无归属">
+        <el-switch v-model="spreadOnlyUnowned" />
+      </el-form-item>
+      <el-form-item label="已选会员">
+        <span>{{ selectedRows.length }} 人</span>
+      </el-form-item>
+    </el-form>
+    <div v-if="spreadResults.length" class="batch-results">
+      <div v-for="r in spreadResults" :key="r.uid" :class="{ fail: !r.ok }">
+        UID {{ r.uid }}: {{ r.ok ? '成功' : r.error }}
+      </div>
+    </div>
+    <template #footer>
+      <el-button @click="spreadOpen = false">取消</el-button>
+      <el-button type="primary" :loading="spreadRunning" @click="runSpreadBatch">确定</el-button>
+    </template>
+  </el-dialog>
+
   <el-dialog v-model="csvOpen" title="CSV 导入结果" width="480px" destroy-on-close>
     <el-alert
       v-if="csvSummary"
@@ -228,6 +263,8 @@ import { ElMessage } from 'element-plus'
 import PageShell from '@/components/PageShell.vue'
 import MemberDetailDrawer from './components/MemberDetailDrawer.vue'
 import MemberTag from '@/components/MemberTag.vue'
+import TableSkeleton from '@/components/TableSkeleton.vue'
+import { downloadCsv } from '@/utils/csvExport'
 
 const loading = ref(false)
 const list = ref<any[]>([])
@@ -240,7 +277,9 @@ const filters = ref({
   searchType: 'all',
   keyword: '',
   tag: '',
-  paidOnly: '' as '' | 'yes' | 'no'
+  paidOnly: '' as '' | 'yes' | 'no',
+  spreadUid: undefined as number | undefined,
+  unownedOnly: false
 })
 const drawerOpen = ref(false)
 const selectedUid = ref<number | null>(null)
@@ -256,6 +295,11 @@ const batchRemark = ref('批量发放')
 const batchRunning = ref(false)
 const batchProgress = ref(0)
 const batchResults = ref<any[]>([])
+const spreadOpen = ref(false)
+const spreadTargetUid = ref<number | undefined>(undefined)
+const spreadOnlyUnowned = ref(true)
+const spreadRunning = ref(false)
+const spreadResults = ref<any[]>([])
 const tableRef = ref<TableInstance>()
 
 const batchTitle = computed(() => ({
@@ -329,6 +373,35 @@ async function runBatch() {
   finally { batchRunning.value = false }
 }
 
+function openSpreadBatch() {
+  if (!selectedRows.value.length) {
+    ElMessage.warning('请先勾选用户')
+    return
+  }
+  spreadResults.value = []
+  spreadOpen.value = true
+}
+
+async function runSpreadBatch() {
+  if (!selectedRows.value.length || !spreadTargetUid.value) {
+    ElMessage.warning('请填写归属店员 UID')
+    return
+  }
+  spreadRunning.value = true
+  spreadResults.value = []
+  try {
+    const data = await request.post('/api/admin/members/batch-spread', {
+      spreadUid: spreadTargetUid.value,
+      uids: selectedRows.value.map((r) => r.uid),
+      onlyUnowned: spreadOnlyUnowned.value
+    })
+    spreadResults.value = data?.results || []
+    ElMessage.success(`完成：成功 ${data?.success ?? 0} / 失败 ${data?.failed ?? 0}`)
+    loadList()
+  } catch { /* handled */ }
+  finally { spreadRunning.value = false }
+}
+
 async function loadList() {
   loading.value = true
   try {
@@ -336,7 +409,10 @@ async function loadList() {
       page: page.value,
       pageSize: pageSize.value,
       keyword: filters.value.keyword || undefined,
-      tag: filters.value.tag || undefined
+      searchType: filters.value.searchType !== 'all' ? filters.value.searchType : undefined,
+      tag: filters.value.tag || undefined,
+      spreadUid: filters.value.spreadUid || undefined,
+      unownedOnly: filters.value.unownedOnly || undefined
     }
     const data = await request.get('/api/admin/members/list', { params })
     let rows = data?.list || []
@@ -361,7 +437,7 @@ function search() {
 }
 
 function reset() {
-  filters.value = { searchType: 'all', keyword: '', tag: '', paidOnly: '' }
+  filters.value = { searchType: 'all', keyword: '', tag: '', paidOnly: '', spreadUid: undefined, unownedOnly: false }
   activeTab.value = 'all'
   search()
 }
@@ -377,7 +453,8 @@ function openDetail(uid: number) {
 }
 
 function downloadTemplate() {
-  window.open('/api/admin/members/batch-grant/template', '_blank')
+  const base = import.meta.env.VITE_API_BASE || ''
+  window.open(`${base}/api/admin/members/batch-grant/template`, '_blank')
 }
 
 async function handleCsvImport(file: File) {
@@ -397,8 +474,55 @@ async function handleCsvImport(file: File) {
   return false
 }
 
-function exportData() {
-  ElMessage.info('导出功能开发中，可先使用列表筛选后批量操作')
+function tierLabel(code?: string) {
+  if (code === 'SW199') return '199会员'
+  if (code === 'SW299') return '299会员'
+  return ''
+}
+
+async function exportData() {
+  const rows: any[] = []
+  let p = 1
+  const size = 100
+  let totalCount = 0
+  try {
+    do {
+      const params: Record<string, any> = {
+        page: p,
+        pageSize: size,
+        keyword: filters.value.keyword || undefined,
+        tag: filters.value.tag || undefined
+      }
+      const data = await request.get('/api/admin/members/list', { params })
+      let batch = data?.list || []
+      if (filters.value.paidOnly === 'yes') batch = batch.filter((r: any) => !!r.tierCode)
+      else if (filters.value.paidOnly === 'no') batch = batch.filter((r: any) => !r.tierCode)
+      rows.push(...batch)
+      totalCount = data?.total || rows.length
+      p += 1
+    } while (rows.length < totalCount && p <= 50)
+  } catch { /* handled */ }
+
+  if (!rows.length) {
+    ElMessage.info('暂无数据可导出')
+    return
+  }
+  downloadCsv(
+    'members-list.csv',
+    ['UID', '昵称', '手机号', '付费会员', '等级', '分组', '归属店员', '积分', '现金券'],
+    rows.map((r) => [
+      r.uid,
+      r.nickname || '',
+      r.phone || '',
+      r.tierCode ? '是' : '否',
+      tierLabel(r.tierCode),
+      roleTags(r).join('/') || '',
+      r.spreadNickname || (r.spreadUid ? `#${r.spreadUid}` : ''),
+      r.integralBalance ?? 0,
+      r.cashVoucherBalance ?? 0
+    ])
+  )
+  ElMessage.success(`已导出 ${rows.length} 条`)
 }
 </script>
 

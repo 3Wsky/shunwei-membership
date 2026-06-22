@@ -1,5 +1,6 @@
 const { getPool, legacyTable } = require('../../shared/mysql');
 const { swTable } = require('../../shared/sw-mysql');
+const { AdminStoresService } = require('../admin/admin-stores.service');
 
 function maskPhone(phone) {
   const value = String(phone || '');
@@ -12,7 +13,15 @@ class StaffService {
     const page = Math.max(1, Number(params.page || 1));
     const pageSize = Math.min(100, Math.max(1, Number(params.pageSize || 20)));
     const keyword = String(params.keyword || '').trim();
-    const divisionId = params.divisionId ? Number(params.divisionId) : null;
+    let divisionId = params.divisionId ? Number(params.divisionId) : null;
+    const storeName = String(params.storeName || '').trim();
+    if (!divisionId && storeName) {
+      const store = await new AdminStoresService().findByName(storeName);
+      if (store) divisionId = store.id;
+      else {
+        return { list: [], total: 0, page, pageSize };
+      }
+    }
 
     const conditions = ['u.is_staff = 1', 'COALESCE(u.is_del, 0) = 0'];
     const values = [];
@@ -119,14 +128,60 @@ class StaffService {
     return `门店#${id}`;
   }
 
+  async isManager(uid) {
+    try {
+      const [[row]] = await getPool().query(
+        `SELECT 1 AS v FROM ${swTable('store_manager')}
+         WHERE manager_uid = ? AND is_active = 1 LIMIT 1`,
+        [uid]
+      );
+      return Boolean(row);
+    } catch {
+      return false;
+    }
+  }
+
+  async assertStaffOrManager(uid) {
+    const [[user]] = await getPool().query(
+      `SELECT uid, is_staff FROM ${legacyTable('user')}
+       WHERE uid = ? AND COALESCE(is_del, 0) = 0 LIMIT 1`,
+      [uid]
+    );
+    if (!user) {
+      const error = new Error('用户不存在');
+      error.statusCode = 404;
+      throw error;
+    }
+    const isStaff = Number(user.is_staff) === 1;
+    const isManager = await this.isManager(uid);
+    if (!isStaff && !isManager) {
+      const error = new Error('无会员管理权限');
+      error.statusCode = 403;
+      throw error;
+    }
+    return { isStaff, isManager };
+  }
+
   async getStats(staffUid) {
-    await this.assertStaff(staffUid);
+    const access = await this.assertStaffOrManager(staffUid);
 
     const [members] = await getPool().query(
-      `SELECT uid, nickname, phone, add_time AS registerAt
-       FROM ${legacyTable('user')}
-       WHERE spread_uid = ? AND COALESCE(is_del, 0) = 0
-       ORDER BY add_time DESC LIMIT 100`,
+      `SELECT u.uid, u.nickname, u.phone, u.add_time AS registerAt,
+              m.tier_code, m.expire_at
+       FROM ${legacyTable('user')} u
+       LEFT JOIN (
+         SELECT s1.uid, s1.tier_code, s1.expire_at
+         FROM ${swTable('user_membership')} s1
+         WHERE s1.status = 1 AND s1.expire_at > UNIX_TIMESTAMP()
+           AND s1.id = (
+             SELECT s2.id FROM ${swTable('user_membership')} s2
+             WHERE s2.uid = s1.uid AND s2.status = 1 AND s2.expire_at > UNIX_TIMESTAMP()
+             ORDER BY CASE s2.tier_code WHEN 'SW299' THEN 2 WHEN 'SW199' THEN 1 ELSE 0 END DESC, s2.expire_at DESC
+             LIMIT 1
+           )
+       ) m ON m.uid = u.uid
+       WHERE u.spread_uid = ? AND COALESCE(u.is_del, 0) = 0
+       ORDER BY u.add_time DESC LIMIT 100`,
       [staffUid]
     );
 
@@ -161,6 +216,118 @@ class StaffService {
       })),
       approvalStats: { pending, approved, rejected },
       approvals
+    };
+  }
+
+  async getAccess(staffUid) {
+    const access = await this.assertStaffOrManager(staffUid);
+    const [[user]] = await getPool().query(
+      `SELECT uid, nickname, division_id FROM ${legacyTable('user')} WHERE uid = ? LIMIT 1`,
+      [staffUid]
+    );
+    return {
+      uid: Number(staffUid),
+      nickname: user?.nickname || '',
+      divisionId: Number(user?.division_id || 0),
+      isStaff: access.isStaff,
+      isManager: access.isManager
+    };
+  }
+
+  async listOwnedMembers(staffUid, params = {}) {
+    await this.assertStaffOrManager(staffUid);
+    const page = Math.max(1, Number(params.page || 1));
+    const pageSize = Math.min(50, Math.max(1, Number(params.pageSize || 20)));
+    const keyword = String(params.keyword || '').trim();
+    const conditions = ['u.spread_uid = ?', 'COALESCE(u.is_del, 0) = 0'];
+    const values = [staffUid];
+    if (keyword) {
+      if (/^\d+$/.test(keyword)) {
+        conditions.push('(u.uid = ? OR u.phone LIKE ? OR u.nickname LIKE ?)');
+        values.push(Number(keyword), `%${keyword}%`, `%${keyword}%`);
+      } else {
+        conditions.push('(u.nickname LIKE ? OR u.phone LIKE ?)');
+        values.push(`%${keyword}%`, `%${keyword}%`);
+      }
+    }
+    const where = conditions.join(' AND ');
+    const [[countRow]] = await getPool().query(
+      `SELECT COUNT(*) AS total FROM ${legacyTable('user')} u WHERE ${where}`,
+      values
+    );
+    const offset = (page - 1) * pageSize;
+    const [rows] = await getPool().query(
+      `SELECT u.uid, u.nickname, u.phone, u.avatar, u.integral, u.add_time,
+              (SELECT um.tier_code FROM ${swTable('user_membership')} um
+               WHERE um.uid = u.uid AND um.status = 1 AND um.expire_at > UNIX_TIMESTAMP()
+               ORDER BY CASE um.tier_code WHEN 'SW299' THEN 2 WHEN 'SW199' THEN 1 ELSE 0 END DESC,
+                        um.expire_at DESC LIMIT 1) AS tier_code,
+              (SELECT um.expire_at FROM ${swTable('user_membership')} um
+               WHERE um.uid = u.uid AND um.status = 1 AND um.expire_at > UNIX_TIMESTAMP()
+               ORDER BY CASE um.tier_code WHEN 'SW299' THEN 2 WHEN 'SW199' THEN 1 ELSE 0 END DESC,
+                        um.expire_at DESC LIMIT 1) AS membership_expire_at
+       FROM ${legacyTable('user')} u
+       WHERE ${where}
+       ORDER BY u.add_time DESC
+       LIMIT ? OFFSET ?`,
+      [...values, pageSize, offset]
+    );
+
+    let approvalMap = {};
+    const uids = rows.map((row) => Number(row.uid)).filter((id) => id > 0);
+    if (uids.length) {
+      try {
+        const [approvalRows] = await getPool().query(
+          `SELECT ar.customer_uid, ar.status
+           FROM ${swTable('approval_request')} ar
+           INNER JOIN (
+             SELECT customer_uid, MAX(id) AS max_id
+             FROM ${swTable('approval_request')}
+             WHERE staff_uid = ? AND customer_uid IN (${uids.map(() => '?').join(',')})
+             GROUP BY customer_uid
+           ) latest ON latest.max_id = ar.id`,
+          [staffUid, ...uids]
+        );
+        approvalMap = Object.fromEntries(
+          (approvalRows || []).map((row) => [Number(row.customer_uid), row.status || ''])
+        );
+      } catch { /* ignore */ }
+    }
+
+    let voucherMap = {};
+    if (uids.length) {
+      try {
+        const [voucherRows] = await getPool().query(
+          `SELECT uid, COALESCE(SUM(remain_amount), 0) AS cash_voucher
+           FROM ${swTable('cash_voucher_batch')}
+           WHERE uid IN (${uids.map(() => '?').join(',')})
+             AND status = 1 AND remain_amount > 0
+             AND (expire_at = 0 OR expire_at > UNIX_TIMESTAMP())
+           GROUP BY uid`,
+          uids
+        );
+        voucherMap = Object.fromEntries(
+          (voucherRows || []).map((row) => [Number(row.uid), Number(row.cash_voucher || 0)])
+        );
+      } catch { /* ignore */ }
+    }
+
+    return {
+      total: Number(countRow?.total || 0),
+      page,
+      pageSize,
+      list: rows.map((row) => ({
+        uid: Number(row.uid),
+        nickname: row.nickname || '',
+        phone: maskPhone(row.phone),
+        avatar: row.avatar || '',
+        integral: Number(row.integral || 0),
+        cashVoucher: voucherMap[Number(row.uid)] || 0,
+        tierCode: row.tier_code || '',
+        membershipExpireAt: Number(row.membership_expire_at || 0),
+        registerAt: Number(row.add_time || 0),
+        latestApprovalStatus: approvalMap[Number(row.uid)] || ''
+      }))
     };
   }
 
@@ -294,6 +461,98 @@ class StaffService {
       error.statusCode = 404;
       throw error;
     }
+  }
+
+  async listSpreadStaffCandidates() {
+    const userTable = legacyTable('user');
+    const [rows] = await getPool().query(
+      `SELECT sp.uid, sp.nickname, sp.phone, sp.is_staff, sp.division_id,
+              COUNT(m.uid) AS memberCount
+       FROM ${userTable} m
+       INNER JOIN ${userTable} sp ON sp.uid = m.spread_uid
+       WHERE m.spread_uid > 0
+         AND COALESCE(m.is_del, 0) = 0
+         AND COALESCE(sp.is_del, 0) = 0
+       GROUP BY sp.uid, sp.nickname, sp.phone, sp.is_staff, sp.division_id
+       ORDER BY memberCount DESC, sp.uid ASC`
+    );
+
+    return Promise.all((rows || []).map(async (row) => ({
+      uid: Number(row.uid),
+      nickname: row.nickname || '',
+      phone: maskPhone(row.phone),
+      isStaff: Number(row.is_staff || 0) === 1,
+      divisionId: Number(row.division_id || 0),
+      divisionName: await this.resolveDivisionName(row.division_id),
+      memberCount: Number(row.memberCount || 0)
+    })));
+  }
+
+  async previewBatchGrantFromSpread() {
+    const candidates = await this.listSpreadStaffCandidates();
+    const pending = candidates.filter((item) => !item.isStaff);
+    const existing = candidates.filter((item) => item.isStaff);
+    return {
+      totalCandidates: candidates.length,
+      pendingCount: pending.length,
+      existingCount: existing.length,
+      pending,
+      existing
+    };
+  }
+
+  async batchGrantFromSpread(params = {}) {
+    const storeName = String(params.storeName || '米古里').trim() || '米古里';
+    const storesService = new AdminStoresService();
+    const store = await storesService.resolveOrCreateByName(storeName);
+    const preview = await this.previewBatchGrantFromSpread();
+    const results = [];
+
+    for (const row of preview.pending) {
+      try {
+        await getPool().query(
+          `UPDATE ${legacyTable('user')} SET is_staff = 1, division_id = ? WHERE uid = ?`,
+          [store.id, row.uid]
+        );
+        results.push({
+          uid: row.uid,
+          nickname: row.nickname,
+          memberCount: row.memberCount,
+          status: 'granted'
+        });
+      } catch (error) {
+        results.push({
+          uid: row.uid,
+          nickname: row.nickname,
+          status: 'failed',
+          message: error.message || '开通失败'
+        });
+      }
+    }
+
+    return {
+      storeName: store.name,
+      divisionId: store.id,
+      granted: results.filter((item) => item.status === 'granted').length,
+      skipped: preview.existingCount,
+      failed: results.filter((item) => item.status === 'failed').length,
+      results
+    };
+  }
+
+  async updateStaffStore(uid, storeName) {
+    await this.assertStaff(uid);
+    const storesService = new AdminStoresService();
+    const store = await storesService.resolveOrCreateByName(storeName);
+    await getPool().query(
+      `UPDATE ${legacyTable('user')} SET division_id = ? WHERE uid = ?`,
+      [store.id, uid]
+    );
+    return {
+      uid,
+      divisionId: store.id,
+      storeName: store.name
+    };
   }
 }
 

@@ -1,0 +1,14 @@
+.page{padding-bottom:40rpx;background:#f7f6f2}
+.banner{height:560rpx}
+.banner-img{width:100%;height:560rpx}
+.info{margin:24rpx;padding:28rpx;background:#fff;border-radius:20rpx}
+.name{font-size:34rpx;font-weight:600;color:#1a1f36}
+.price{margin-top:12rpx;font-size:36rpx;color:#b48b16;font-weight:700}
+.desc{margin-top:12rpx;font-size:26rpx;color:#666;line-height:1.6}
+.section{margin:24rpx;padding:28rpx;background:#fff;border-radius:20rpx}
+.section-title{font-size:28rpx;font-weight:600;margin-bottom:16rpx}
+.row{display:flex;padding:12rpx 0;border-bottom:1rpx solid #f1eee8;font-size:26rpx}
+.label{width:180rpx;color:#888}
+.value{flex:1;color:#333}
+.footer{padding:40rpx;text-align:center;color:#999;font-size:24rpx}
+.empty{padding:120rpx;text-align:center;color:#999}

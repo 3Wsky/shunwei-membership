@@ -380,8 +380,16 @@ function registerAdminManagementRoutes(app) {
     category: z.string().trim().max(64).optional().default(''),
     contactName: z.string().trim().max(64).optional().default(''),
     contactPhone: z.string().trim().max(20).optional().default(''),
-    loginUid: z.coerce.number().int().positive(),
-    canVerify: z.boolean().optional().default(true)
+    loginUid: z.coerce.number().int().nonneg().optional().default(0),
+    canVerify: z.boolean().optional().default(true),
+    storeAddress: z.string().trim().max(255).optional().default(''),
+    province: z.string().trim().max(32).optional().default(''),
+    city: z.string().trim().max(32).optional().default(''),
+    district: z.string().trim().max(32).optional().default(''),
+    latitude: z.coerce.number().optional().default(0),
+    longitude: z.coerce.number().optional().default(0),
+    storeImages: z.array(z.string()).optional().default([]),
+    businessHours: z.string().trim().max(128).optional().default('')
   });
 
   const verifyModeSchema = z.object({
@@ -418,15 +426,21 @@ function registerAdminManagementRoutes(app) {
     if (!parsed.success) return fail(reply, 400, '参数错误', parsed.error.flatten());
 
     const now = Math.floor(Date.now() / 1000);
+    const d = parsed.data;
     const [result] = await getPool().query(
       `INSERT INTO ${swTable('merchant')}
-       (merchant_name, category, contact_name, contact_phone, login_uid, can_verify, is_active, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)`,
-      [parsed.data.merchantName, parsed.data.category, parsed.data.contactName,
-       parsed.data.contactPhone, parsed.data.loginUid, parsed.data.canVerify ? 1 : 0, now, now]
+       (merchant_name, category, contact_name, contact_phone, login_uid, can_verify, is_active,
+        store_address, province, city, district, latitude, longitude, store_images, business_hours,
+        created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [d.merchantName, d.category, d.contactName, d.contactPhone, d.loginUid,
+       d.canVerify ? 1 : 0,
+       d.storeAddress, d.province, d.city, d.district, d.latitude, d.longitude,
+       JSON.stringify(d.storeImages.filter(Boolean)), d.businessHours,
+       now, now]
     );
 
-    return ok({ merchantId: result.insertId, merchantName: parsed.data.merchantName }, '商家创建成功');
+    return ok({ merchantId: result.insertId, merchantName: d.merchantName }, '商家创建成功');
   });
 
   app.put('/api/admin/cash-voucher/verify-mode', async (request, reply) => {
@@ -476,6 +490,55 @@ function registerAdminManagementRoutes(app) {
     } catch (error) {
       return fail(reply, error.statusCode || 500, error.message || '审批列表加载失败');
     }
+  });
+
+  app.get('/api/admin/account/info', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    const { getAdminSession } = require('./admin.auth');
+    const session = getAdminSession(request);
+    const { config } = require('../../shared/config');
+    return ok({
+      username: session?.username || config.admin.username,
+      loginAt: session?.issuedAt ? new Date(session.issuedAt).toISOString() : null,
+      expiresAt: session?.expiresAt ? new Date(session.expiresAt).toISOString() : null,
+      sessionMaxAge: config.admin.sessionMaxAgeSeconds
+    });
+  });
+
+  const changePasswordSchema = z.object({
+    currentPassword: z.string().min(1),
+    newPassword: z.string().min(8).max(64)
+  });
+
+  app.put('/api/admin/account/password', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    const parsed = changePasswordSchema.safeParse(request.body || {});
+    if (!parsed.success) return fail(reply, 400, '参数错误', parsed.error.flatten());
+
+    const { config } = require('../../shared/config');
+    const { verifyAdminCredentials } = require('./admin.auth');
+    if (!verifyAdminCredentials(config.admin.username, parsed.data.currentPassword)) {
+      return fail(reply, 403, '当前密码错误');
+    }
+
+    config.admin.password = parsed.data.newPassword;
+
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const envPath = path.resolve(config.rootDir, '.env');
+    try {
+      let envContent = fs.readFileSync(envPath, 'utf8');
+      if (/^ADMIN_PASSWORD=.*/m.test(envContent)) {
+        envContent = envContent.replace(/^ADMIN_PASSWORD=.*/m, `ADMIN_PASSWORD=${parsed.data.newPassword}`);
+      } else {
+        envContent += `\nADMIN_PASSWORD=${parsed.data.newPassword}\n`;
+      }
+      fs.writeFileSync(envPath, envContent, 'utf8');
+    } catch {
+      // .env write optional; in-memory change still takes effect until restart
+    }
+
+    return ok(null, '密码已修改（当前进程立即生效）');
   });
 
   app.post('/api/admin/approval/review', async (request, reply) => {

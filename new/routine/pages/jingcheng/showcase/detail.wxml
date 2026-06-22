@@ -1,0 +1,32 @@
+<view wx:if="{{product}}" class="page">
+  <swiper wx:if="{{gallery.length}}" class="banner" circular indicator-dots>
+    <swiper-item wx:for="{{gallery}}" wx:key="*this">
+      <image class="banner-img" src="{{item}}" mode="aspectFill" />
+    </swiper-item>
+  </swiper>
+  <view class="info">
+    <view class="name">{{title}}</view>
+    <view class="price">{{priceLabel}}</view>
+    <view wx:if="{{subtitle}}" class="desc">{{subtitle}}</view>
+  </view>
+  <view wx:if="{{paramList.length}}" class="section">
+    <view class="section-title">参数规格</view>
+    <view wx:for="{{paramList}}" wx:key="name" class="row">
+      <text class="label">{{item.name}}</text>
+      <text class="value">{{item.value}}</text>
+    </view>
+  </view>
+  <view wx:if="{{specEntries.length}}" class="section">
+    <view class="section-title">配置信息</view>
+    <view wx:for="{{specEntries}}" wx:key="key" class="row">
+      <text class="label">{{item.key}}</text>
+      <text class="value">{{item.value}}</text>
+    </view>
+  </view>
+  <view wx:if="{{product.description}}" class="section">
+    <view class="section-title">商品详情</view>
+    <rich-text nodes="{{product.description}}" />
+  </view>
+  <view class="footer">展示商品 · 到店咨询 · 不支持线上下单</view>
+</view>
+<view wx:else class="empty">{{loading ? '加载中…' : '商品不存在'}}</view>

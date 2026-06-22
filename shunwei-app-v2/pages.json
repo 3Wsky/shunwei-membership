@@ -3,7 +3,7 @@
         {
             "path": "pages/index/index",
             "style": {
-                "navigationBarTitleText": "顺为会员",
+                "navigationBarTitleText": "锦程祥瑞",
                 "enablePullDownRefresh": true
             }
         },
@@ -98,6 +98,32 @@
             }
         },
         {
+            "path": "pages/staff/members",
+            "style": {
+                "navigationBarTitleText": "会员管理",
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/staff/apply",
+            "style": {
+                "navigationBarTitleText": "开通会员"
+            }
+        },
+        {
+            "path": "pages/merchant/index",
+            "style": {
+                "navigationBarTitleText": "商家工作台",
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/goods_cate/index",
+            "style": {
+                "navigationBarTitleText": "商品分类"
+            }
+        },
+        {
             "path": "pages/approval/submit",
             "style": {
                 "navigationBarTitleText": "发起开通"
@@ -112,7 +138,7 @@
     ],
     "tabBar": {
         "color": "#999999",
-        "selectedColor": "#E8436E",
+        "selectedColor": "#C9A227",
         "borderStyle": "white",
         "backgroundColor": "#ffffff",
         "list": [
@@ -138,7 +164,7 @@
     },
     "globalStyle": {
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "顺为会员",
+        "navigationBarTitleText": "锦程祥瑞",
         "navigationBarBackgroundColor": "#FFFFFF",
         "backgroundColor": "#F5F3F0"
     }

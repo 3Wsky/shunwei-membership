@@ -1,0 +1,32 @@
+<view wx:if="{{loggedIn}}" class="user-menus" style="margin-top:20rpx">
+  <view class="menu-title">锦程服务</view>
+  <view wx:if="{{showManagerApproval}}" class="column-box manager-box">
+    <navigator class="item" url="/pages/jingcheng/manager/approvals">
+      <text class="iconfont icon-s-bianji menu-icon-inline"></text>
+      <text class="name">店长审批<text wx:if="{{pendingCount}}" class="pending-tag">{{pendingCount}}条待办</text></text>
+      <text class="iconfont icon-jiantou"></text>
+    </navigator>
+  </view>
+  <view class="list-box">
+    <navigator class="item" url="/pages/jingcheng/showcase/list">
+      <text class="iconfont icon-shangpin menu-icon"></text>
+      <text class="name">展示商品</text>
+    </navigator>
+    <navigator class="item" url="/pages/jingcheng/integral/mall">
+      <text class="iconfont icon-jifen menu-icon"></text>
+      <text class="name">积分商城</text>
+    </navigator>
+    <navigator class="item" url="/pages/jingcheng/wallet/index">
+      <text class="iconfont icon-qiandai menu-icon"></text>
+      <text class="name">现金券</text>
+    </navigator>
+    <navigator wx:if="{{showMemberMgmt}}" class="item" url="/pages/jingcheng/staff/members">
+      <text class="iconfont icon-huiyuanzhongxin menu-icon"></text>
+      <text class="name">会员管理</text>
+    </navigator>
+    <navigator wx:if="{{showMerchant}}" class="item" url="/pages/jingcheng/merchant/index">
+      <text class="iconfont icon-dianpu menu-icon"></text>
+      <text class="name">商家核销</text>
+    </navigator>
+  </view>
+</view>

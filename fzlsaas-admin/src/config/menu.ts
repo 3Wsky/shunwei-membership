@@ -1,4 +1,4 @@
-export type MenuModule = 'data' | 'member' | 'ops' | 'merchant' | 'finance' | 'system'
+export type MenuModule = 'workspace' | 'member' | 'integral' | 'merchant' | 'settings'
 
 export interface MenuModuleConfig {
   key: MenuModule
@@ -6,23 +6,34 @@ export interface MenuModuleConfig {
   routes: string[]
 }
 
+/** 5 Tab 业务域分组（方案 A，2026-06-21 PM 确认） */
 export const MENU_MODULES: MenuModuleConfig[] = [
-  { key: 'data', label: '数据', routes: ['dashboard'] },
-  { key: 'member', label: '会员', routes: ['members', 'staff'] },
-  { key: 'ops', label: '运营', routes: ['approval', 'integral-mall', 'lottery'] },
-  { key: 'merchant', label: '商家', routes: ['merchant', 'products'] },
+  { key: 'workspace', label: '工作台', routes: ['dashboard', 'approval'] },
+  { key: 'member', label: '会员', routes: ['members', 'membership-plans', 'staff'] },
   {
-    key: 'finance',
-    label: '财务',
-    routes: ['finance-cash', 'finance-integral', 'finance-recharge', 'finance-settlement', 'finance-settings'],
+    key: 'integral',
+    label: '积分',
+    routes: ['integral-mall', 'integral-mall/orders', 'finance-integral', 'finance-recharge'],
   },
-  { key: 'system', label: '系统', routes: ['audit-logs'] },
+  { key: 'merchant', label: '商家', routes: ['merchant', 'finance-settlement'] },
+  {
+    key: 'settings',
+    label: '设置',
+    routes: ['products', 'finance-cash', 'lottery', 'finance-settings', 'audit-logs', 'system-settings'],
+  },
 ]
 
 export function getModuleByRoute(path: string): MenuModule {
-  const name = path.replace(/^\//, '').split('/')[0] || 'dashboard'
-  for (const mod of MENU_MODULES) {
-    if (mod.routes.includes(name)) return mod.key
+  const normalized = path.replace(/^\//, '')
+  // 长路径优先匹配，避免 integral-mall 误匹配 integral-mall/orders
+  const entries = MENU_MODULES.flatMap((mod) =>
+    mod.routes.map((r) => ({ mod: mod.key, route: r }))
+  ).sort((a, b) => b.route.length - a.route.length)
+
+  for (const { mod, route: r } of entries) {
+    if (normalized === r || normalized.startsWith(`${r}/`)) {
+      return mod
+    }
   }
-  return 'data'
+  return 'workspace'
 }

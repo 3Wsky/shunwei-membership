@@ -1,0 +1,4 @@
+<view class="num-item" bindtap="goWallet">
+  <text class="num">{{amount}}</text>
+  <view class="txt">现金券</view>
+</view>

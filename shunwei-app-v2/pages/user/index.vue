@@ -1,94 +1,129 @@
 <template>
   <view class="user-page">
-    <!-- 深色头部 -->
-    <view class="header-bg" />
-
-    <!-- 用户大卡片 -->
-    <view class="profile-card" @tap="goLogin">
-      <view class="profile-top">
-        <view class="avatar-wrap">
+    <!-- 用户头卡 -->
+    <view class="user-card">
+      <view class="card-bg" />
+      <view class="user-info-row">
+        <view class="avatar-box" @tap="goLogin">
           <image v-if="userStore.avatar" class="avatar" :src="userStore.avatar" mode="aspectFill" />
-          <view v-else class="avatar-placeholder">
-            <text>{{ userStore.nickname?.charAt(0) || '?' }}</text>
-          </view>
-          <view class="badge-ring" :class="tierClass">
-            <text class="badge-icon">{{ tierIcon }}</text>
-          </view>
+          <image v-else class="avatar" src="/static/images/f.png" mode="aspectFill" />
         </view>
-        <view class="profile-info">
-          <text class="user-name">{{ userStore.isLoggedIn ? userStore.nickname : '点击登录' }}</text>
-          <view class="tier-chip" :class="tierClass">
-            <text>{{ tierLabel }}</text>
+        <view class="info-center">
+          <view v-if="!userStore.isLoggedIn" class="nickname" @tap="goLogin">
+            <text>点击登录</text>
           </view>
-          <text class="user-hint" v-if="!userStore.isLoggedIn">登录后享受会员专属权益</text>
+          <template v-else>
+            <view class="nickname">
+              <text class="nick-text">{{ userStore.nickname }}</text>
+              <view v-if="isMember" class="vip-tag">
+                <text>{{ tierLabel }}</text>
+              </view>
+            </view>
+            <view class="phone-row" v-if="userStore.userInfo?.phone">
+              <text class="phone-text">{{ userStore.userInfo.phone }}</text>
+            </view>
+          </template>
+        </view>
+        <view class="header-actions" v-if="userStore.isLoggedIn">
+          <view class="action-icon" @tap="goMember">
+            <text>⚙️</text>
+          </view>
         </view>
       </view>
 
-      <!-- 数据看板 -->
-      <view class="stats-row">
-        <view class="stat-item" @tap.stop="goIntegral">
-          <text class="stat-num">{{ stats.integral }}</text>
-          <text class="stat-label">积分余额</text>
+      <!-- 数据行 -->
+      <view class="num-wrapper">
+        <view class="num-item" @tap="goVoucher">
+          <text class="num">¥{{ stats.voucherBalance }}</text>
+          <text class="txt">现金券</text>
         </view>
-        <view class="stat-divider" />
-        <view class="stat-item" @tap.stop="goVoucher">
-          <text class="stat-num">{{ stats.vouchers }}</text>
-          <text class="stat-label">优惠券</text>
+        <view class="num-item" @tap="goIntegral">
+          <text class="num">{{ stats.integral }}</text>
+          <text class="txt">积分</text>
         </view>
-        <view class="stat-divider" />
-        <view class="stat-item" @tap.stop="goIntegral">
-          <text class="stat-num">{{ stats.pending }}</text>
-          <text class="stat-label">待核销</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 功能菜单 -->
-    <view class="menu-section">
-      <view class="menu-group">
-        <view class="menu-item btn-tap" @tap="goMember">
-          <view class="menu-icon-wrap menu-icon-member"><text class="menu-icon">👑</text></view>
-          <text class="menu-label">我的会员</text>
-          <text class="menu-desc">等级权益</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-item btn-tap" @tap="goIntegral">
-          <view class="menu-icon-wrap menu-icon-integral"><text class="menu-icon">✦</text></view>
-          <text class="menu-label">我的积分</text>
-          <text class="menu-desc">明细 · 兑换</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-item btn-tap" @tap="goVoucher">
-          <view class="menu-icon-wrap menu-icon-voucher"><text class="menu-icon">◈</text></view>
-          <text class="menu-label">现金券钱包</text>
-          <text class="menu-desc">到店核销</text>
-          <text class="menu-arrow">›</text>
+        <view class="num-item" @tap="goMall">
+          <text class="num">{{ stats.pending }}</text>
+          <text class="txt">待核销</text>
         </view>
       </view>
     </view>
 
-    <view class="menu-section">
-      <text class="menu-section-title">工作台</text>
+    <!-- 业务入口宫格 -->
+    <view class="entry-grid">
+      <view class="entry-title">常用服务</view>
+      <view class="entry-list">
+        <view class="entry-item btn-tap" @tap="goMall">
+          <view class="entry-icon" style="color: #7B4FD4;">🎁</view>
+          <text class="entry-label">积分商城</text>
+        </view>
+        <view class="entry-item btn-tap" @tap="goVoucher">
+          <view class="entry-icon" style="color: #2ECC71;">◈</view>
+          <text class="entry-label">现金券</text>
+        </view>
+        <view class="entry-item btn-tap" @tap="goMember">
+          <view class="entry-icon" style="color: #C9A227;">👑</view>
+          <text class="entry-label">会员中心</text>
+        </view>
+        <view class="entry-item btn-tap" @tap="goProductList">
+          <view class="entry-icon" style="color: #333;">◇</view>
+          <text class="entry-label">精选好物</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 锦程面板（会员管理/现金券/商家/审批） -->
+    <view class="jc-panel" v-if="userStore.isLoggedIn">
+      <view class="entry-title">工作台</view>
       <view class="menu-group">
         <view class="menu-item btn-tap" @tap="goStaff">
-          <view class="menu-icon-wrap menu-icon-staff"><text class="menu-icon">🔧</text></view>
+          <text class="menu-icon">🔧</text>
           <text class="menu-label">员工工作台</text>
           <text class="menu-arrow">›</text>
         </view>
+        <view class="menu-item btn-tap" @tap="goMembers">
+          <text class="menu-icon">👥</text>
+          <text class="menu-label">会员管理</text>
+          <text class="menu-arrow">›</text>
+        </view>
         <view class="menu-item btn-tap" @tap="goMerchant">
-          <view class="menu-icon-wrap menu-icon-merchant"><text class="menu-icon">🏪</text></view>
+          <text class="menu-icon">🏪</text>
           <text class="menu-label">商家入口</text>
+          <text class="menu-arrow">›</text>
+        </view>
+        <view class="menu-item btn-tap" @tap="goApproval">
+          <text class="menu-icon">📋</text>
+          <text class="menu-label">审批中心</text>
+          <view v-if="approvalCount > 0" class="menu-badge">{{ approvalCount }}</view>
           <text class="menu-arrow">›</text>
         </view>
       </view>
     </view>
 
+    <!-- 常用菜单 -->
+    <view class="menu-section">
+      <view class="entry-title">我的服务</view>
+      <view class="menu-group">
+        <view class="menu-item btn-tap" @tap="goIntegral">
+          <text class="menu-icon">✦</text>
+          <text class="menu-label">积分明细</text>
+          <text class="menu-arrow">›</text>
+        </view>
+        <view class="menu-item btn-tap" @tap="goMember">
+          <text class="menu-icon">⭐</text>
+          <text class="menu-label">我的会员</text>
+          <text class="menu-desc">{{ tierLabel }}</text>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 退出登录 -->
     <view v-if="userStore.isLoggedIn" class="logout-section">
       <button class="logout-btn btn-tap" @tap="handleLogout">退出登录</button>
     </view>
 
     <view class="footer-brand">
-      <text>顺为优选 · FZLSaas</text>
+      <text>锦程祥瑞 · FZLSaas</text>
     </view>
   </view>
 </template>
@@ -99,28 +134,21 @@ import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/user'
 import { getMyIntegral, getMyMembership, getIntegralMallOrders } from '@/api/membership'
 import { getVoucherWallet } from '@/api/voucher'
+import { getApprovalTodos } from '@/api/approval'
 
 const userStore = useUserStore()
-const stats = ref({ integral: 0, vouchers: 0, pending: 0 })
+const stats = ref({ integral: 0, voucherBalance: 0, pending: 0 })
 const membership = ref(null)
+const approvalCount = ref(0)
 
 const tierLabel = computed(() => {
   if (!userStore.isLoggedIn) return '未登录'
-  if (!membership.value) return '普通用户'
-  return membership.value.planName || membership.value.title || '会员'
+  if (!membership.value || !membership.value.isMemberActive) return '普通用户'
+  return membership.value.title || membership.value.planName || '会员'
 })
 
-const tierClass = computed(() => {
-  const label = tierLabel.value
-  if (label.includes('299') || label.includes('尊享')) return 'tier-premium'
-  if (membership.value) return 'tier-gold'
-  return 'tier-default'
-})
-
-const tierIcon = computed(() => {
-  if (tierClass.value === 'tier-premium') return '◆'
-  if (tierClass.value === 'tier-gold') return '★'
-  return '○'
+const isMember = computed(() => {
+  return membership.value && membership.value.isMemberActive
 })
 
 onShow(() => {
@@ -129,13 +157,12 @@ onShow(() => {
 
 async function loadStats() {
   try {
-    const integral = await getMyIntegral()
-    stats.value.integral = integral?.totalIntegral || integral?.balance || integral?.total || 0
+    const data = await getMyIntegral()
+    stats.value.integral = data?.totalIntegral || data?.balance || data?.total || 0
   } catch { /* silent */ }
   try {
     const voucher = await getVoucherWallet()
-    const list = voucher?.list || voucher?.batches || (Array.isArray(voucher) ? voucher : [])
-    stats.value.vouchers = list.filter(v => v.status !== 2 && v.status !== 'used').length
+    stats.value.voucherBalance = Number(voucher?.balance || 0)
   } catch { /* silent */ }
   try {
     membership.value = await getMyMembership()
@@ -144,6 +171,10 @@ async function loadStats() {
     const orders = await getIntegralMallOrders({ page: 1, limit: 50 })
     const list = orders?.list || []
     stats.value.pending = list.filter(o => o.status !== 3).length
+  } catch { /* silent */ }
+  try {
+    const todos = await getApprovalTodos('manager')
+    approvalCount.value = (todos || []).length
   } catch { /* silent */ }
 }
 
@@ -163,19 +194,35 @@ function goVoucher() {
   uni.navigateTo({ url: '/pages/voucher/wallet' })
 }
 
+function goMall() {
+  uni.navigateTo({ url: '/pages/integral/mall' })
+}
+
+function goProductList() {
+  uni.switchTab({ url: '/pages/products/list' })
+}
+
 function goStaff() {
   uni.navigateTo({ url: '/pages/staff/workbench' })
 }
 
+function goMembers() {
+  uni.navigateTo({ url: '/pages/staff/members' })
+}
+
 function goMerchant() {
-  uni.navigateTo({ url: '/pages/merchant/verify' })
+  uni.navigateTo({ url: '/pages/merchant/index' })
+}
+
+function goApproval() {
+  uni.navigateTo({ url: '/pages/approval/center' })
 }
 
 function handleLogout() {
   uni.showModal({
     title: '退出登录',
     content: '确定要退出登录吗？',
-    confirmColor: '#C9A227',
+    confirmColor: '#e93b3d',
     success(res) {
       if (res.confirm) userStore.logout()
     },
@@ -184,236 +231,250 @@ function handleLogout() {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/tokens.scss';
-
 .user-page {
   min-height: 100vh;
-  padding-bottom: 60rpx;
-  position: relative;
+  background: #F8F8F8;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-.header-bg {
+/* ── 用户头卡 ── */
+.user-card {
+  position: relative;
+  background: linear-gradient(160deg, #1A1F36 0%, #2D3561 100%);
+  padding: 40rpx 30rpx 0;
+  overflow: hidden;
+}
+
+.card-bg {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 360rpx;
-  background: $sw-bg-dark;
-  border-radius: 0 0 48rpx 48rpx;
+  top: -60rpx;
+  right: -40rpx;
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+  background: rgba(201, 162, 39, 0.08);
 }
 
-.profile-card {
-  position: relative;
-  z-index: 1;
-  margin: 48rpx $sw-page-pad 0;
-  background: $sw-bg-card;
-  border-radius: $sw-radius-card;
-  padding: 36rpx 28rpx 28rpx;
-  box-shadow: $sw-shadow-lg;
-}
-
-.profile-top {
+.user-info-row {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
-.avatar-wrap {
-  position: relative;
+.avatar-box {
   margin-right: 24rpx;
   flex-shrink: 0;
 }
 
-.avatar, .avatar-placeholder {
-  width: 112rpx;
-  height: 112rpx;
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
   border-radius: 50%;
-  border: 4rpx solid rgba(212, 175, 55, 0.4);
+  border: 4rpx solid rgba(212, 175, 55, 0.5);
 }
 
-.avatar-placeholder {
-  background: $sw-bg-dark;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 44rpx;
-  font-weight: 700;
-  color: $sw-gold-light;
-}
-
-.badge-ring {
-  position: absolute;
-  bottom: -4rpx;
-  right: -4rpx;
-  width: 40rpx;
-  height: 40rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3rpx solid #fff;
-  font-size: 18rpx;
-
-  &.tier-default { background: #9CA3AF; color: #fff; }
-  &.tier-gold { background: linear-gradient(135deg, $sw-gold, $sw-gold-dark); color: #fff; }
-  &.tier-premium { background: linear-gradient(135deg, $sw-purple, $sw-gold); color: #fff; }
-}
-
-.profile-info {
+.info-center {
   flex: 1;
   min-width: 0;
 }
 
-.user-name {
-  display: block;
-  font-size: 36rpx;
-  font-weight: 700;
-  color: $sw-text;
-}
-
-.tier-chip {
-  display: inline-block;
-  margin-top: 8rpx;
-  font-size: 22rpx;
-  font-weight: 600;
-  padding: 4rpx 16rpx;
-  border-radius: 999rpx;
-
-  &.tier-default { background: #F3F4F6; color: $sw-text-muted; }
-  &.tier-gold { background: $sw-integral-soft; color: $sw-gold-dark; }
-  &.tier-premium { background: linear-gradient(135deg, #E8DAEF, #FBF6E8); color: $sw-purple; }
-}
-
-.user-hint {
-  display: block;
-  font-size: 24rpx;
-  color: $sw-text-muted;
-  margin-top: 8rpx;
-}
-
-.stats-row {
+.nickname {
   display: flex;
   align-items: center;
-  margin-top: 32rpx;
-  padding-top: 28rpx;
-  border-top: 1rpx solid $sw-border;
+  gap: 12rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #fff;
 }
 
-.stat-item {
+.nick-text {
+  max-width: 280rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vip-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.35), rgba(212, 175, 55, 0.2));
+  color: #F5E6A3;
+  border: 1rpx solid rgba(212, 175, 55, 0.4);
+}
+
+.phone-row {
+  margin-top: 8rpx;
+}
+
+.phone-text {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.header-actions {
+  flex-shrink: 0;
+}
+
+.action-icon {
+  font-size: 36rpx;
+  padding: 12rpx;
+}
+
+/* ── 数据行 ── */
+.num-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  margin-top: 32rpx;
+  padding: 28rpx 0 32rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.num-item {
   flex: 1;
   text-align: center;
 }
 
-.stat-num {
+.num {
   display: block;
-  font-size: 40rpx;
-  font-weight: 800;
-  color: $sw-gold;
-  line-height: 1.1;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #fff;
 }
 
-.stat-label {
+.txt {
   display: block;
   font-size: 22rpx;
-  color: $sw-text-muted;
-  margin-top: 6rpx;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4rpx;
 }
 
-.stat-divider {
-  width: 1rpx;
-  height: 48rpx;
-  background: $sw-border;
+/* ── 宫格入口 ── */
+.entry-grid {
+  margin: 20rpx 24rpx 0;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 0 8rpx;
 }
 
-.menu-section {
-  margin: 28rpx $sw-page-pad 0;
-}
-
-.menu-section-title {
-  display: block;
-  font-size: 26rpx;
+.entry-title {
+  font-size: 28rpx;
   font-weight: 600;
-  color: $sw-text-secondary;
-  margin-bottom: 16rpx;
-  padding-left: 8rpx;
+  color: #333;
+  padding: 0 28rpx 16rpx;
+}
+
+.entry-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.entry-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx 0 20rpx;
+}
+
+.entry-icon {
+  font-size: 44rpx;
+  margin-bottom: 8rpx;
+}
+
+.entry-label {
+  font-size: 24rpx;
+  color: #333;
+}
+
+/* ── 锦程面板 & 菜单 ── */
+.jc-panel, .menu-section {
+  margin: 20rpx 24rpx 0;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 0 0;
 }
 
 .menu-group {
-  background: $sw-bg-card;
-  border-radius: $sw-radius-card;
-  overflow: hidden;
-  box-shadow: $sw-shadow-card;
+  padding: 0;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+  padding: 24rpx 28rpx;
+  border-bottom: 1rpx solid #F5F5F5;
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
-.menu-icon-wrap {
-  width: 64rpx;
-  height: 64rpx;
+.menu-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  width: 44rpx;
+  text-align: center;
+}
+
+.menu-label {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.menu-desc {
+  font-size: 24rpx;
+  color: #999;
+  margin-right: 12rpx;
+}
+
+.menu-badge {
+  background: #e93b3d;
+  color: #fff;
+  font-size: 20rpx;
+  min-width: 32rpx;
+  height: 32rpx;
   border-radius: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 20rpx;
-}
-
-.menu-icon-member { background: linear-gradient(135deg, #FBF6E8, #F5E6A3); }
-.menu-icon-integral { background: linear-gradient(135deg, #FBF6E8, #FFF8E7); }
-.menu-icon-voucher { background: linear-gradient(135deg, $sw-voucher-soft, #D4F5E0); }
-.menu-icon-staff { background: linear-gradient(135deg, #EEF2FF, #DDE4FF); }
-.menu-icon-merchant { background: linear-gradient(135deg, #F0F0F5, #E8E8F0); }
-
-.menu-icon { font-size: 28rpx; }
-
-.menu-label {
-  font-size: 28rpx;
-  color: $sw-text;
-  font-weight: 500;
-}
-
-.menu-desc {
-  flex: 1;
-  text-align: right;
-  font-size: 22rpx;
-  color: $sw-text-muted;
+  padding: 0 8rpx;
   margin-right: 8rpx;
 }
 
 .menu-arrow {
-  font-size: 28rpx;
-  color: $sw-text-muted;
+  font-size: 32rpx;
+  color: #ccc;
 }
 
+/* ── 退出 ── */
 .logout-section {
-  margin: 48rpx $sw-page-pad 0;
+  margin: 40rpx 24rpx 0;
 }
 
 .logout-btn {
   width: 100%;
   height: 88rpx;
-  border-radius: 44rpx;
-  background: $sw-bg-card;
-  color: $sw-text-secondary;
-  font-size: 28rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: $sw-shadow-card;
-  &::after { border: none; }
+  line-height: 88rpx;
+  background: #fff !important;
+  color: #e93b3d !important;
+  font-size: 30rpx;
+  font-weight: 500;
+  border: none !important;
+  border-radius: 16rpx;
 }
 
 .footer-brand {
   text-align: center;
-  margin-top: 40rpx;
+  padding: 40rpx 0 20rpx;
   font-size: 22rpx;
-  color: $sw-text-muted;
-  letter-spacing: 2rpx;
+  color: #ccc;
 }
 </style>

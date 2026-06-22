@@ -60,19 +60,52 @@ function openMap() {
 }
 </script>
 
-<style scoped>
-.card-page { padding: 32rpx; background: #f5f3f0; min-height: 100vh; }
-.hero { background: #fff; border-radius: 24rpx; padding: 40rpx; text-align: center; margin-bottom: 24rpx; }
-.avatar { width: 160rpx; height: 160rpx; border-radius: 50%; margin-bottom: 20rpx; }
-.name { font-size: 40rpx; font-weight: 700; color: #1a1a2e; }
-.title { color: #e8436e; margin-top: 8rpx; }
-.bio { color: #666; margin-top: 16rpx; font-size: 28rpx; }
-.store-panel { background: #fff; border-radius: 24rpx; padding: 32rpx; margin-bottom: 24rpx; }
-.store-name { font-weight: 600; font-size: 32rpx; }
-.store-addr { color: #666; margin-top: 12rpx; }
-.hours { color: #999; margin-top: 12rpx; font-size: 26rpx; }
+<style lang="scss" scoped>
+@import '@/styles/tokens.scss';
+
+.card-page { padding: 32rpx; background: $sw-bg; min-height: 100vh; }
+.hero {
+  background: $sw-bg-card;
+  border-radius: $sw-radius-card;
+  padding: 40rpx;
+  text-align: center;
+  margin-bottom: 24rpx;
+  box-shadow: $sw-shadow-card;
+}
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  margin-bottom: 20rpx;
+  border: 4rpx solid rgba(201, 162, 39, 0.25);
+}
+.name { font-size: 40rpx; font-weight: 700; color: $sw-dark; }
+.title { color: $sw-gold; margin-top: 8rpx; font-weight: 600; }
+.bio { color: $sw-text-secondary; margin-top: 16rpx; font-size: 28rpx; }
+.store-panel {
+  background: $sw-bg-card;
+  border-radius: $sw-radius-card;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: $sw-shadow-card;
+}
+.store-name { font-weight: 600; font-size: 32rpx; color: $sw-text; }
+.store-addr { color: $sw-text-secondary; margin-top: 12rpx; }
+.hours { color: $sw-text-muted; margin-top: 12rpx; font-size: 26rpx; }
 .actions { display: flex; gap: 20rpx; }
-.btn { flex: 1; }
-.primary { background: #e8436e; color: #fff; }
-.empty { text-align: center; padding: 80rpx; color: #999; }
+.btn {
+  flex: 1;
+  border-radius: $sw-radius;
+  font-weight: 600;
+  border: 2rpx solid $sw-border;
+  background: $sw-bg-card;
+  color: $sw-text;
+}
+.primary {
+  background: linear-gradient(135deg, $sw-gold, $sw-gold-dark);
+  color: #fff;
+  border: none;
+  box-shadow: $sw-shadow-gold;
+}
+.empty { text-align: center; padding: 80rpx; color: $sw-text-muted; }
 </style>

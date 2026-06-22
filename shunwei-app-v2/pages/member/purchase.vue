@@ -13,28 +13,28 @@
       <text class="section-title">会员权益</text>
       <view class="benefit-list">
         <view class="benefit-item">
-          <text class="benefit-icon">🎁</text>
+          <view class="benefit-icon"><text class="benefit-char">赠</text></view>
           <view class="benefit-detail">
             <text class="benefit-name">开卡赠积分</text>
             <text class="benefit-desc">开通即赠 {{ plan ? plan.giftIntegral : '--' }} 积分</text>
           </view>
         </view>
         <view class="benefit-item">
-          <text class="benefit-icon">📅</text>
+          <view class="benefit-icon"><text class="benefit-char">期</text></view>
           <view class="benefit-detail">
             <text class="benefit-name">会员有效期</text>
             <text class="benefit-desc">{{ plan ? plan.vipDays : '--' }} 天</text>
           </view>
         </view>
         <view class="benefit-item">
-          <text class="benefit-icon">🛍️</text>
+          <view class="benefit-icon"><text class="benefit-char">礼</text></view>
           <view class="benefit-detail">
             <text class="benefit-name">积分商城</text>
             <text class="benefit-desc">专属积分兑换商品</text>
           </view>
         </view>
         <view class="benefit-item">
-          <text class="benefit-icon">👑</text>
+          <view class="benefit-icon"><text class="benefit-char">V</text></view>
           <view class="benefit-detail">
             <text class="benefit-name">等级保护</text>
             <text class="benefit-desc">取高不降级，续费权益叠加</text>
@@ -219,7 +219,6 @@ export default {
 .benefit-item:last-child { border-bottom: none; }
 
 .benefit-icon {
-  font-size: 40rpx;
   margin-right: 20rpx;
   width: 64rpx;
   height: 64rpx;
@@ -228,8 +227,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  line-height: 64rpx;
+  flex-shrink: 0;
+}
+.benefit-char {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: $sw-gold-dark;
 }
 
 .benefit-name {

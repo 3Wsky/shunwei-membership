@@ -6,9 +6,9 @@
         </view>
         <view class="login-content">
             <view class="logo-wrap">
-                <text class="logo-icon">顺</text>
+                <text class="logo-icon">锦</text>
             </view>
-            <view class="logo">顺为优选</view>
+            <view class="logo">锦程祥瑞</view>
             <view class="tip">登录后查看会员权益、积分与专属服务</view>
             <button class="login-btn" :loading="loading" @click="onLogin">
                 <text class="btn-icon">💬</text>

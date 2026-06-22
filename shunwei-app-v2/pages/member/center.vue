@@ -11,7 +11,7 @@
                     <text class="cc-label">当前等级</text>
                     <view class="cc-badge">{{ current.title || '普通会员' }}</view>
                 </view>
-                <view class="cc-exp" v-if="current.expire_at">有效期至 {{ current.expire_at }}</view>
+                <view class="cc-exp" v-if="expireDate">有效期至 {{ expireDate }}</view>
                 <view class="cc-exp" v-else>开通会员，畅享专属权益与积分好礼</view>
                 <view class="cc-deco">✦ MEMBER ✦</view>
             </view>
@@ -90,6 +90,13 @@ export default {
             if (t.includes('299') || t.includes('尊享')) return 'tier-premium'
             if (t.includes('199') || t.includes('会员')) return 'tier-gold'
             return 'tier-default'
+        },
+        expireDate() {
+            const raw = this.current.membershipExpireAt || this.current.expire_at
+            if (!raw) return ''
+            const d = new Date(Number(raw) < 2e10 ? Number(raw) * 1000 : Number(raw))
+            if (isNaN(d.getTime())) return ''
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
         }
     },
     onShow() {

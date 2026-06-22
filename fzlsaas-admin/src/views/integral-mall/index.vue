@@ -50,13 +50,30 @@
           </template>
         </el-dropdown>
         <el-button @click="exportData">数据导出</el-button>
+        <el-button
+          :type="sortMode ? 'primary' : 'default'"
+          :disabled="!canSort"
+          @click="toggleSortMode"
+        >
+          {{ sortMode ? '完成排序' : '拖拽排序' }}
+        </el-button>
       </div>
       <div class="toolbar-right">
         <span class="hint">积分核销 · 本地自提 · 无物流</span>
       </div>
     </template>
 
-    <el-table :data="displayList" v-loading="loading" row-key="id" @selection-change="onSelect">
+    <el-table ref="tableRef" :data="displayList" v-loading="loading" row-key="id" :row-class-name="rowClassName" @selection-change="onSelect">
+      <template #empty>
+        <el-empty description="暂无积分商品">
+          <el-button type="primary" @click="goCreate">添加商品</el-button>
+        </el-empty>
+      </template>
+      <el-table-column v-if="sortMode" label="" width="48" align="center">
+        <template #default>
+          <el-icon class="drag-handle" style="cursor: grab"><Rank /></el-icon>
+        </template>
+      </el-table-column>
       <el-table-column type="selection" width="48" />
       <el-table-column prop="id" label="ID" width="64" />
       <el-table-column label="商品图" width="72" align="center">
@@ -79,7 +96,10 @@
       </el-table-column>
       <el-table-column label="库存" width="100" align="right">
         <template #default="{ row }">
-          <el-link type="primary" :underline="false" @click="openStock(row)">{{ row.stock }}</el-link>
+          <el-link :type="row.stock <= 5 ? 'warning' : 'primary'" :underline="false" @click="openStock(row)">
+            {{ row.stock }}
+            <span v-if="row.stock <= 5" class="low-stock-tag">低</span>
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column prop="sales" label="销量" width="72" align="right" />
@@ -102,6 +122,7 @@
 
     <template #footer>
       <el-pagination
+        v-if="!sortMode"
         v-model:current-page="page"
         v-model:page-size="pageSize"
         :total="filteredTotal"
@@ -110,6 +131,7 @@
         @current-change="syncPage"
         @size-change="onSizeChange"
       />
+      <p v-else class="sort-hint">拖拽左侧手柄调整「销售中」商品顺序，完成后点击「完成排序」</p>
     </template>
   </PageShell>
 
@@ -130,13 +152,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, Rank } from '@element-plus/icons-vue'
+import Sortable from 'sortablejs'
 import PageShell from '@/components/PageShell.vue'
 import ProductCollectDialog from '@/components/ProductCollectDialog.vue'
+import { downloadCsv } from '@/utils/csvExport'
 
 const router = useRouter()
 const loading = ref(false)
@@ -155,6 +179,16 @@ const stockValue = ref(0)
 const stockSaving = ref(false)
 const page = ref(1)
 const pageSize = ref(20)
+const sortMode = ref(false)
+const tableRef = ref<any>(null)
+let sortable: Sortable | null = null
+
+const canSort = computed(() =>
+  activeTab.value === 'shown' &&
+  !keyword.value &&
+  !showFilter.value &&
+  !productIdFilter.value
+)
 
 const filteredList = computed(() => {
   let rows = allList.value
@@ -172,11 +206,16 @@ const filteredList = computed(() => {
 
 const filteredTotal = computed(() => filteredList.value.length)
 const displayList = computed(() => {
+  if (sortMode.value) return filteredList.value
   const start = (page.value - 1) * pageSize.value
   return filteredList.value.slice(start, start + pageSize.value)
 })
 
 onMounted(() => load())
+
+function rowClassName({ row }: { row: any }) {
+  return row.stock <= 5 && row.isShow ? 'low-stock-row' : ''
+}
 
 function formatNum(v: any) {
   const n = Number(v)
@@ -247,12 +286,86 @@ async function batchShow(isShow: boolean) {
       ids: selected.value.map((r) => r.id),
       isShow
     })
-    ElMessage.success('批量更新成功')
+    ElMessage.success(`已更新 ${selected.value.length} 个商品`)
     load()
   } catch { /* handled */ }
 }
 
-function exportData() { ElMessage.info('导出功能开发中') }
+function exportData() {
+  const rows = filteredList.value
+  if (!rows.length) {
+    ElMessage.info('暂无数据可导出')
+    return
+  }
+  downloadCsv(
+    'integral-mall-products.csv',
+    ['ID', '商品名称', '关联商品ID', '兑换积分', '库存', '销量', '限购', '排序', '状态'],
+    rows.map((r) => [
+      r.id,
+      r.title || '',
+      r.productId || '',
+      r.price ?? 0,
+      r.stock ?? 0,
+      r.sales ?? 0,
+      `${r.onceNum || 0}/${r.num || '∞'}`,
+      r.sort ?? 0,
+      r.isShow ? '销售中' : '仓库'
+    ])
+  )
+  ElMessage.success(`已导出 ${rows.length} 条`)
+}
+
+function destroySortable() {
+  sortable?.destroy()
+  sortable = null
+}
+
+async function initSortable() {
+  await nextTick()
+  destroySortable()
+  if (!sortMode.value || !canSort.value) return
+  const tbody = tableRef.value?.$el?.querySelector('.el-table__body-wrapper tbody')
+  if (!tbody) return
+  sortable = Sortable.create(tbody, {
+    handle: '.drag-handle',
+    animation: 150,
+    onEnd: async (evt) => {
+      const { oldIndex, newIndex } = evt
+      if (oldIndex == null || newIndex == null || oldIndex === newIndex) return
+      const ids = filteredList.value.map((r) => r.id)
+      const [moved] = ids.splice(oldIndex, 1)
+      ids.splice(newIndex, 0, moved)
+      try {
+        await request.patch('/api/admin/integral-mall/products/reorder', { ids })
+        ElMessage.success('排序已保存')
+        await load()
+        if (sortMode.value) initSortable()
+      } catch {
+        /* handled */
+      }
+    }
+  })
+}
+
+function toggleSortMode() {
+  if (sortMode.value) {
+    sortMode.value = false
+    destroySortable()
+    return
+  }
+  if (!canSort.value) {
+    ElMessage.warning('请先切换到「销售中」Tab 并清空筛选条件')
+    return
+  }
+  sortMode.value = true
+  initSortable()
+}
+
+watch([sortMode, () => filteredList.value.length], () => {
+  if (sortMode.value) initSortable()
+})
+
+onBeforeUnmount(() => destroySortable())
 </script>
 
 <style scoped>
@@ -260,8 +373,12 @@ function exportData() { ElMessage.info('导出功能开发中') }
 .toolbar-left { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .toolbar-right { margin-left: auto; }
 .hint { font-size: 12px; color: rgba(0,0,0,0.45); }
+.sort-hint { font-size: 13px; color: rgba(0,0,0,0.55); margin: 0; padding: 8px 0; }
+.drag-handle { color: #999; }
 .name-link { color: var(--el-color-primary); cursor: pointer; }
 .name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .sub-info { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 2px; }
 .no-img { font-size: 12px; color: #ccc; }
+.low-stock-tag { margin-left: 4px; font-size: 11px; color: #d97706; }
+:deep(.low-stock-row) { background-color: #fffbeb !important; }
 </style>

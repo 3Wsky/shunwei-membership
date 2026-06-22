@@ -1,0 +1,25 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+  <view wx:if="{{isManager}}" class="manager-entry" bindtap="openApprovals"><view><text>店长审批</text><label>审核店员提交的会员权益申请</label></view><view class="badge">{{pendingCount}} 条待办 ›</view></view>
+  <view class="search"><input value="{{keyword}}" bindinput="onInput" confirm-type="search" bindconfirm="onSearch" placeholder="搜索昵称、UID或手机号"/><button bindtap="onSearch">查询</button></view>
+  <view class="summary">
+    <text>我的会员 {{total}} 人</text>
+    <text wx:if="{{selfUid}}" class="uid-hint">登录 UID {{selfUid}}</text>
+    <text wx:if="{{loadError}}" class="warn-hint">{{loadError}}</text>
+  </view>
+  <view wx:for="{{list}}" wx:key="uid" class="member" data-index="{{index}}" bindtap="openMember">
+    <image class="avatar" src="{{item.avatar || '/static/images/def_avatar.png'}}" mode="aspectFill"/>
+    <view class="info"><view class="name">{{item.nickname || '未设置昵称'}}</view><view class="meta">UID {{item.uid}} · {{item.phone || '未绑定手机'}}</view></view>
+    <view class="status">›</view>
+  </view>
+  <view wx:if="{{needLogin}}" class="empty">
+    <view class="empty-title">请先回「我的」登录</view>
+    <view class="empty-desc">在「我的」页完成微信授权后，下拉刷新，再进会员管理。</view>
+    <button class="login-btn" bindtap="goLogin">去「我的」页</button>
+  </view>
+  <view wx:elif="{{loaded && !loading && !list.length}}" class="empty">
+    <view class="empty-title">暂无名下会员</view>
+    <view class="empty-desc">需在 Admin 为会员指定归属 UID {{selfUid || '您的UID'}}</view>
+  </view>
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+</view>

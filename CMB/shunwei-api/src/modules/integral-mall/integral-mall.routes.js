@@ -31,11 +31,22 @@ function registerIntegralMallRoutes(app) {
         [request.auth.uid]
       );
       if (!user) return fail(reply, 404, '用户不存在');
+      const { swTable } = require('../../shared/sw-mysql');
+      let isManager = 0;
+      try {
+        const [[mgr]] = await getPool().query(
+          `SELECT 1 AS v FROM ${swTable('store_manager')}
+           WHERE manager_uid = ? AND is_active = 1 LIMIT 1`,
+          [user.uid]
+        );
+        isManager = mgr ? 1 : 0;
+      } catch { /* ignore */ }
       return ok({
         uid: user.uid,
         nickname: user.nickname || '',
         avatar: user.avatar || '',
         is_staff: Number(user.is_staff || 0),
+        is_manager: isManager,
         division_id: Number(user.division_id || 0)
       });
     } catch (error) {

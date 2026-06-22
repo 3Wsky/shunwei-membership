@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "个人中心",
+  "enablePullDownRefresh": true,
+  "navigationStyle": "custom",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "page-footer": "/components/pageFooter/index",
+    "edit-user-modal": "/components/eidtUserModal/index",
+    "jc-member-panel": "/components/jc-member-panel/index",
+    "jc-cash-voucher-num": "/components/jc-cash-voucher-num/index",
+    "jc-auth-sync": "/components/jc-auth-sync/index"
+  }
+}

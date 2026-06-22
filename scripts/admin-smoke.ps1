@@ -69,6 +69,8 @@ Test-Endpoint '/api/admin/merchant/list?page=1' $sess
 Write-Host "`n=== Admin-R3 ===" -ForegroundColor Cyan
 Test-Endpoint '/api/admin/audit-logs?page=1' $sess
 Test-Endpoint '/api/admin/integral-mall/products?page=1' $sess
+Test-Endpoint '/api/admin/integral-mall/orders?page=1' $sess
+Test-Endpoint '/api/admin/config/miniapp-entries' $sess
 Test-Endpoint '/api/admin/members/batch-grant/template' $sess
 
 Write-Host "`n=== Finance ===" -ForegroundColor Cyan
@@ -77,6 +79,9 @@ Test-Endpoint '/api/admin/finance/cash-voucher-ledger?page=1' $sess
 Test-Endpoint '/api/admin/finance/integral-ledger?page=1' $sess
 Test-Endpoint '/api/admin/finance/recharge/list?page=1' $sess
 Test-Endpoint '/api/admin/finance/settlement/list' $sess
+
+Write-Host "`n=== Miniapp ===" -ForegroundColor Cyan
+Test-Endpoint '/api/miniapp/entry-config' $null @(200)
 
 Write-Host "`n=== Public API (401 expected) ===" -ForegroundColor Cyan
 Test-Endpoint '/api/membership/plans' $null @(200)

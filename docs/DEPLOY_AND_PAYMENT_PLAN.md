@@ -38,19 +38,36 @@
 
 ## 二、生产部署 Runbook
 
-### 架构
+### 架构（2026-06-20 业务方确认）
+
+> **CRMEB 后端架构不变**；在同一站点目录下**并列增加** FZLSaas 后台与 shunwei-api 旁路服务。
+
 ```
-小程序(shunwei-app-v2 编译产物) ──→ 微信审核发布
-        │ 业务接口
-        ▼
-shunwei-api(Node20+Fastify) ── 部署到生产服务器(PM2) ── Nginx 反代
-        │
-        ▼
-生产 MySQL so1988_shunwei(已有1770用户) ── 跑 sw_* 迁移
-        │ 登录/支付
-        ▼
-CRMEB 生产 ok.xjshunwei.cn(微信网关)
+生产服务器（示例：宝塔站点 ok.xjshunwei.cn）
+/www/wwwroot/ok.xjshunwei.cn/
+├── crmeb/                 # 【保持不动】现有 CRMEB v5.6.4 PHP 后端
+├── shunwei-api/           # 【新增】Node 旁路 API（PM2 :8787）
+└── fzlsaas-admin/         # 【新增】Vue3 管理后台 build 产物（dist/）
 ```
+
+**职责划分**
+
+| 组件 | 路径/端口 | 职责 | 变更策略 |
+|------|-----------|------|----------|
+| CRMEB PHP | `crmeb/` · 现有 Nginx 规则 | 微信登录 code2session、微信支付下单/回调、老后台 | **不改动架构** |
+| shunwei-api | `shunwei-api/` · PM2 `:8787` | 会员/积分/现金券/审批/核销/新业务 Admin API | 新增旁路 |
+| fzlsaas-admin | `fzlsaas-admin/dist/` | 新运营后台 SPA（超管/店长/店员/商家） | 同目录新增 |
+
+**Nginx 路由建议（同主域，免额外合法域名）**
+
+| 路径 | 反代目标 | 说明 |
+|------|----------|------|
+| `/` | CRMEB 现有规则 | 不变 |
+| `/sw-api/` | `http://127.0.0.1:8787/` | 小程序 `SHUNWEI_API` |
+| `/fzlsaas/` | `fzlsaas-admin/dist/` 静态 | 新后台入口，如 `https://ok.xjshunwei.cn/fzlsaas/` |
+| CRMEB 旧 `/admin` | 仍走 CRMEB | 与新 FZLSaas **并存**，逐步切换运营习惯 |
+
+小程序 prod 配置示例：`SHUNWEI_API: 'https://ok.xjshunwei.cn/sw-api'`
 
 ### 步骤
 **0. 前置（不可跳过）**
@@ -127,17 +144,60 @@ server {
 ```
 - [ ] 或复用主域路径前缀（小程序 `SHUNWEI_API` 填 `https://ok.xjshunwei.cn/sw-api`）：
 ```nginx
+# ── 同站点并列部署（2026-06-20 业务方确认）────────────────────────
+# 追加到 ok.xjshunwei.cn 现有 server {} 块，CRMEB 原有 location 不动
+
+# shunwei-api 旁路（小程序 + FZLSaas 后台 API）
 location /sw-api/ {
     proxy_pass http://127.0.0.1:8787/;
+    proxy_http_version 1.1;
     proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
 }
+
+# FZLSaas 新运营后台 SPA（Hash 路由，静态资源走子路径）
+location /fzlsaas/ {
+    alias /www/wwwroot/ok.xjshunwei.cn/fzlsaas-admin/dist/;
+    index index.html;
+    try_files $uri $uri/ /fzlsaas/index.html;
+}
+# 兼容无尾斜杠访问 → 重定向到 /fzlsaas/
+location = /fzlsaas {
+    return 301 /fzlsaas/;
+}
 ```
-- [ ] 部署 **fzlsaas-admin**（静态 dist）：
+
+> **注意**：FZLSaas 前端 API 请求在生产环境须走 `/sw-api` 前缀（见下方 2.5），否则 `/admin/login`、`/api/admin/*` 会误打到 CRMEB。
+
+- [ ] 部署 **fzlsaas-admin**（与 CRMEB **同站点目录**，不改动 CRMEB）：
 ```bash
 cd fzlsaas-admin && npm ci && npm run build
-# 将 dist/ 挂到 Nginx，如 https://admin.xjshunwei.cn 或 /admin-spa/
+# 将 dist/ 上传到 /www/wwwroot/ok.xjshunwei.cn/fzlsaas-admin/dist/
+# Nginx 挂载路径前缀 /fzlsaas/ → 上述 dist 目录
+# 入口：https://ok.xjshunwei.cn/fzlsaas/
 ```
+
+**2.5 fzlsaas-admin 子路径改造（开发侧，上线 1.7 前置）**
+
+| # | 文件 | 改动 | 原因 |
+|---|------|------|------|
+| 1 | `vite.config.ts` | `base: '/fzlsaas/'`（生产 build） | 静态资源 `/assets/*` 须带前缀，否则 404 |
+| 2 | `.env.production` | `VITE_API_BASE=/sw-api` | 登录 `/admin/*` 与业务 `/api/admin/*` 走 shunwei-api |
+| 3 | `src/utils/request.ts` | `baseURL: import.meta.env.VITE_API_BASE \|\| ''` | 本地 dev 仍走 vite proxy（空 base） |
+| 4 | `src/router/index.ts` | 保持 `createWebHashHistory()` 即可 | Hash 路由无需改 path；URL 形如 `/fzlsaas/#/dashboard` |
+
+**子路径部署验收（运维 build 后逐项 curl/浏览器）**
+
+| # | 检查项 | 命令/操作 | 预期 |
+|---|--------|-----------|------|
+| A | 静态入口 | 浏览器打开 `https://ok.xjshunwei.cn/fzlsaas/` | 登录页正常，无白屏 |
+| B | JS/CSS | DevTools Network 看 `*.js` / `*.css` | 路径以 `/fzlsaas/assets/` 开头，全部 200 |
+| C | API 健康 | `curl https://ok.xjshunwei.cn/sw-api/health` | JSON 200 |
+| D | 后台登录 | 登录页输入超管账号 | POST `/sw-api/admin/login` 200，跳转看板 |
+| E | 看板数据 | 登录后看板页 | GET `/sw-api/api/admin/dashboard/summary` 200 |
+| F | CRMEB 不受影响 | 访问 `https://ok.xjshunwei.cn/` 与旧 `/admin` | 原有 CRMEB 页面正常 |
 
 **3. 小程序指向生产**
 - [ ] `shunwei-app-v2/config/index.js` 的 `prod.SHUNWEI_API` 改为生产 shunwei-api 地址（HTTPS 合法域名）
@@ -151,7 +211,7 @@ cd fzlsaas-admin && npm ci && npm run build
 ### 需要你提供
 1. **服务器访问**（SSH / 宝塔）— 部署 shunwei-api（Agent 无服务器权，需你或运维执行，Agent 可给全部命令）
 2. **微信支付凭证**（见上：APIv3密钥 + 证书 + 序列号）
-3. **shunwei-api 生产域名**（建议独立子域 + HTTPS 证书）
+3. **shunwei-api 生产地址**（已确认同主域 `/sw-api/`，无需额外子域 SSL）
 4. 生产 `crmeb/.env` 的 **APP_KEY**（小程序 JWT 校验需与生产一致）
 
 **APP_KEY 核对（上线前必做）**

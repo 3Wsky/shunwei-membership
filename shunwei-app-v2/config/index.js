@@ -18,8 +18,7 @@ const CONFIG = {
     },
     prod: {
         CRMEB_GATEWAY: 'https://ok.xjshunwei.cn',
-        // TODO: 上线前改为生产 shunwei-api 地址（HTTPS 合法域名 / 反代路径）
-        SHUNWEI_API: 'https://ok.xjshunwei.cn'
+        SHUNWEI_API: 'https://ok.xjshunwei.cn/sw-api'
     }
 }
 

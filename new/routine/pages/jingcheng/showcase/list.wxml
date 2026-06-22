@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="tip">展示商品 · 与 Admin 商品管理同源 · 到店咨询</view>
+  <view wx:if="{{list.length}}" class="grid">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="card"
+      data-id="{{item.id}}"
+      bindtap="openDetail"
+    >
+      <image wx:if="{{item.displayCover}}" class="cover" src="{{item.displayCover}}" mode="aspectFill" />
+      <view wx:else class="cover placeholder">商品</view>
+      <view class="name">{{item.displayTitle}}</view>
+      <view class="price">{{item.displayPrice}}</view>
+    </view>
+  </view>
+  <view wx:elif="{{!loading}}" class="empty">
+    <text>暂无展示商品</text>
+    <button class="link-btn" bindtap="openMall">去积分商城看看</button>
+  </view>
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+</view>

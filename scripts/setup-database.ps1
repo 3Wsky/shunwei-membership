@@ -9,7 +9,7 @@ param(
     [Alias("MySqlPassword")]
     [string]$DbPassword = "root",
     [string]$Database = "so1988_shunwei",
-    [string]$SqlFile = "F:\shunweiapp\Data\so1988_shunwei_2026-06-19_mysql_data_kXB9h.sql"
+    [string]$SqlFile = (Join-Path (Split-Path $PSScriptRoot -Parent) "Data\so1988_shunwei_2026-06-19_mysql_data_kXB9h.sql")
 )
 
 $ErrorActionPreference = "Stop"
@@ -24,10 +24,11 @@ if (-not (Test-Path $SqlFile)) {
 
 Write-Host "Create database: $Database" -ForegroundColor Yellow
 $createSql = "CREATE DATABASE IF NOT EXISTS ``$Database`` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-& $MySqlBin -h $DbHost -P $DbPort -u $DbUser -p"$DbPassword" -e $createSql
+& $MySqlBin --default-character-set=utf8mb4 -h $DbHost -P $DbPort -u $DbUser -p"$DbPassword" -e $createSql
 
 Write-Host "Import SQL (~12MB, 1-3 min)..." -ForegroundColor Yellow
-Get-Content -Raw -Encoding UTF8 $SqlFile | & $MySqlBin -h $DbHost -P $DbPort -u $DbUser -p"$DbPassword" $Database
+Write-Host "Tip: must use utf8mb4 or Chinese nicknames become ??? on Windows" -ForegroundColor DarkGray
+Get-Content -Raw -Encoding UTF8 $SqlFile | & $MySqlBin --default-character-set=utf8mb4 -h $DbHost -P $DbPort -u $DbUser -p"$DbPassword" $Database
 if ($LASTEXITCODE -ne 0) {
     Write-Error "SQL import failed. Check password and MySQL service."
 }

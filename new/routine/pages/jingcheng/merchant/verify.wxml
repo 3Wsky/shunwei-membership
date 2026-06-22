@@ -1,0 +1,10 @@
+<view class="page">
+  <view class="scan-card" bindtap="scanCustomer"><view class="icon">⌗</view><text>扫描顾客现金券码</text><label>支持 sw-uid 顾客二维码</label></view>
+  <view class="form">
+    <view class="field"><label>顾客UID</label><input type="number" value="{{customerUid}}" bindinput="onUidInput" placeholder="扫码后自动填入，也可手动输入"/></view>
+    <view class="field"><label>核销金额（元）</label><input type="digit" value="{{amount}}" bindinput="onAmountInput" placeholder="请输入本次核销金额"/></view>
+    <view class="field"><label>核销备注</label><input value="{{remark}}" bindinput="onRemarkInput" maxlength="200" placeholder="选填"/></view>
+    <button class="submit" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">确认核销</button>
+  </view>
+  <view class="tip">核销成功后金额将计入商家可提现余额，店长可在商家工作台查看。</view>
+</view>

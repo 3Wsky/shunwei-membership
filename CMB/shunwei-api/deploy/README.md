@@ -95,7 +95,11 @@ curl http://127.0.0.1:8787/health
 
 ## 7. Nginx
 
-Copy `deploy/nginx-shunwei-api.conf.example` and replace:
+**Production (ok.xjshunwei.cn, same site as CRMEB)** — append to the existing CRMEB `server {}` block:
+
+- `deploy/nginx-ok-xjshunwei-same-site.conf.example` — `/sw-api/` proxy + `/fzlsaas/` SPA alias
+
+**Standalone subdomain** — copy `deploy/nginx-shunwei-api.conf.example` and replace:
 
 - `api.example.com`
 - SSL certificate paths
