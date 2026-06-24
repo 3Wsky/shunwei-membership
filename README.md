@@ -5,12 +5,16 @@
 ## 项目结构
 
 ```
-├── shunwei-app-v2/     # 小程序（uni-app Vue3 + Pinia）— 当前主小程序
-├── CMB/shunwei-api/    # 业务后端（Node.js + Fastify）
-├── fzlsaas-admin/      # 管理后台（Vue3 + Vite + Element Plus）
+├── new/routine/        # 小程序（原生微信）— ★ 当前生产小程序（2026-06-23 起上线）
+├── CMB/shunwei-api/    # 业务后端（Node.js + Fastify）— routine 全部接口对接它
+├── fzlsaas-admin/      # 管理后台（Vue3 + Vite + Element Plus）— 业务完整版
 ├── docs/               # 产品文档（PRD / 技术方案 / 部署 / 进度）
-└── scripts/            # 本地开发辅助脚本
+├── scripts/            # 本地开发辅助脚本
+└── _archive/           # 已封存（半成品/仅供后期对比）
+    └── shunwei-app-v2/ # VUE3(uni-app) 版小程序 — 半成品，已被 new/routine 取代
 ```
+
+> ⚠️ **生产主体是 `new/routine`**（原生微信小程序）。原 `shunwei-app-v2`（VUE3）改造未完成，已封存至 `_archive/`，**请勿在其上继续开发**。详见 `_archive/README.md` 与 `docs/PROGRESS_AND_LAUNCH_CHECKLIST.md` 顶部「🧭 仓库状态快照」。
 
 ## 技术栈
 
@@ -68,9 +72,10 @@ npm install
 npm run dev            # http://localhost:3000，代理到 :8787
 ```
 
-### 小程序
+### 小程序（生产：`new/routine`）
 
-HBuilderX 打开 `shunwei-app-v2`，运行到微信开发者工具。登录/支付需真机预览。
+微信开发者工具打开 `new/routine`（原生微信小程序）。登录/支付需真机预览。
+> 旧 VUE3 版 `_archive/shunwei-app-v2/`（HBuilderX uni-app）已封存，不再维护。
 
 ## 文档索引
 
