@@ -78,13 +78,14 @@ jobs:
       - name: Deploy on server
         shell: bash
         run: |
+          # 兼容旧 secret 名 SERVER_PATH，新名 SERVER_API_PATH 优先
           ssh -i ~/.ssh/deploy_key -p "${{ secrets.SERVER_PORT || 22 }}" \
             "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
-            "SERVER_PATH='${{ secrets.SERVER_API_PATH }}' bash -s" <<'EOF'
+            "SERVER_PATH='${{ secrets.SERVER_API_PATH || secrets.SERVER_PATH }}' bash -s" <<'EOF'
           set -euo pipefail
 
           if [ -z "${SERVER_PATH:-}" ]; then
-            echo "SERVER_API_PATH secret is required"
+            echo "SERVER_API_PATH (或旧 SERVER_PATH) secret is required"
             exit 1
           fi
           case "$SERVER_PATH" in
@@ -167,18 +168,25 @@ jobs:
       - name: Deploy dist on server
         shell: bash
         run: |
+          # DIST_PATH 优先用 SERVER_ADMIN_DIST_PATH；否则从后端路径(SERVER_API_PATH/旧 SERVER_PATH)的父目录推导出 fzlsaas-admin/dist
           ssh -i ~/.ssh/deploy_key -p "${{ secrets.SERVER_PORT || 22 }}" \
             "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
-            "DIST_PATH='${{ secrets.SERVER_ADMIN_DIST_PATH }}' bash -s" <<'EOF'
+            "DIST_PATH='${{ secrets.SERVER_ADMIN_DIST_PATH }}' API_PATH='${{ secrets.SERVER_API_PATH || secrets.SERVER_PATH }}' bash -s" <<'EOF'
           set -euo pipefail
 
           if [ -z "${DIST_PATH:-}" ]; then
-            echo "SERVER_ADMIN_DIST_PATH secret is required (e.g. /www/wwwroot/our/fzlsaas-admin/dist)"
-            exit 1
+            if [ -n "${API_PATH:-}" ]; then
+              parent="$(dirname "${API_PATH%/}")"
+              DIST_PATH="$parent/fzlsaas-admin/dist"
+              echo "SERVER_ADMIN_DIST_PATH 未设置，自动推导为 $DIST_PATH"
+            else
+              echo "需要 SERVER_ADMIN_DIST_PATH 或 SERVER_API_PATH(用于推导)"
+              exit 1
+            fi
           fi
           case "$DIST_PATH" in
             */dist|*/dist/) ;;
-            *) echo "SERVER_ADMIN_DIST_PATH must end with dist"; exit 1 ;;
+            *) echo "dist 路径必须以 dist 结尾：$DIST_PATH"; exit 1 ;;
           esac
 
           mkdir -p "$DIST_PATH"

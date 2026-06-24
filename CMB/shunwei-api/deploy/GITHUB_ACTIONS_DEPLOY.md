@@ -23,14 +23,17 @@
 
 仓库 `Settings → Secrets and variables → Actions → New repository secret`：
 
-| Secret | 说明 | 示例 |
-| --- | --- | --- |
-| `SERVER_HOST` | 服务器 IP 或域名 | `123.45.67.89` |
-| `SERVER_PORT` | SSH 端口（默认 22 可不填） | `22` |
-| `SERVER_USER` | SSH 登录用户 | `root` |
-| `SERVER_SSH_KEY` | SSH **私钥**全文（含 BEGIN/END 行） | `-----BEGIN OPENSSH PRIVATE KEY-----\n...` |
-| `SERVER_API_PATH` | 后端部署目录（须以 `shunwei-api` 结尾） | `/www/wwwroot/our/shunwei-api` |
-| `SERVER_ADMIN_DIST_PATH` | 后台 dist 目录（须以 `dist` 结尾） | `/www/wwwroot/our/fzlsaas-admin/dist` |
+| Secret | 必需 | 说明 | 示例 |
+| --- | :--: | --- | --- |
+| `SERVER_HOST` | ✅ | 服务器 IP 或域名 | `123.45.67.89` |
+| `SERVER_PORT` | 可选 | SSH 端口（默认 22 可不填） | `22` |
+| `SERVER_USER` | ✅ | SSH 登录用户 | `root` |
+| `SERVER_SSH_KEY` | ✅ | SSH **私钥**全文（含 BEGIN/END 行） | `-----BEGIN OPENSSH PRIVATE KEY-----\n...` |
+| `SERVER_API_PATH` | ✅* | 后端部署目录（须以 `shunwei-api` 结尾） | `/www/wwwroot/our/shunwei-api` |
+| `SERVER_ADMIN_DIST_PATH` | 可选 | 后台 dist 目录（须以 `dist` 结尾）；**不填则自动推导**为 `<API父目录>/fzlsaas-admin/dist` | `/www/wwwroot/our/fzlsaas-admin/dist` |
+
+> **兼容旧配置**：若你之前已配过旧 secret `SERVER_PATH`（指向后端目录），无需改名——工作流会优先用 `SERVER_API_PATH`，没有则回退 `SERVER_PATH`。
+> *：`SERVER_API_PATH` 和旧 `SERVER_PATH` 至少要有一个。`SERVER_ADMIN_DIST_PATH` 不填时，会基于后端路径的父目录自动推导出 admin dist 路径（本项目布局即 `/www/wwwroot/our/` 下并列）。
 
 > 服务器目录约定见 `nginx-ok-xjshunwei-same-site.conf.example`：
 > - 后端 `/www/wwwroot/our/shunwei-api/`（PM2 :8787）
