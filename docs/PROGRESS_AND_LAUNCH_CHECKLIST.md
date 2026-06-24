@@ -1,7 +1,49 @@
 # 顺为会员系统 — 进度总览 & 上线清单
 
 > 开发方：FZLSaas · 反重力人工智能工作室  
-> 更新：2026-06-21（产品经理 · 进度同步）
+> 更新：2026-06-24（资深全栈架构师 · 线上/本地差异核对 + 仓库状态同步）
+
+---
+
+## 🧭 仓库状态快照（2026-06-24，务必先读，避免脏改动）
+
+> 本节为「线上 GitHub 仓库 ↔ 本地」差异 + 仓库当前状态的权威记录。**任何人继续开发前先读这一段**，否则极易误判线上已是最新而丢掉本地真实工作、或把没接线的半成品提交进主干造成混乱。
+
+### A. 当前真实上线主体：`new/routine`（原生微信小程序），不是 `shunwei-app-v2`
+
+- 紧急上线走的是 **`new/routine`**（锦程 jingcheng 原生微信小程序，1106+ 文件）。
+- VUE3 版 `shunwei-app-v2` 的改造**尚未完成**，为赶上线临时改用了 `new/routine`。
+- **关键事实**：`new/routine` **只存在于本地** `main`（已提交在 `9c849b2` 内），==线上 `origin/main` 完全没有 `new/` 目录==。即「线上是最新」仅对 Admin/`shunwei-app-v2` 的 devin PR 成立，对真正上线的 routine 小程序**不成立**——直接信"线上最新"去覆盖会丢掉整个 routine。
+
+### B. 线上 ↔ 本地 提交分叉（已 `git fetch`，二者非快进关系）
+
+> 共同祖先 `3437191`（Initial commit）后，两条线各自前进。
+
+| 方向 | 领先数 | 内容 |
+|---|:--:|---|
+| **`origin/main` 领先本地** | **13 commit**（6 个 devin/3Wsky PR） | ① UI redesign→专业 SaaS + 小程序商品列表抛光 ② dashboard 零值/新客卡修复 ③ Admin 全表空状态 `TableEmpty` + 自动生成 `components.d.ts` ④ 小程序 CountUp 数字滚动 ⑤ 核销码缩放弹出+卡片淡入动效 + `beforeUnmount` 清理 ⑥ Admin 真实 CSV 导出（会员/商品/积分/财务四页）|
+| **本地 `main` 领先 origin** | **2 commit** | ① `3b23f83` Admin 政企轻奢/大厂风 UI 重设计 ② `9c849b2` 商家门店照片+地址 / 商品增强 / AI 礼包 / miniapp v2 / **+ 整个 `new/routine` 小程序** |
+
+> 线上 13 commit 与本地 2 commit 改了**同一批** Admin/`shunwei-app-v2` 文件 → 合并必冲突（14 文件 / 26 冲突块，详见本会话 KC 记录）。
+
+### C. 仓库当前状态：已退出 rebase，干净停在 `9c849b2`
+
+- 2026-06-24 一次 `git pull --rebase origin main` 曾导致 rebase 中断（14 冲突）；本会话已 `git rebase --abort` **安全退回干净态 `9c849b2`**（保留本地 2 commit + 全部 `new/routine`，无丢失）。
+- 当前 `git status`：仅 14 个 untracked 文件 + 2 个子模块指针变更，**无冲突、无 rebase 中断**。
+- 与 origin 的合并尚未做（仍落后 13 / 领先 2）。**注意**：`git push` 会被拒（非快进）；==严禁强推 main==（会删掉 origin 上 13 个 devin PR）；如需上云建议推到新分支再发 PR。当前 github.com 网络不通，推送须等恢复。
+
+### D. ⚠️ 未提交的 14 个文件 = 「没接线的半成品下一迭代」（用户决策：暂保持不动）
+
+> 2026-06-24 核实：这批是"新版商家中心 + token 核销升级"，**做了一半、尚未接进小程序**。==当前不要提交进主干==（会引入死代码/报错页面）。`9c849b2` 里 routine 已是自洽可用的 **UID 核销流**（钱包出码 `sw-uid:` ↔ 核销页扫码 ↔ 后端 `verify-voucher` 收 `customerUid`）。
+
+| 未提交文件 | 性质 |
+|---|---|
+| `cash-voucher/verify-token.service.js` | token 出码服务；后端接线已随 abort 还原 → 当前**无人调用** |
+| `migrations/admin-r7/{001_sw_verify_token,002_sw_merchant_staff_suspend}.sql`、`mvp2/004_approval_receipt_no_length.sql` | 配套迁移，功能未接通 |
+| `new/routine/pages/jingcheng/merchant/{records,staff,withdraw}/` | 新版商家管理页，==app.json 未注册、无任何页面跳转引用==；staff 页依赖的 `/api/merchant/staff`+`/suspend` 后端已还原 |
+| `new/routine/pages/jingcheng/wallet/merchant-detail.*`、`pages/users/staff_bind_manual/`、`services/jc-bind.js`、`static/images/jc-share-coupon.jpg` | 同样未注册/未引用的孤立文件 |
+
+> 处置（用户 2026-06-24 选 A）：**保留在工作区不动**，待确认是否要做"新版商家中心+token核销"再补全接线后单独提交/发分支。
 
 ---
 
@@ -118,7 +160,7 @@ membership · integral · integral-mall · products · cash-voucher · merchant 
 | 1 | **材料 A–F** | 服务器 / APP_KEY / 支付 / 域名 / 微信后台 / 测试账号 — **当前唯一硬阻塞** |
 | 2 | **真机登录验证** | 模拟器无法完成微信授权，必须体验版 + 真机 |
 | 3 | **微信合法域名** | 添加 `https://ok.xjshunwei.cn` |
-| 4 | **git pull** | 本地落后 origin 7 commit，合并前见 §3.2 风险评估 |
+| 4 | **git 同步/合并** | 本地落后 origin **13 commit**、领先 2 commit（已退出 rebase 干净停在 `9c849b2`）。**先读顶部「🧭 仓库状态快照」**；勿强推 main |
 | 5 | **购物车 Tab** | PM 建议 MVP 隐藏，**待你确认**后改 `pages.json` |
 | 6 | **抽奖素材**（可选）| 无素材则代码自绘 |
 
@@ -214,9 +256,12 @@ membership · integral · integral-mall · products · cash-voucher · merchant 
 | # | 事项 | 负责人 | 操作要点 | 验收标准 | 状态 |
 |---|------|--------|----------|----------|:----:|
 | 3.1 | 切换 prod 配置 | 💻 | `shunwei-app-v2/config/index.js`：`ENV='prod'`，`SHUNWEI_API` 改为生产 HTTPS 地址 | 编译产物不含 `127.0.0.1` | ☐ |
-| 3.2 | git 同步 remote | 💻 | `git pull origin main`（当前本地落后 **7 commit**） | 无冲突，build 通过 | ☐ |
+| 3.2 | git 同步 remote | 💻 | 见顶部「🧭 仓库状态快照」§B/§C；本地落后 origin **13 commit**、领先 2 commit | 无冲突，build 通过 | ⏳ 待合并 |
 
-> **3.2 同步风险评估**（PM 2026-06-20）：remote 7 commit 主要为 Admin UI 改版（空状态/看板/TableEmpty）+ 小程序商品列表抛光，与本地 `fzlsaas-admin/`、`shunwei-app-v2/pages/products/` 均有改动，**合并冲突概率高**。建议：`git stash` → `git pull` → `git stash pop` → 逐文件解决 → 双端 `npm run build` 验证。
+> **3.2 同步风险评估**（更新 2026-06-24，资深全栈架构师）：实际为 **13 commit**（6 个 devin/3Wsky PR：UI redesign / dashboard 修复 / 空状态 / CountUp / 动效 / CSV 导出），与本地 2 commit 改了同一批 `fzlsaas-admin/`、`shunwei-app-v2/pages/` 文件 → 14 个冲突文件。
+> - 真实上线主体是 `new/routine`（仅本地，origin 无），origin 13 commit 多为 Admin/`shunwei-app-v2` 优化，与 routine 上线不强相关，可后置合并。
+> - 用户指示「小程序端改动都不要变」→ `shunwei-app-v2` 的 3 个小程序冲突不应改小程序解决。
+> - **禁止强推 main**（会删 origin 13 个 PR）；如需上云推到新分支发 PR；当前 github.com 网络不通。
 | 3.3 | HBuilderX 发行 | 💻 | 发行 → 微信小程序 → 上传 | 微信后台可见新版本 | ☐ |
 | 3.4 | 体验版冒烟（真机） | ✅ + 👤 | 见下方「阶段 4 业务链路表」P0 项 | P0 全绿 | ☐ |
 | 3.5 | UI v2.0 走查 | ✅ + 设计师 | 对照 `MINIAPP_LUXURY_UI_BRIEF.md`；**代码走查 ✅**（见 `MINIAPP_UI_WALKTHROUGH_CHECKLIST.md`）；真机 iOS/Android 待部署后勾选 | 无 P0 视觉/交互缺陷 | ⏳ 代码✅ 真机待验 |
