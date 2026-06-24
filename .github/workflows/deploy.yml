@@ -1,0 +1,188 @@
+name: Deploy (shunwei-api + fzlsaas-admin)
+
+# 推送到 main 自动部署：① 后端 shunwei-api（PM2）② 管理后台 fzlsaas-admin（静态 dist）
+# 也可在 Actions 页面手动 Run workflow。
+#
+# 服务器目录约定（见 CMB/shunwei-api/deploy/nginx-ok-xjshunwei-same-site.conf.example）：
+#   后端:  ${{ secrets.SERVER_API_PATH }}        例如 /www/wwwroot/our/shunwei-api
+#   后台:  ${{ secrets.SERVER_ADMIN_DIST_PATH }} 例如 /www/wwwroot/our/fzlsaas-admin/dist
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'CMB/shunwei-api/**'
+      - 'fzlsaas-admin/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: shunwei-production
+  cancel-in-progress: true
+
+jobs:
+  deploy-api:
+    name: Deploy shunwei-api
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: CMB/shunwei-api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check src/server.js
+          node --check src/modules/admin/admin.routes.js
+          node --check src/modules/approval/approval.service.js
+          node --check src/modules/admin/admin-integral-mall.routes.js
+
+      - name: Prepare SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.SERVER_PORT || 22 }}" "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Package application
+        shell: bash
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='data' \
+            --exclude='.env' \
+            --exclude='*.log' \
+            -czf /tmp/shunwei-api.tar.gz .
+
+      - name: Upload package
+        shell: bash
+        run: |
+          scp -i ~/.ssh/deploy_key -P "${{ secrets.SERVER_PORT || 22 }}" \
+            /tmp/shunwei-api.tar.gz \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/shunwei-api.tar.gz"
+
+      - name: Deploy on server
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.SERVER_PORT || 22 }}" \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "SERVER_PATH='${{ secrets.SERVER_API_PATH }}' bash -s" <<'EOF'
+          set -euo pipefail
+
+          if [ -z "${SERVER_PATH:-}" ]; then
+            echo "SERVER_API_PATH secret is required"
+            exit 1
+          fi
+          case "$SERVER_PATH" in
+            */shunwei-api|*/shunwei-api/) ;;
+            *) echo "SERVER_API_PATH must end with shunwei-api"; exit 1 ;;
+          esac
+
+          mkdir -p "$SERVER_PATH"
+          # 保留 .env 与 data/，其余清空后解包
+          find "$SERVER_PATH" -mindepth 1 -maxdepth 1 \
+            ! -name '.env' \
+            ! -name 'data' \
+            -exec rm -rf -- {} +
+          tar -xzf /tmp/shunwei-api.tar.gz -C "$SERVER_PATH"
+          cd "$SERVER_PATH"
+
+          if [ ! -f .env ]; then
+            echo "Missing production .env in $SERVER_PATH (copy from .env.example first)"
+            exit 1
+          fi
+
+          npm ci --omit=dev
+
+          if command -v pm2 >/dev/null 2>&1; then
+            pm2 describe shunwei-api >/dev/null 2>&1 \
+              && pm2 reload shunwei-api --update-env \
+              || pm2 start ecosystem.config.cjs --env production
+            pm2 save
+          else
+            echo "pm2 is not installed on server"; exit 1
+          fi
+
+          curl -fsS http://127.0.0.1:8787/health >/dev/null
+          echo "shunwei-api deployed & healthy"
+          EOF
+
+  deploy-admin:
+    name: Deploy fzlsaas-admin
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: fzlsaas-admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: fzlsaas-admin/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (production base /fzlsaas/)
+        run: npm run build
+
+      - name: Prepare SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.SERVER_PORT || 22 }}" "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Package dist
+        shell: bash
+        run: tar -czf /tmp/fzlsaas-admin-dist.tar.gz -C dist .
+
+      - name: Upload dist
+        shell: bash
+        run: |
+          scp -i ~/.ssh/deploy_key -P "${{ secrets.SERVER_PORT || 22 }}" \
+            /tmp/fzlsaas-admin-dist.tar.gz \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/fzlsaas-admin-dist.tar.gz"
+
+      - name: Deploy dist on server
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.SERVER_PORT || 22 }}" \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "DIST_PATH='${{ secrets.SERVER_ADMIN_DIST_PATH }}' bash -s" <<'EOF'
+          set -euo pipefail
+
+          if [ -z "${DIST_PATH:-}" ]; then
+            echo "SERVER_ADMIN_DIST_PATH secret is required (e.g. /www/wwwroot/our/fzlsaas-admin/dist)"
+            exit 1
+          fi
+          case "$DIST_PATH" in
+            */dist|*/dist/) ;;
+            *) echo "SERVER_ADMIN_DIST_PATH must end with dist"; exit 1 ;;
+          esac
+
+          mkdir -p "$DIST_PATH"
+          find "$DIST_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+          tar -xzf /tmp/fzlsaas-admin-dist.tar.gz -C "$DIST_PATH"
+          echo "fzlsaas-admin dist deployed to $DIST_PATH"
+          EOF

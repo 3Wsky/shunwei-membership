@@ -1,50 +1,67 @@
-# GitHub Actions 自动部署
+# GitHub Actions 自动部署（后端 + 管理后台）
 
-本项目已配置 `.github/workflows/deploy.yml`。
+工作流位于**仓库根目录** `.github/workflows/deploy.yml`（⚠️ 必须在根目录，GitHub 才会识别；旧版误放在 `CMB/shunwei-api/.github/` 子目录，从未生效，已删除）。
 
-推送到 `main` 后，GitHub Actions 会：
+## 触发条件
 
-1. 安装依赖。
-2. 执行 JS 语法检查。
-3. 运行 `npm test`。
-4. 打包项目代码。
-5. 通过 SSH 上传到服务器。
-6. 在服务器执行 `npm ci --omit=dev`。
-7. 使用 PM2 启动或重载 `shunwei-api`。
-8. 请求 `http://127.0.0.1:8787/health` 做健康检查。
+- 推送到 `main` 分支，且改动涉及 `CMB/shunwei-api/**`、`fzlsaas-admin/**` 或工作流本身。
+- 也可在 GitHub 仓库 `Actions` 页面点 `Run workflow` 手动触发。
 
-## GitHub Secrets
+## 它做了什么（两个并行 job）
 
-在 GitHub 仓库的 `Settings -> Secrets and variables -> Actions` 新增：
+### job 1：`deploy-api`（后端 shunwei-api）
+1. 安装依赖、JS 语法检查。
+2. 打包 `CMB/shunwei-api`（排除 .git/.github/node_modules/data/.env/*.log）。
+3. SCP 上传到服务器 → 解包到 `SERVER_API_PATH`（保留 `.env` 和 `data/`）。
+4. `npm ci --omit=dev` → PM2 reload/start `shunwei-api` → `/health` 健康检查。
 
-| Secret | 说明 |
-| --- | --- |
-| `SERVER_HOST` | 服务器 IP 或域名 |
-| `SERVER_PORT` | SSH 端口，默认可填 `22` |
-| `SERVER_USER` | SSH 登录用户 |
-| `SERVER_SSH_KEY` | SSH 私钥内容 |
-| `SERVER_PATH` | 服务器部署目录，例如 `/www/wwwroot/shunwei-api` |
+### job 2：`deploy-admin`（管理后台 fzlsaas-admin）
+1. `npm ci` → `npm run build`（生产 base `/fzlsaas/`）。
+2. 打包 `dist/` → SCP 上传 → 解包覆盖到 `SERVER_ADMIN_DIST_PATH`。
 
-## 服务器准备
+## 需要在 GitHub 配置的 Secrets
 
-服务器需要先安装：
+仓库 `Settings → Secrets and variables → Actions → New repository secret`：
 
-- Node.js 20 或 22
-- PM2
-- Nginx
+| Secret | 说明 | 示例 |
+| --- | --- | --- |
+| `SERVER_HOST` | 服务器 IP 或域名 | `123.45.67.89` |
+| `SERVER_PORT` | SSH 端口（默认 22 可不填） | `22` |
+| `SERVER_USER` | SSH 登录用户 | `root` |
+| `SERVER_SSH_KEY` | SSH **私钥**全文（含 BEGIN/END 行） | `-----BEGIN OPENSSH PRIVATE KEY-----\n...` |
+| `SERVER_API_PATH` | 后端部署目录（须以 `shunwei-api` 结尾） | `/www/wwwroot/our/shunwei-api` |
+| `SERVER_ADMIN_DIST_PATH` | 后台 dist 目录（须以 `dist` 结尾） | `/www/wwwroot/our/fzlsaas-admin/dist` |
 
-首次部署前，服务器上要先准备生产环境变量：
+> 服务器目录约定见 `nginx-ok-xjshunwei-same-site.conf.example`：
+> - 后端 `/www/wwwroot/our/shunwei-api/`（PM2 :8787）
+> - 后台 `/www/wwwroot/our/fzlsaas-admin/dist/`（Nginx `/fzlsaas/`）
+
+## 服务器一次性准备
 
 ```bash
-mkdir -p /www/wwwroot/shunwei-api
-cd /www/wwwroot/shunwei-api
-cp .env.example .env
+# Node 20/22 + PM2 + Nginx 已装
+mkdir -p /www/wwwroot/our/shunwei-api
+cd /www/wwwroot/our/shunwei-api
+cp .env.example .env   # 填生产 CRMEB 库、ADMIN_PASSWORD、ADMIN_SESSION_SECRET 等
+# admin dist 目录
+mkdir -p /www/wwwroot/our/fzlsaas-admin/dist
 ```
 
-编辑 `.env`，填入正式的管理员密码、CRMEB 数据库配置、`ADMIN_SESSION_SECRET` 等。
+> 自动部署**不会**覆盖服务器上的 `.env` 和 `data/`（生产密钥/抽奖数据安全）。
 
-注意：自动部署不会覆盖服务器上的 `.env` 和 `data/`，避免生产密钥和抽奖数据被本地文件覆盖。
+## 生成部署用 SSH key（在服务器执行）
 
-## 手动触发
+```bash
+ssh-keygen -t ed25519 -C "gh-actions-deploy" -f ~/.ssh/gh_deploy -N ""
+cat ~/.ssh/gh_deploy.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+cat ~/.ssh/gh_deploy            # 复制【私钥】全文 → 填到 GitHub Secret SERVER_SSH_KEY
+```
 
-除了 push `main` 自动部署，也可以在 GitHub Actions 页面点击 `Run workflow` 手动触发。
+## 验证
+
+```bash
+curl https://ok.xjshunwei.cn/sw-api/health           # 后端 200
+curl -I https://ok.xjshunwei.cn/fzlsaas/             # 后台首页 200
+# 浏览器打开 https://ok.xjshunwei.cn/fzlsaas/ 看审批管理是否显示提交人/审批人姓名
+```
