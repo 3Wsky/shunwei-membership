@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "核销员管理",
+  "navigationBarBackgroundColor": "#F7FBFF",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "jc-auth-sync": "/components/jc-auth-sync/index"
+  }
+}

@@ -1,10 +1,78 @@
 <view class="page">
-  <view class="scan-card" bindtap="scanCustomer"><view class="icon">⌗</view><text>扫描顾客现金券码</text><label>支持 sw-uid 顾客二维码</label></view>
-  <view class="form">
-    <view class="field"><label>顾客UID</label><input type="number" value="{{customerUid}}" bindinput="onUidInput" placeholder="扫码后自动填入，也可手动输入"/></view>
-    <view class="field"><label>核销金额（元）</label><input type="digit" value="{{amount}}" bindinput="onAmountInput" placeholder="请输入本次核销金额"/></view>
-    <view class="field"><label>核销备注</label><input value="{{remark}}" bindinput="onRemarkInput" maxlength="200" placeholder="选填"/></view>
-    <button class="submit" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">确认核销</button>
+  <jc-auth-sync></jc-auth-sync>
+
+  <view class="hero">
+    <image class="hero-bg" src="/pages/jingcheng/static/images/jc-merchant-verify-bg.jpg" mode="aspectFill"/>
+    <view class="hero-body">
+      <view class="hero-badge"><text class="iconfont icon-hexiaoma"></text> 现金券核销</view>
+      <view class="hero-title">扫描顾客付款码</view>
+      <view class="hero-desc">请让顾客打开现金券钱包，出示付款码</view>
+      <view class="scan-btn {{scanning ? 'disabled' : ''}}" bindtap="scanCustomer">
+        <text class="iconfont icon-hexiaoma"></text> 扫一扫
+      </view>
+    </view>
   </view>
-  <view class="tip">核销成功后金额将计入商家可提现余额，店长可在商家工作台查看。</view>
+
+  <view class="data-card">
+    <view class="dc-head">
+      <view>
+        <view class="dc-kicker">我的今日核销</view>
+        <view class="dc-title">当前核销员数据</view>
+      </view>
+      <view class="dc-tag"><text class="iconfont icon-yonghu"></text> 个人</view>
+    </view>
+    <view class="dc-body">
+      <view class="dc-cell">
+        <view class="dc-label">今日金额</view>
+        <view class="dc-value">￥{{todayAmount}}</view>
+      </view>
+      <view class="dc-cell">
+        <view class="dc-label">核销次数</view>
+        <view class="dc-value dark">{{todayCount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <text>今日核销明细</text>
+    <view class="section-badge">{{todayRecords.length}}条</view>
+  </view>
+  <view wx:if="{{todayRecords.length}}" class="record-list">
+    <view wx:for="{{todayRecords}}" wx:key="id" class="record-row">
+      <view class="record-icon"><text class="iconfont icon-yonghu"></text></view>
+      <view class="record-left">
+        <view class="record-name">{{item.customerNickname || ('UID ' + item.customerUid)}}</view>
+        <view class="record-meta">{{item.timeText}}{{item.remark ? ' · ' + item.remark : ''}}</view>
+      </view>
+      <view class="record-amount">-￥{{item.amount}}</view>
+    </view>
+  </view>
+  <view wx:else class="empty-card">
+    <view class="empty-icon"><text class="iconfont icon-hexiaoma"></text></view>
+    <view>今日暂无核销明细</view>
+  </view>
+
+  <view class="summary-card">
+    <view class="summary-head" bindtap="toggleSummary">
+      <view class="sh-left"><text class="iconfont icon-xiaofeijilu1"></text> 日 / 周 / 月汇总</view>
+      <view class="sh-right">{{showSummary ? '收起' : '展开'}} {{showSummary ? '⌃' : '⌄'}}</view>
+    </view>
+    <view wx:if="{{showSummary}}" class="summary-body">
+      <view class="summary-cell">
+        <view class="sc-label">日汇总</view>
+        <view class="sc-value">￥{{todayAmount}}</view>
+        <view class="sc-desc">{{todayCount}} 次</view>
+      </view>
+      <view class="summary-cell">
+        <view class="sc-label">周汇总</view>
+        <view class="sc-value">￥{{weekAmount}}</view>
+        <view class="sc-desc">{{weekCount}} 次</view>
+      </view>
+      <view class="summary-cell">
+        <view class="sc-label">月汇总</view>
+        <view class="sc-value">￥{{monthAmount}}</view>
+        <view class="sc-desc">{{monthCount}} 次</view>
+      </view>
+    </view>
+  </view>
 </view>

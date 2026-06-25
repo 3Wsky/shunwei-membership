@@ -1,0 +1,87 @@
+<view class="manager-page">
+  <view wx:if="{{loading}}" class="state-card">
+    <view class="state-icon loading-dot"></view>
+    <view class="state-title">正在加载客户经理</view>
+  </view>
+
+  <view wx:elif="{{bound && hasCard}}" class="manager-card">
+    <view class="manager-hero">
+      <view class="manager-mark"><text class="iconfont icon-kehu"></text></view>
+      <image class="manager-avatar" src="{{card.avatar}}" mode="aspectFill"></image>
+      <view class="manager-main">
+        <view class="manager-name">{{card.displayName}}</view>
+        <view class="manager-role">{{card.jobTitle}}</view>
+        <view class="manager-uid">UID {{card.staffUid || spreadUid}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{card.bio}}" class="manager-bio">{{card.bio}}</view>
+
+    <view class="info-list">
+      <view wx:if="{{card.storeName}}" class="info-row">
+        <text class="iconfont icon-dianpu info-icon"></text>
+        <text>{{card.storeName}}</text>
+      </view>
+      <view wx:if="{{card.businessHours}}" class="info-row">
+        <text class="iconfont icon-shijian info-icon"></text>
+        <text>{{card.businessHours}}</text>
+      </view>
+      <view wx:if="{{card.storeAddress}}" class="info-row">
+        <text class="iconfont icon-didiandingwei_o info-icon"></text>
+        <text>{{card.storeAddress}}</text>
+      </view>
+      <view wx:if="{{card.storePhone || card.contactPhone}}" class="info-row">
+        <text class="iconfont icon-dianhua info-icon"></text>
+        <text>{{card.storePhone || card.contactPhone}}</text>
+      </view>
+    </view>
+
+    <view class="manager-actions">
+      <button wx:if="{{card.storePhone}}" class="manager-action primary" bindtap="makePhoneCall">电话联系</button>
+      <button wx:if="{{card.latitude && card.longitude}}" class="manager-action" bindtap="openLocation">导航到店</button>
+    </view>
+
+    <view wx:if="{{card.wechatQrcode}}" class="qrcode-card" bindtap="previewQrcode">
+      <image class="qrcode-image" src="{{card.wechatQrcode}}" mode="aspectFill"></image>
+      <view class="qrcode-text">
+        <view>添加客户经理微信</view>
+        <text>点击二维码可放大查看</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{bound && !hasCard}}" class="state-card">
+    <view class="state-icon">ID</view>
+    <view class="state-title">已绑定客户经理</view>
+    <view class="state-desc">当前客户经理 UID：{{spreadUid}}。名片资料暂未发布，请联系门店完善。</view>
+  </view>
+
+  <view wx:else class="staff-bind-card">
+    <view class="staff-bind-hero">
+      <view class="manager-mark bind-mark"><text class="iconfont icon-kehu"></text></view>
+      <view class="staff-bind-title">绑定客户经理</view>
+      <view class="staff-bind-desc">请输入客户经理提供的 UID，确认后会绑定到当前会员账号。</view>
+    </view>
+
+    <view class="staff-bind-field">
+      <view class="staff-bind-label">客户经理 UID</view>
+      <input
+        class="staff-bind-input"
+        type="number"
+        maxlength="12"
+        placeholder="请输入 UID"
+        value="{{staffUid}}"
+        bindinput="onUidInput"
+      />
+    </view>
+
+    <button
+      class="staff-bind-button"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+      bindtap="submitBind"
+    >确认绑定</button>
+
+    <view class="staff-bind-note">已有归属时不会重复覆盖，请确认 UID 后再提交。</view>
+  </view>
+</view>

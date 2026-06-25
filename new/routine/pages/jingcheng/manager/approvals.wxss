@@ -1,1 +1,195 @@
-.page{min-height:100vh;background:#f5f3f0;padding:24rpx;box-sizing:border-box}.card{background:#fff;border-radius:20rpx;padding:26rpx;margin-bottom:18rpx}.head,.row{display:flex;justify-content:space-between}.head{font-size:28rpx;font-weight:600;color:#1a1f36;padding-bottom:20rpx;border-bottom:1rpx solid #eee}.pending{font-size:23rpx;color:#b48b16}.row{font-size:25rpx;color:#777;padding-top:18rpx}.row text:last-child{color:#333}.benefit{display:flex;justify-content:space-between;background:#f8f6f1;margin-top:22rpx;padding:20rpx;border-radius:14rpx;color:#8d6d16;font-size:24rpx}.buttons{display:flex;gap:18rpx;margin-top:24rpx}.buttons button{flex:1;font-size:27rpx}.reject{background:#fff;color:#b54a4a;border:1rpx solid #e4bcbc}.approve{background:#1a1f36;color:#d8bc61}.empty{text-align:center;padding:100rpx 0;color:#999}
+page {
+  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.page {
+  min-height: 100vh;
+  padding: 28rpx 32rpx 56rpx;
+  box-sizing: border-box;
+  color: #0B1F3A;
+  background:
+    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
+    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.card {
+  margin-bottom: 24rpx;
+  padding: 28rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 22rpx;
+  border-bottom: 1rpx solid #F0F4FA;
+}
+
+.ch-left {
+  display: flex;
+  align-items: center;
+}
+
+.ch-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54rpx;
+  height: 54rpx;
+  margin-right: 16rpx;
+  border-radius: 16rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #4A8CFF, #1F6BFF);
+}
+
+.ch-icon .iconfont {
+  font-size: 30rpx;
+}
+
+.ch-title {
+  color: #0B1F3A;
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.ch-status {
+  display: flex;
+  align-items: center;
+  color: #B8862B;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.ch-status .dot {
+  width: 12rpx;
+  height: 12rpx;
+  margin-right: 10rpx;
+  border-radius: 50%;
+  background: #E6A817;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 22rpx;
+}
+
+.row-label {
+  display: flex;
+  align-items: center;
+  color: #8A95A6;
+  font-size: 26rpx;
+}
+
+.row-label .iconfont {
+  margin-right: 12rpx;
+  color: #A9B4C4;
+  font-size: 30rpx;
+}
+
+.row-value {
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1A2236;
+  font-size: 27rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
+.row-value.muted {
+  color: #B6BECB;
+  font-weight: 400;
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+  padding: 20rpx 12rpx;
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #FBF3DF, #FCF8EC);
+  border: 1rpx solid rgba(200, 162, 39, 0.25);
+}
+
+.benefit-seg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8D6D16;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.benefit-seg + .benefit-seg {
+  border-left: 1rpx solid rgba(200, 162, 39, 0.28);
+}
+
+.benefit-seg .iconfont {
+  margin-right: 8rpx;
+  font-size: 26rpx;
+}
+
+.buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 26rpx;
+}
+
+.buttons button {
+  flex: 1;
+  height: 84rpx;
+  line-height: 84rpx;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.buttons button::after {
+  border: none;
+}
+
+.reject {
+  color: #E34D59;
+  background: #fff;
+  border: 1rpx solid #F3B4BA;
+}
+
+.approve {
+  color: #fff;
+  background: linear-gradient(135deg, #4A90F4, #2F6BEA);
+  box-shadow: 0 10rpx 24rpx rgba(47, 107, 234, 0.32);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  color: #9AA5B4;
+  font-size: 27rpx;
+}
+
+.empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
+  border-radius: 36rpx;
+  color: #9CC0FF;
+  background: linear-gradient(145deg, #EAF2FF, #FFFFFF);
+}
+
+.empty-icon .iconfont {
+  font-size: 60rpx;
+}

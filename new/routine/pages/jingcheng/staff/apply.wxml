@@ -1,12 +1,69 @@
 <view class="page">
-  <view class="member"><image src="{{member.avatar || '/static/images/def_avatar.png'}}"/><view><view class="name">{{member.nickname || '未设置昵称'}}</view><view class="meta">UID {{member.uid}} · {{member.phone}}</view></view></view>
-  <view class="assets"><view><text>{{member.integral || 0}}</text><label>当前积分</label></view><view><text>¥{{member.cashVoucher || 0}}</text><label>现金券</label></view></view>
-  <view class="heading">请选择固定权益档位</view>
-  <view wx:for="{{rules}}" wx:key="id" class="rule" data-index="{{index}}" bindtap="chooseRule">
-    <view class="range">{{item.maxAmount ? item.minAmount + '–' + item.maxAmount + '元档' : item.minAmount + '元以上档'}}</view>
-    <view class="tier">{{item.tierCode === 'SW299' ? '299会员' : '199会员'}}</view>
-    <view class="gift"><text>{{item.giftIntegral}} 积分</text><text>¥{{item.voucherAmount}} 现金券</text></view>
-    <view class="select">选择 ›</view>
+  <view class="profile">
+    <view class="profile-top">
+      <image class="avatar" src="{{member.avatar || '/static/images/def_avatar.png'}}" mode="aspectFill"/>
+      <view class="profile-info">
+        <view class="profile-name">{{member.nickname || '未设置昵称'}}</view>
+        <view class="profile-meta">UID {{member.uid}} · {{member.phone || '未绑定手机'}}</view>
+      </view>
+      <view class="profile-badge"><text class="iconfont icon-huiyuandengji"></text> 会员权益</view>
+    </view>
+    <view class="assets">
+      <view class="asset-cell">
+        <view class="asset-icon blue"><text class="iconfont icon-jifenshangcheng"></text></view>
+        <view class="asset-text">
+          <view class="asset-value">{{member.integral || 0}}</view>
+          <view class="asset-label">当前积分</view>
+        </view>
+      </view>
+      <view class="asset-cell">
+        <view class="asset-icon gold"><text class="iconfont icon-yue2"></text></view>
+        <view class="asset-text">
+          <view class="asset-value gold">￥{{member.cashVoucher || 0}}</view>
+          <view class="asset-label">现金券</view>
+        </view>
+      </view>
+    </view>
   </view>
-  <view class="tip">提交后依次由店长和超管审批，终审通过后权益到账。</view>
+
+  <view class="heading">请选择固定权益档位</view>
+  <view class="tier-grid">
+    <view wx:for="{{rules}}" wx:key="id" class="tier-card">
+      <view class="tier-range">{{item.maxAmount ? item.minAmount + '-' + item.maxAmount + '元档' : item.minAmount + '元以上档'}}</view>
+      <view class="tier-integral">{{item.giftIntegral}}<text>积分</text></view>
+      <view class="tier-voucher">￥{{item.voucherAmount}}<text>现金券</text></view>
+      <view class="tier-btn" data-index="{{index}}" bindtap="openProduct">立即选择</view>
+    </view>
+  </view>
+  <view class="tip"><text class="iconfont icon-shuoming2"></text> 提交后依次由店长和超管审批，终审通过后权益到账。</view>
+
+  <view wx:if="{{showProduct}}" class="modal-mask" catchtouchmove="true" bindtap="closeProduct">
+    <view class="modal" catchtap="noop">
+      <view class="modal-head">
+        <view class="modal-icon"><text class="iconfont icon-liwu"></text></view>
+        <view class="modal-head-text">
+          <view class="modal-title">补充产品信息</view>
+          <view class="modal-sub">{{selectedText}}</view>
+        </view>
+        <view class="modal-close" bindtap="closeProduct"><text class="iconfont icon-guanbi6"></text></view>
+      </view>
+
+      <view class="field-label">产品类型</view>
+      <view class="type-row">
+        <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{productType === item ? 'active' : ''}}" data-type="{{item}}" bindtap="chooseType">{{item}}</view>
+      </view>
+
+      <view class="field-label">产品型号</view>
+      <input class="field-input" value="{{productModel}}" bindinput="onModel" placeholder="请输入产品型号" placeholder-class="ph" maxlength="30"/>
+
+      <view class="field-label">产品价格</view>
+      <input class="field-input" type="digit" value="{{productPrice}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph"/>
+
+      <view class="modal-actions">
+        <view class="modal-btn cancel" bindtap="closeProduct">取消</view>
+        <view class="modal-btn submit {{submitting ? 'disabled' : ''}}" bindtap="submit">提交申请</view>
+      </view>
+      <view class="modal-tip">提交后将由店长和超管审批，终审通过后权益到账</view>
+    </view>
+  </view>
 </view>

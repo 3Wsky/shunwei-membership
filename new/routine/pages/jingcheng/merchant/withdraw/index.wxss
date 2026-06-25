@@ -1,0 +1,264 @@
+page {
+  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.page {
+  min-height: 100vh;
+  padding: 28rpx 32rpx 56rpx;
+  box-sizing: border-box;
+  color: #0B1F3A;
+  background:
+    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
+    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.manager-card,
+.withdraw-card,
+.withdraw-row,
+.empty-card {
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+}
+
+.manager-card {
+  padding: 30rpx;
+  border-radius: 32rpx;
+}
+
+.manager-kicker {
+  color: #B8862B;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.manager-title {
+  margin-top: 10rpx;
+  color: #0B1F3A;
+  font-size: 38rpx;
+  font-weight: 900;
+}
+
+.manager-desc {
+  margin-top: 12rpx;
+  color: #8A95A6;
+  font-size: 24rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin: 32rpx 4rpx 18rpx;
+  color: #0B1F3A;
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.section-badge {
+  margin-left: 10rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 14rpx;
+  color: #1F6BFF;
+  font-size: 20rpx;
+  font-weight: 700;
+  background: #EEF5FF;
+}
+
+.withdraw-card {
+  padding: 32rpx;
+  border-radius: 32rpx;
+}
+
+.withdraw-head {
+  display: flex;
+  align-items: stretch;
+}
+
+.withdraw-balance {
+  flex: 1;
+  min-width: 0;
+}
+
+.withdraw-balance.right {
+  padding-left: 32rpx;
+  border-left: 1rpx solid #E6EEF8;
+}
+
+.balance-label {
+  color: #8A95A6;
+  font-size: 26rpx;
+}
+
+.balance-value {
+  margin-top: 10rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #B8862B;
+  font-size: 52rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pending-value {
+  color: #596579;
+  font-size: 40rpx;
+}
+
+.arrival-tip {
+  display: flex;
+  align-items: center;
+  min-height: 62rpx;
+  margin: 28rpx 0 18rpx;
+  padding: 0 22rpx;
+  border-radius: 18rpx;
+  color: #B8862B;
+  font-size: 24rpx;
+  background: #FFF8E6;
+}
+
+.arrival-tip .iconfont {
+  margin-right: 12rpx;
+  font-size: 26rpx;
+}
+
+.all-btn {
+  width: 100%;
+  height: 84rpx;
+  line-height: 84rpx;
+  border-radius: 42rpx;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #4D9BFF 0%, #1F6BFF 100%);
+  box-shadow: 0 10rpx 24rpx rgba(31, 107, 255, 0.24);
+}
+
+.all-btn.disabled,
+.all-btn[disabled] {
+  color: #FFFFFF;
+  background: #D8E2F0;
+  box-shadow: none;
+}
+
+.all-btn::after,
+.custom-btn::after {
+  border: 0;
+}
+
+.custom-row {
+  display: flex;
+  align-items: center;
+  margin-top: 18rpx;
+}
+
+.custom-input {
+  flex: 1;
+  min-width: 0;
+  height: 74rpx;
+  padding: 0 22rpx;
+  box-sizing: border-box;
+  border: 1rpx solid #E6EEF8;
+  border-radius: 18rpx;
+  color: #0B1F3A;
+  font-size: 28rpx;
+  background: #F7F9FC;
+}
+
+.custom-btn {
+  width: 176rpx;
+  height: 74rpx;
+  margin-left: 18rpx;
+  line-height: 74rpx;
+  border-radius: 18rpx;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #F5D77A 0%, #D9A83A 100%);
+  box-shadow: 0 8rpx 18rpx rgba(217, 168, 58, 0.22);
+}
+
+.custom-btn.disabled,
+.custom-btn[disabled] {
+  background: #D8E2F0;
+  box-shadow: none;
+}
+
+.input-placeholder {
+  color: #AEB8C8;
+}
+
+.withdraw-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 118rpx;
+  margin-bottom: 14rpx;
+  padding: 24rpx 28rpx;
+  border-radius: 24rpx;
+  box-sizing: border-box;
+}
+
+.withdraw-amount {
+  color: #0B1F3A;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.withdraw-meta {
+  margin-top: 8rpx;
+  color: #8A95A6;
+  font-size: 22rpx;
+  line-height: 1.35;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  margin-left: 18rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.status-pill.pending {
+  color: #B8862B;
+  background: #FFF4D8;
+}
+
+.status-pill.settled {
+  color: #1E9E64;
+  background: #E9F8F1;
+}
+
+.status-pill.rejected {
+  color: #E34D59;
+  background: #FDECEF;
+}
+
+.empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200rpx;
+  border-radius: 24rpx;
+  color: #8A95A6;
+  font-size: 26rpx;
+}
+
+.empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 108rpx;
+  height: 88rpx;
+  margin-bottom: 14rpx;
+  border-radius: 30rpx;
+  color: #82AEFF;
+  background: linear-gradient(145deg, #EEF5FF, #FFFFFF);
+}
+
+.empty-icon .iconfont {
+  font-size: 54rpx;
+}

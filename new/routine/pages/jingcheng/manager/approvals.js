@@ -1,13 +1,37 @@
 const { request } = require('../../../services/jc-request')
 
+function rangeText(rule) {
+  if (!rule) return ''
+  return rule.maxAmount
+    ? rule.minAmount + '-' + rule.maxAmount + '元'
+    : rule.minAmount + '元以上'
+}
+
 Page({
   data: { list: [], loading: false },
-  onLoad() { this.load() },
-  onPullDownRefresh() { this.load().finally(() => wx.stopPullDownRefresh()) },
+  onLoad() { this.boot() },
+  onPullDownRefresh() { this.boot().finally(() => wx.stopPullDownRefresh()) },
+  boot() {
+    return request('/api/approval/tier-options').then((rules) => {
+      this._ruleMap = {}
+      ;(rules || []).forEach((r) => { this._ruleMap[Number(r.minAmount)] = r })
+    }).catch(() => { this._ruleMap = {} }).then(() => this.load())
+  },
   load() {
     this.setData({ loading: true })
     return request('/api/approval/todos', { data: { role: 'manager' } })
-      .then((list) => this.setData({ list: list || [] }))
+      .then((list) => {
+        const map = this._ruleMap || {}
+        const items = (list || []).map((it) => {
+          const rule = map[Number(it.consumeAmount)]
+          return Object.assign({}, it, {
+            rangeText: rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档'),
+            productText: it.receiptNo || '未填写产品信息',
+            hasProduct: !!it.receiptNo
+          })
+        })
+        this.setData({ list: items })
+      })
       .catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
       .finally(() => this.setData({ loading: false }))
   },
@@ -16,11 +40,11 @@ Page({
     const action = e.currentTarget.dataset.action
     wx.showModal({
       title: action === 'approve' ? '通过申请' : '驳回申请',
-      content: `UID ${item.customerUid}\n${item.matchedTierCode === 'SW299' ? '299会员' : '199会员'} · ${item.matchedIntegral}积分 · ¥${item.matchedVoucher}现金券`,
+      content: `会员UID ${item.customerUid} · ${item.rangeText}\n${item.matchedIntegral}积分 + ¥${item.matchedVoucher}现金券`,
       editable: true,
       placeholderText: '请输入审批备注（选填）',
       confirmText: action === 'approve' ? '确认通过' : '确认驳回',
-      confirmColor: action === 'approve' ? '#B48B16' : '#D44C4C',
+      confirmColor: action === 'approve' ? '#2F6BEA' : '#E34D59',
       success: (res) => {
         if (!res.confirm) return
         request('/api/approval/review/manager', {

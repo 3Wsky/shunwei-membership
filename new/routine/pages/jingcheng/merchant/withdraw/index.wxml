@@ -1,0 +1,48 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+
+  <view class="manager-card">
+    <view class="manager-kicker">提现管理</view>
+    <view class="manager-title">{{merchantNameText}}</view>
+    <view class="manager-desc">提现申请 · 到账状态 · 提现记录</view>
+  </view>
+
+  <view class="section-title">提现账户</view>
+  <view class="withdraw-card">
+    <view class="withdraw-head">
+      <view class="withdraw-balance">
+        <view class="balance-label">可提现金额</view>
+        <view class="balance-value">￥{{availableAmount}}</view>
+      </view>
+      <view class="withdraw-balance right">
+        <view class="balance-label">提现中</view>
+        <view class="balance-value pending-value">￥{{withdrawingAmount}}</view>
+      </view>
+    </view>
+    <view class="arrival-tip">
+      <text class="iconfont icon-xuanzhong6"></text>
+      <text>提现申请审核打款后，预计 T+3 到账</text>
+    </view>
+    <button class="all-btn {{availableAmount > 0 ? '' : 'disabled'}}" bindtap="withdrawAll" disabled="{{availableAmount <= 0}}">全部提现 ￥{{availableAmount}}</button>
+    <view class="custom-row">
+      <input class="custom-input" type="digit" value="{{customAmount}}" bindinput="onAmountInput" placeholder="输入自定义提现金额" placeholder-class="input-placeholder"/>
+      <button class="custom-btn {{customReady ? '' : 'disabled'}}" bindtap="withdrawCustom" disabled="{{!customReady}}">申请提现</button>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <text>提现记录</text>
+    <view class="section-badge">{{withdrawals.length}}条</view>
+  </view>
+  <view wx:for="{{withdrawals}}" wx:key="id" class="withdraw-row">
+    <view>
+      <view class="withdraw-amount">￥{{item.amount}}</view>
+      <view class="withdraw-meta">申请 {{item.createdText}} · 预计 {{item.expectedText}} 到账</view>
+    </view>
+    <view class="status-pill {{item.statusClass}}">{{item.statusText}}</view>
+  </view>
+  <view wx:if="{{!loading && !withdrawals.length}}" class="empty-card">
+    <view class="empty-icon"><text class="iconfont icon-bianji"></text></view>
+    <view>暂无提现记录</view>
+  </view>
+</view>

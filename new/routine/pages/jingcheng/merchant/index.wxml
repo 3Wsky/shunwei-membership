@@ -1,21 +1,79 @@
 <view class="page">
   <jc-auth-sync></jc-auth-sync>
-  <view class="merchant-head"><view><label>商家工作台</label><text>{{merchantName}}</text></view><view class="role">{{isManager ? '店长' : '店员'}}</view></view>
-  <view class="verify-card" bindtap="openVerify"><view><text>现金券核销</text><label>扫码识别顾客并输入核销金额</label></view><view class="scan">扫一扫 ›</view></view>
 
-  <block wx:if="{{isManager}}">
-    <view class="title">核销数据</view>
-    <view class="stats"><view><text>¥{{todayAmount}}</text><label>今日</label></view><view><text>¥{{weekAmount}}</text><label>本周</label></view><view><text>¥{{monthAmount}}</text><label>本月</label></view><view><text>¥{{totalAmount}}</text><label>累计</label></view></view>
-
-    <view class="withdraw-card">
-      <view class="withdraw-head"><view><label>可提现金额</label><text>¥{{availableAmount}}</text></view><view><label>提现中</label><text class="small">¥{{withdrawingAmount}}</text></view></view>
-      <view class="arrival">提现申请审核打款后，预计 <b>T+3</b> 到账</view>
-      <button class="all" bindtap="withdrawAll" disabled="{{availableAmount <= 0}}">全部提现 ¥{{availableAmount}}</button>
-      <view class="custom"><input type="digit" value="{{customAmount}}" bindinput="onAmountInput" placeholder="输入自定义提现金额"/><button bindtap="withdrawCustom">申请提现</button></view>
+  <view class="hero">
+    <image class="hero-bg" src="/pages/jingcheng/static/images/jc-merchant-workbench-bg.jpg" mode="aspectFill"/>
+    <view class="hero-body">
+      <view class="hero-kicker">商家工作台</view>
+      <view class="hero-title">{{merchantName || '锦程数码'}}</view>
+      <view class="hero-role">{{isManager ? '商家负责人' : '核销员'}}</view>
+      <view class="hero-desc">今日经营概览 · 快速核销 · 管理入口</view>
     </view>
+  </view>
 
-    <view class="title">提现记录</view>
-    <view wx:for="{{withdrawals}}" wx:key="id" class="withdraw-row"><view><text>¥{{item.amount}}</text><label>申请 {{item.createdText}} · 预计 {{item.expectedText}} 到账</label></view><view class="{{item.status === 'settled' ? 'settled' : 'pending'}}">{{item.status === 'settled' ? '已到账' : '处理中'}}</view></view>
-    <view wx:if="{{!loading && !withdrawals.length}}" class="empty">暂无提现记录</view>
-  </block>
+  <view class="verify-entry" bindtap="openVerify">
+    <view class="ve-icon"><text class="iconfont icon-hexiaoma"></text></view>
+    <view class="ve-main">
+      <view class="ve-title">现金券核销</view>
+      <view class="ve-sub">扫描顾客付款码，安全核销</view>
+    </view>
+    <view class="ve-action">扫一扫 ›</view>
+  </view>
+
+  <view class="section-title">今日概览</view>
+  <view class="overview-card">
+    <view class="ov-main">
+      <view class="ov-label">今日核销金额</view>
+      <view class="ov-value">￥{{todayAmount}}</view>
+      <view class="ov-desc">{{todayCount}} 笔核销</view>
+    </view>
+    <view class="ov-grid">
+      <view>
+        <text>￥{{weekAmount}}</text>
+        <label>本周</label>
+      </view>
+      <view>
+        <text>￥{{monthAmount}}</text>
+        <label>本月</label>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">管理入口</view>
+  <view class="entry-grid">
+    <view class="entry-card" bindtap="goRecords">
+      <view class="entry-icon blue"><text class="iconfont icon-xiaofeijilu1"></text></view>
+      <view class="entry-name">核销明细</view>
+      <view class="entry-sub">查看顾客、金额、核销员</view>
+    </view>
+    <view wx:if="{{isManager}}" class="entry-card" bindtap="goStaff">
+      <view class="entry-icon gold"><text class="iconfont icon-yonghu"></text></view>
+      <view class="entry-name">核销员管理</view>
+      <view class="entry-sub">{{staffCount}} 名核销员统计</view>
+    </view>
+  </view>
+
+  <view wx:if="{{isManager}}" class="entry-row" bindtap="goWithdraw">
+    <view class="entry-icon navy"><text class="iconfont icon-jintuikuan"></text></view>
+    <view class="entry-row-main">
+      <view class="entry-name">提现管理</view>
+      <view class="entry-sub">可提现 ￥{{availableAmount}} · 提现中 ￥{{withdrawingAmount}}</view>
+    </view>
+    <view class="entry-arrow">›</view>
+  </view>
+
+  <view class="total-card">
+    <view>
+      <text>￥{{totalAmount}}</text>
+      <label>累计核销</label>
+    </view>
+    <view>
+      <text>{{verifyCount}}</text>
+      <label>累计笔数</label>
+    </view>
+    <view>
+      <text>{{customerCount}}</text>
+      <label>服务顾客</label>
+    </view>
+  </view>
 </view>

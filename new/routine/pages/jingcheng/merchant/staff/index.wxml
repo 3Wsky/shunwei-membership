@@ -1,0 +1,47 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+
+  <view class="hero-card">
+    <view class="hero-kicker">核销员管理</view>
+    <view class="hero-title">{{merchantNameText}}</view>
+    <view class="hero-desc">核销员数据统计与核销权限管理</view>
+  </view>
+
+  <view wx:if="{{staffStats.length}}" class="section-title">核销员统计</view>
+  <view wx:if="{{staffStats.length}}" class="staff-table">
+    <view class="staff-header">
+      <text class="staff-col name-col">核销员</text>
+      <text class="staff-col">今日</text>
+      <text class="staff-col">累计金额</text>
+      <text class="staff-col">笔数</text>
+    </view>
+    <view wx:for="{{staffStats}}" wx:key="uid" class="staff-row">
+      <text class="staff-col name-col">{{item.nickname}}</text>
+      <text class="staff-col">￥{{item.todayAmount}}</text>
+      <text class="staff-col">￥{{item.verifyAmount}}</text>
+      <text class="staff-col">{{item.verifyCount}}</text>
+    </view>
+  </view>
+  <view wx:if="{{!loading && !staffStats.length}}" class="empty-card">
+    <view class="empty-icon"><text class="iconfont icon-yonghu"></text></view>
+    <view>暂无核销员统计</view>
+  </view>
+
+  <view wx:if="{{staffList.length}}" class="section-title">核销权限</view>
+  <view wx:if="{{staffList.length}}" class="staff-manage-list">
+    <view wx:for="{{staffList}}" wx:key="uid" class="staff-manage-row">
+      <view class="staff-manage-info">
+        <view class="staff-manage-name">
+          {{item.nickname || 'UID:' + item.uid}}
+          <text wx:if="{{item.role === 'manager'}}" class="role-tag manager">负责人</text>
+          <text wx:if="{{item.isSuspended}}" class="role-tag suspended">已暂停</text>
+        </view>
+        <view wx:if="{{item.isSuspended}}" class="suspended-hint">次日 {{item.resumeTimeText}} 自动恢复</view>
+      </view>
+      <view wx:if="{{item.role !== 'manager'}}" class="staff-manage-action">
+        <view wx:if="{{!item.isSuspended}}" class="action-btn pause" data-uid="{{item.uid}}" data-nickname="{{item.nickname}}" bindtap="suspendStaff">暂停</view>
+        <view wx:else class="action-btn resume" data-uid="{{item.uid}}" data-nickname="{{item.nickname}}" bindtap="resumeStaff">恢复</view>
+      </view>
+    </view>
+  </view>
+</view>

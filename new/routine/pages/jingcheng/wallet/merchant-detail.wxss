@@ -1,0 +1,125 @@
+page {
+  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.page {
+  min-height: 100vh;
+  padding: 28rpx 32rpx 54rpx;
+  box-sizing: border-box;
+  color: #0B1F3A;
+  background:
+    radial-gradient(circle at 86% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
+    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.merchant-head {
+  padding: 34rpx 32rpx;
+  border-radius: 32rpx;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #2F7BFF 0%, #1F6BFF 100%);
+  box-shadow: 0 16rpx 40rpx rgba(31, 107, 255, 0.16);
+}
+
+.head-label {
+  display: inline-flex;
+  height: 38rpx;
+  align-items: center;
+  padding: 0 14rpx;
+  border-radius: 19rpx;
+  color: #B8862B;
+  font-size: 22rpx;
+  background: #FFF4D8;
+}
+
+.merchant-name {
+  margin-top: 24rpx;
+  font-size: 40rpx;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.merchant-sub {
+  margin-top: 12rpx;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 26rpx;
+}
+
+.info-card,
+.benefit-card {
+  margin-top: 24rpx;
+  padding: 30rpx;
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+}
+
+.card-title {
+  color: #0B1F3A;
+  font-size: 32rpx;
+  font-weight: 800;
+  margin-bottom: 18rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 18rpx 0;
+  border-top: 1rpx solid #E6EEF8;
+}
+
+.info-row label {
+  width: 150rpx;
+  flex: 0 0 150rpx;
+  color: #8A95A6;
+  font-size: 26rpx;
+}
+
+.info-row text {
+  flex: 1;
+  color: #0B1F3A;
+  font-size: 27rpx;
+  line-height: 1.5;
+}
+
+.benefit-line {
+  color: #B8862B;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.benefit-desc {
+  margin-top: 14rpx;
+  color: #8A95A6;
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 30rpx;
+}
+
+.actions button {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  color: #1F6BFF;
+  font-size: 30rpx;
+  font-weight: 700;
+  background: #FFFFFF;
+  border: 2rpx solid #1F6BFF;
+}
+
+.actions button::after {
+  border: 0;
+}
+
+.actions .primary {
+  color: #FFFFFF;
+  border: 0;
+  background: linear-gradient(135deg, #4D9BFF 0%, #1F6BFF 100%);
+  box-shadow: 0 10rpx 24rpx rgba(31, 107, 255, 0.24);
+}

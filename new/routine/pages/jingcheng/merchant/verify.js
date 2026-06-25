@@ -1,41 +1,123 @@
-const { request } = require('../../../services/jc-request')
+const { request, syncAuthFromApp, getToken, openWechatReauth } = require('../../../services/jc-request')
+
+function pad(n) { return n < 10 ? '0' + n : '' + n }
+
+function timeText(ts) {
+  if (!ts) return ''
+  var d = new Date(Number(ts) * 1000)
+  return pad(d.getHours()) + ':' + pad(d.getMinutes())
+}
+
+function todayStartTs() {
+  var n = new Date()
+  return Math.floor(new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime() / 1000)
+}
 
 Page({
-  data: { customerUid: '', amount: '', remark: '', submitting: false },
-  scanCustomer() {
+  data: {
+    loading: true,
+    scanning: false,
+    todayAmount: 0,
+    todayCount: 0,
+    weekAmount: 0,
+    weekCount: 0,
+    monthAmount: 0,
+    monthCount: 0,
+    todayRecords: [],
+    showSummary: false
+  },
+  onShow: function () { this.load() },
+  onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
+  load: function () {
+    syncAuthFromApp()
+    if (!getToken()) {
+      this.setData({ loading: false })
+      openWechatReauth()
+      return Promise.resolve()
+    }
+    this.setData({ loading: true })
+    return request('/api/merchant/dashboard', { data: { scope: 'mine' } }).then(function (data) {
+      var start = todayStartTs()
+      var records = (data.recentRecords || []).filter(function (r) {
+        return Number(r.createdAt || 0) >= start
+      }).map(function (r) {
+        return Object.assign({}, r, { timeText: timeText(r.createdAt) })
+      })
+      this.setData({
+        todayAmount: Number(data.todayAmount || 0),
+        todayCount: Number(data.todayCount || 0),
+        weekAmount: Number(data.weekAmount || 0),
+        weekCount: Number(data.weekCount || 0),
+        monthAmount: Number(data.monthAmount || 0),
+        monthCount: Number(data.monthCount || 0),
+        todayRecords: records
+      })
+    }.bind(this)).catch(function (err) {
+      wx.showToast({ title: err.message, icon: 'none' })
+    }).finally(function () {
+      this.setData({ loading: false })
+    }.bind(this))
+  },
+  toggleSummary: function () { this.setData({ showSummary: !this.data.showSummary }) },
+  scanCustomer: function () {
+    if (this.data.scanning) return
+    this.setData({ scanning: true })
     wx.scanCode({
       onlyFromCamera: false,
-      success: (res) => {
-        const value = String(res.result || '').trim()
-        const match = value.match(/^sw-uid:(\d+)$/i) || value.match(/^(\d+)$/)
-        if (!match) return wx.showToast({ title: '不是有效的顾客二维码', icon: 'none' })
-        this.setData({ customerUid: match[1] })
-        wx.showToast({ title: '已识别UID ' + match[1], icon: 'none' })
+      success: function (res) {
+        var token = String(res.result || '').trim()
+        if (!token) {
+          this.setData({ scanning: false })
+          return wx.showToast({ title: '未识别到付款码', icon: 'none' })
+        }
+        this.preview(token)
+      }.bind(this),
+      fail: function () { this.setData({ scanning: false }) }.bind(this)
+    })
+  },
+  preview: function (token) {
+    request('/api/merchant/preview-verify', {
+      method: 'POST', data: { verifyToken: token }
+    }).then(function (info) {
+      this.setData({ scanning: false })
+      this.askAmount(token, info)
+    }.bind(this)).catch(function (err) {
+      this.setData({ scanning: false })
+      wx.showModal({ title: '无法核销', content: err.message || '付款码无效，请让顾客刷新', showCancel: false })
+    }.bind(this))
+  },
+  askAmount: function (token, info) {
+    var that = this
+    wx.showModal({
+      title: '现金券核销',
+      content: '顾客：' + (info.nickname || ('UID ' + info.uid)) + '\n可用现金券 ¥' + info.balance + '\n请输入核销金额（元）',
+      editable: true,
+      placeholderText: '本次核销金额',
+      confirmText: '确认核销',
+      success: function (res) {
+        if (!res.confirm) return
+        var amount = Number(String(res.content || '').trim())
+        if (!amount || amount <= 0) return wx.showToast({ title: '请输入有效金额', icon: 'none' })
+        if (amount > Number(info.balance || 0)) return wx.showToast({ title: '超过顾客可用余额', icon: 'none' })
+        that.doVerify(token, amount)
       }
     })
   },
-  onUidInput(e) { this.setData({ customerUid: e.detail.value }) },
-  onAmountInput(e) { this.setData({ amount: e.detail.value }) },
-  onRemarkInput(e) { this.setData({ remark: e.detail.value }) },
-  submit() {
-    const customerUid = Number(this.data.customerUid || 0)
-    const amount = Number(this.data.amount || 0)
-    if (!customerUid || amount <= 0) return wx.showToast({ title: '请填写顾客和核销金额', icon: 'none' })
-    wx.showModal({
-      title: '确认现金券核销',
-      content: `顾客UID ${customerUid}\n本次核销 ¥${amount}`,
-      confirmText: '确认核销',
-      success: (res) => {
-        if (!res.confirm) return
-        this.setData({ submitting: true })
-        request('/api/merchant/verify-voucher', {
-          method: 'POST', data: { customerUid, amount, remark: this.data.remark }
-        }).then((data) => {
-          wx.showModal({ title: '核销成功', content: `核销 ¥${data.amount}\n顾客剩余 ¥${data.balanceAfter}`, showCancel: false })
-          this.setData({ customerUid: '', amount: '', remark: '' })
-        }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
-          .finally(() => this.setData({ submitting: false }))
-      }
+  doVerify: function (token, amount) {
+    wx.showLoading({ title: '核销中…', mask: true })
+    request('/api/merchant/verify-voucher', {
+      method: 'POST', data: { verifyToken: token, amount: amount }
+    }).then(function (data) {
+      wx.hideLoading()
+      wx.showModal({
+        title: '核销成功',
+        content: '本次核销 ¥' + data.amount + '\n顾客剩余 ¥' + data.balanceAfter,
+        showCancel: false
+      })
+      this.load()
+    }.bind(this)).catch(function (err) {
+      wx.hideLoading()
+      wx.showModal({ title: '核销失败', content: err.message || '请重试', showCancel: false })
     })
   }
 })

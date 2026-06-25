@@ -1,0 +1,55 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+
+  <view class="hero-card">
+    <view class="hero-kicker">核销明细</view>
+    <view class="hero-title">{{merchantNameText}}</view>
+    <view class="hero-desc">查看顾客、核销员、金额和时间</view>
+  </view>
+
+  <view class="summary-card">
+    <view class="summary-main">
+      <view class="summary-label">今日核销</view>
+      <view class="summary-value">￥{{todayAmount}}</view>
+      <view class="summary-desc">{{todayCount}} 笔</view>
+    </view>
+    <view class="summary-grid">
+      <view>
+        <text>￥{{weekAmount}}</text>
+        <label>本周</label>
+      </view>
+      <view>
+        <text>￥{{monthAmount}}</text>
+        <label>本月</label>
+      </view>
+      <view>
+        <text>￥{{totalAmount}}</text>
+        <label>累计</label>
+      </view>
+      <view>
+        <text>{{customerCount}}</text>
+        <label>顾客</label>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <text>核销记录</text>
+    <view class="section-badge">{{recentRecords.length}}条</view>
+  </view>
+  <view wx:if="{{recentRecords.length}}" class="record-list">
+    <view wx:for="{{recentRecords}}" wx:key="id" class="record-row">
+      <view class="record-icon"><text class="iconfont icon-yonghu2"></text></view>
+      <view class="record-left">
+        <view class="record-name">{{item.displayName}}</view>
+        <view class="record-meta">{{item.dateText}} {{item.timeText}}{{item.operatorNickname ? ' · ' + item.operatorNickname : ''}}</view>
+        <view wx:if="{{item.remark}}" class="record-remark">{{item.remark}}</view>
+      </view>
+      <view class="record-amount">-￥{{item.amount}}</view>
+    </view>
+  </view>
+  <view wx:if="{{!loading && !recentRecords.length}}" class="empty-card">
+    <view class="empty-icon"><text class="iconfont icon-mingxi"></text></view>
+    <view>暂无核销记录</view>
+  </view>
+</view>

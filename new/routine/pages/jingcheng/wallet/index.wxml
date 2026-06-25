@@ -1,22 +1,35 @@
 <view class="page">
   <view class="balance">
-    <view>现金券可用余额</view><text>¥{{balance}}</text><label>核销时按到期时间优先扣减</label>
-    <view class="totals"><view><text>¥{{totalGranted}}</text><label>累计获得</label></view><view><text>¥{{totalUsed}}</text><label>累计核销</label></view></view>
+    <view class="bal-watermark"><text class="iconfont icon-yue2"></text></view>
+    <view class="bal-label">现金券可用余额</view>
+    <view class="bal-value">￥{{balance}}</view>
+    <view class="bal-sub">有效期内可用，过期自动失效</view>
+    <view class="bal-totals">
+      <view><text>￥{{totalGranted}}</text><label>累计获得</label></view>
+      <view><text>￥{{totalUsed}}</text><label>累计核销</label></view>
+    </view>
   </view>
 
-  <view wx:if="{{customerUid && qrText && termsAgreed}}" class="qr-card">
-    <view class="qr-title">出示二维码核销现金券</view>
-    <view class="qr-wrap">
-      <zb-code cid="wallet-uid-qr" val="{{qrText}}" size="320" load-make="{{true}}" foreground="#1A1F36" background="#ffffff"></zb-code>
+  <block wx:if="{{balance > 0}}">
+    <view wx:if="{{termsAgreed}}" class="pay-card">
+      <view class="pay-title">出示付款码核销现金券</view>
+      <view class="pay-qr">
+        <zb-code wx:if="{{qrText}}" cid="wallet-pay-qr" val="{{qrText}}" size="320" load-make="{{true}}" foreground="#0B1F3A" background="#ffffff"></zb-code>
+        <view wx:else class="pay-loading">{{payLoading ? '生成中…' : '点击下方刷新生成付款码'}}</view>
+      </view>
+      <view wx:if="{{qrText}}" class="pay-hint">商家/店员扫码核销 · {{payCountdown}}s 后自动刷新</view>
+      <view class="pay-refresh" bindtap="refreshCode"><text class="iconfont icon-shuaxin"></text> 刷新付款码</view>
+      <view class="pay-terms" bindtap="openTerms">《现金券使用须知》</view>
     </view>
-    <view class="qr-hint">商家/店员扫码即可识别您的会员身份</view>
-    <view class="qr-uid">UID: {{customerUid}}</view>
-    <view class="qr-terms-link" bindtap="openTerms">《现金券使用须知》</view>
-  </view>
-  <view wx:elif="{{customerUid && qrText && !termsAgreed}}" class="terms-lock" bindtap="openTerms">
-    <view class="lock-icon">🔒</view>
-    <view class="lock-title">现金券使用前需阅读并同意</view>
-    <view class="lock-sub">点击查看《现金券使用须知》</view>
+    <view wx:else class="lock-card" bindtap="openTerms">
+      <view class="lock-ic"><text class="iconfont icon-shoudanyouhui"></text></view>
+      <view class="lock-title">使用前需阅读并同意</view>
+      <view class="lock-sub">点击查看《现金券使用须知》</view>
+    </view>
+  </block>
+  <view wx:else class="empty-balance">
+    <view class="eb-title">暂无可用余额</view>
+    <view class="eb-sub">当前现金券余额为 0，无法生成付款码</view>
   </view>
 
   <view wx:if="{{showTerms}}" class="terms-mask" catchtouchmove="true">
@@ -36,25 +49,43 @@
   </view>
 
   <view class="title"><text>可核销商家</text><label>{{merchants.length}} 家</label></view>
-  <scroll-view wx:if="{{merchants.length}}" class="merchant-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
-    <view class="merchant-row">
-      <view wx:for="{{merchants}}" wx:key="id" class="merchant">
-        <image wx:if="{{item.cover}}" class="merchant-cover" src="{{item.cover}}" mode="aspectFill"/>
-        <view wx:else class="merchant-cover fallback">{{item.initial}}</view>
-        <view class="merchant-name">{{item.merchantName}}</view>
-        <view class="merchant-category">{{item.category || '合作商家'}} · {{item.businessHours || '营业时间请咨询'}}</view>
-        <view class="merchant-address">{{item.storeAddress || '门店地址请咨询'}}</view>
-        <view class="merchant-actions"><button data-index="{{index}}" bindtap="openMerchant">导航</button><button data-phone="{{item.contactPhone}}" bindtap="callMerchant">电话</button></view>
-      </view>
+  <view wx:for="{{merchants}}" wx:key="id" class="merchant-card" data-index="{{index}}" bindtap="openMerchantDetail">
+    <view class="mc-head">
+      <view class="mc-name">{{item.merchantName}}</view>
+      <view class="mc-arrow">›</view>
     </view>
-  </scroll-view>
+    <view class="mc-badge">当前权益商家</view>
+    <view class="mc-row"><text class="mc-k">行业</text><text class="mc-v">{{item.category || '数码3C'}}</text></view>
+    <view class="mc-row"><text class="mc-k">营业时间</text><text class="mc-v">{{item.businessHours || '营业时间请咨询'}}</text></view>
+    <view class="mc-row"><text class="mc-k">门店地址</text><text class="mc-v">{{item.storeAddress || '门店地址请咨询'}}</text></view>
+  </view>
   <view wx:if="{{!loading && !merchants.length}}" class="section-empty">暂无可核销商家</view>
 
+  <view class="promo">
+    <view class="promo-title">更多权益商家正在加入中</view>
+    <view class="promo-sub">商超、加油站、餐饮等场景陆续接入，敬请期待</view>
+    <view class="promo-row">
+      <view class="promo-cell"><view class="promo-ic"><text class="iconfont icon-gouwuche11"></text></view><view class="promo-name">商超</view><view class="promo-soon">敬请期待</view></view>
+      <view class="promo-cell"><view class="promo-ic"><text class="iconfont icon-dianpu2"></text></view><view class="promo-name">加油站</view><view class="promo-soon">敬请期待</view></view>
+      <view class="promo-cell"><view class="promo-ic"><text class="iconfont icon-liwu"></text></view><view class="promo-name">餐饮</view><view class="promo-soon">敬请期待</view></view>
+    </view>
+  </view>
+
   <view class="title"><text>核销记录</text><label>最近50条</label></view>
-  <view wx:for="{{verifyRecords}}" wx:key="id" class="ledger"><view><text>{{item.merchantName || item.remark || '现金券核销'}}</text><label>{{item.createdText}}{{item.remark ? ' · ' + item.remark : ''}}</label></view><text class="minus">-¥{{item.amount}}</text></view>
-  <view wx:if="{{!loading && !verifyRecords.length}}" class="section-empty">暂无核销记录</view>
+  <view wx:if="{{verifyRecords.length}}" class="card-list">
+    <view wx:for="{{verifyRecords}}" wx:key="id" class="ledger">
+      <view><text>{{item.merchantName || item.remark || '现金券核销'}}</text><label>{{item.createdText}}{{item.remark ? ' · ' + item.remark : ''}}</label></view>
+      <text class="minus">-￥{{item.amount}}</text>
+    </view>
+  </view>
+  <view wx:else class="section-empty">暂无核销记录</view>
 
   <view class="title"><text>可用现金券</text><label>{{batches.length}} 个批次</label></view>
-  <view wx:for="{{batches}}" wx:key="id" class="item"><view><text>¥{{item.remainAmount}}</text><label>原金额 ¥{{item.totalAmount}}</label></view><view class="date">有效期至 {{item.expireText}}</view></view>
-  <view wx:if="{{!loading && !batches.length}}" class="section-empty">暂无可用现金券</view>
+  <view wx:if="{{batches.length}}" class="card-list">
+    <view wx:for="{{batches}}" wx:key="id" class="item">
+      <view><text>￥{{item.remainAmount}}</text><label>原金额 ￥{{item.totalAmount}}</label></view>
+      <view class="date">有效期至 {{item.expireText}}</view>
+    </view>
+  </view>
+  <view wx:else class="section-empty">暂无可用现金券</view>
 </view>

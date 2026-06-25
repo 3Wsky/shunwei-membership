@@ -28,26 +28,79 @@ Page({
     batches: [],
     merchants: [],
     verifyRecords: [],
-    customerUid: 0,
-    qrText: '',
     loading: true,
     termsAgreed: false,
     showTerms: false,
     countdown: 0,
-    termsList: TERMS_LIST
+    termsList: TERMS_LIST,
+    qrText: '',
+    payLoading: false,
+    payCountdown: 0
   },
   onShow() {
+    this.setData({ termsAgreed: !!wx.getStorageSync(VOUCHER_TERMS_KEY) })
     this.load()
-    this.checkTerms()
   },
-  onHide() { this.clearTermsTimer() },
-  onUnload() { this.clearTermsTimer() },
-  checkTerms() {
-    const uid = this.resolveCustomerUid()
-    const agreed = !!wx.getStorageSync(VOUCHER_TERMS_KEY)
-    this.setData({ termsAgreed: agreed })
-    if (uid > 0 && !agreed) this.openTerms()
+  onHide() { this.clearTermsTimer(); this.clearPayTimer() },
+  onUnload() { this.clearTermsTimer(); this.clearPayTimer() },
+  onPullDownRefresh() { this.load().finally(() => wx.stopPullDownRefresh()) },
+
+  load() {
+    this.setData({ loading: true })
+    return Promise.all([
+      request('/api/cash-voucher/wallet'),
+      request('/api/cash-voucher/ledger', { data: { page: 1, limit: 50 } }),
+      request('/api/merchants/available')
+    ]).then(([wallet, ledger, merchants]) => {
+      const balance = Number(wallet.balance || 0)
+      this.setData({
+        balance,
+        totalGranted: Number(wallet.totalGranted || 0),
+        totalUsed: Number(wallet.totalUsed || 0),
+        batches: (wallet.batches || []).map((item) => ({ ...item, expireText: formatTime(item.expireAt) })),
+        merchants: merchants || [],
+        verifyRecords: (ledger.list || [])
+          .filter((item) => Number(item.direction) === 0)
+          .map((item) => ({ ...item, createdText: formatTime(item.createdAt) }))
+      })
+      if (balance > 0 && this.data.termsAgreed) {
+        this.genToken()
+      } else {
+        this.setData({ qrText: '' })
+        this.clearPayTimer()
+      }
+    }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
+      .finally(() => this.setData({ loading: false }))
   },
+
+  genToken() {
+    if (this.data.balance <= 0) return
+    this.setData({ payLoading: true })
+    request('/api/member/verify-token', { method: 'POST' }).then((d) => {
+      this.setData({ qrText: d.token || '', payCountdown: Number(d.expiresIn || 60), payLoading: false })
+      this.startPayTimer()
+    }).catch((err) => {
+      this.setData({ payLoading: false })
+      wx.showToast({ title: err.message, icon: 'none' })
+    })
+  },
+  refreshCode() { if (!this.data.payLoading) this.genToken() },
+  startPayTimer() {
+    this.clearPayTimer()
+    this._payTimer = setInterval(() => {
+      const next = this.data.payCountdown - 1
+      if (next <= 0) {
+        this.clearPayTimer()
+        this.genToken()
+      } else {
+        this.setData({ payCountdown: next })
+      }
+    }, 1000)
+  },
+  clearPayTimer() {
+    if (this._payTimer) { clearInterval(this._payTimer); this._payTimer = null }
+  },
+
   openTerms() {
     this.setData({ showTerms: true })
     if (this.data.termsAgreed) {
@@ -72,65 +125,26 @@ Page({
     try { wx.setStorageSync(VOUCHER_TERMS_KEY, '1') } catch (e) { /* ignore */ }
     this.setData({ termsAgreed: true, showTerms: false })
     this.clearTermsTimer()
+    if (this.data.balance > 0) this.genToken()
   },
   clearTermsTimer() {
-    if (this._termsTimer) {
-      clearInterval(this._termsTimer)
-      this._termsTimer = null
-    }
+    if (this._termsTimer) { clearInterval(this._termsTimer); this._termsTimer = null }
   },
-  resolveCustomerUid() {
-    let uid = Number(wx.getStorageSync('UID') || 0)
-    if (uid > 0) return uid
-    try {
-      const userInfo = wx.getStorageSync('USER_INFO')
-      if (userInfo && userInfo.uid) uid = Number(userInfo.uid)
-    } catch (error) { /* ignore */ }
-    return uid > 0 ? uid : 0
-  },
-  load() {
-    const customerUid = this.resolveCustomerUid()
-    this.setData({
-      customerUid,
-      qrText: customerUid ? `sw-uid:${customerUid}` : '',
-      loading: true
-    })
-    Promise.all([
-      request('/api/cash-voucher/wallet'),
-      request('/api/cash-voucher/ledger', { data: { page: 1, limit: 50 } }),
-      request('/api/merchants/available')
-    ]).then(([wallet, ledger, merchants]) => {
-      this.setData({
-        balance: Number(wallet.balance || 0),
-        totalGranted: Number(wallet.totalGranted || 0),
-        totalUsed: Number(wallet.totalUsed || 0),
-        batches: (wallet.batches || []).map((item) => ({ ...item, expireText: formatTime(item.expireAt) })),
-        merchants: (merchants || []).map((item) => ({
-          ...item,
-          initial: String(item.merchantName || '商').slice(0, 1)
-        })),
-        verifyRecords: (ledger.list || [])
-          .filter((item) => Number(item.direction) === 0)
-          .map((item) => ({ ...item, createdText: formatTime(item.createdAt) }))
-      })
-    }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
-      .finally(() => this.setData({ loading: false }))
-  },
-  callMerchant(e) {
-    const phone = e.currentTarget.dataset.phone
-    if (phone) wx.makePhoneCall({ phoneNumber: String(phone) })
-  },
-  openMerchant(e) {
+
+  openMerchantDetail(e) {
     const merchant = this.data.merchants[e.currentTarget.dataset.index]
-    if (!merchant || !merchant.latitude || !merchant.longitude) {
-      wx.showToast({ title: merchant.storeAddress || '暂无地图位置', icon: 'none' })
-      return
-    }
-    wx.openLocation({
-      latitude: merchant.latitude,
-      longitude: merchant.longitude,
-      name: merchant.merchantName,
-      address: merchant.storeAddress || ''
-    })
+    if (!merchant) return
+    try {
+      wx.setStorageSync('JC_WALLET_MERCHANT_DETAIL', {
+        merchantName: merchant.merchantName,
+        categoryText: merchant.category || '数码3C',
+        hoursText: merchant.businessHours || '营业时间请咨询',
+        addressText: merchant.storeAddress || '门店地址请咨询',
+        contactPhone: merchant.contactPhone || '',
+        latitude: merchant.latitude,
+        longitude: merchant.longitude
+      })
+    } catch (error) { /* ignore */ }
+    wx.navigateTo({ url: '/pages/jingcheng/wallet/merchant-detail' })
   }
 })

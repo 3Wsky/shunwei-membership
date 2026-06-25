@@ -14,8 +14,12 @@
         "staff/apply",
         "manager/approvals",
         "wallet/index",
+        "wallet/merchant-detail",
         "merchant/index",
         "merchant/verify",
+        "merchant/records/index",
+        "merchant/staff/index",
+        "merchant/withdraw/index",
         "showcase/list",
         "showcase/detail",
         "integral/mall"
@@ -102,7 +106,8 @@
         "login/index",
         "payment_on_behalf/index",
         "payment_on_behalf/pay_status",
-        "staff_list/index"
+        "staff_list/index",
+        "staff_bind_manual/index"
       ],
       "name": "users"
     },
