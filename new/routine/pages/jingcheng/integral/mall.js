@@ -9,9 +9,12 @@ Page({
   onShow() {
     this.load()
   },
+  onPullDownRefresh() {
+    this.load().finally(() => wx.stopPullDownRefresh())
+  },
   load() {
     this.setData({ loading: true })
-    Promise.all([
+    return Promise.all([
       request('/api/member/assets').then((data) => Number(data.integral || 0)).catch(() => 0),
       request('/api/integral-mall/products').catch(() => [])
     ]).then(([balance, products]) => {
@@ -25,22 +28,9 @@ Page({
       })
     }).finally(() => this.setData({ loading: false }))
   },
-  exchange(e) {
+  openDetail(e) {
     const id = e.currentTarget.dataset.id
-    const item = (this.data.products || []).find((p) => String(p.id) === String(id))
-    if (!item || !item.canExchange) return
-    wx.showModal({
-      title: '确认兑换',
-      content: `使用 ${item.price} 积分兑换「${item.title}」？`,
-      success: (res) => {
-        if (!res.confirm) return
-        request('/api/integral-mall/exchange', { method: 'POST', data: { productId: id } })
-          .then(() => {
-            wx.showToast({ title: '兑换成功', icon: 'success' })
-            this.load()
-          })
-          .catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
-      }
-    })
+    if (!id) return
+    wx.navigateTo({ url: '/pages/jingcheng/integral/detail?id=' + id })
   }
 })

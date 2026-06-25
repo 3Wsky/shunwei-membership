@@ -22,7 +22,8 @@
         "merchant/withdraw/index",
         "showcase/list",
         "showcase/detail",
-        "integral/mall"
+        "integral/mall",
+        "integral/detail"
       ],
       "name": "jingcheng"
     },

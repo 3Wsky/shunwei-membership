@@ -1,20 +1,42 @@
 <view class="page">
-  <view class="balance">可用积分 <text class="num">{{balance}}</text></view>
+  <view class="balance-card">
+    <view class="bc-bg"><text class="iconfont icon-jifenshangcheng"></text></view>
+    <view class="bc-label">我的可用积分</view>
+    <view class="bc-value">{{balance}}</view>
+    <view class="bc-sub">积分可兑换会员专享好礼</view>
+  </view>
+
+  <view class="section-title">
+    <text>积分好礼</text>
+    <view class="section-badge">{{products.length}} 件</view>
+  </view>
+
   <view wx:if="{{products.length}}" class="grid">
     <view
       wx:for="{{products}}"
       wx:key="id"
-      class="card {{item.canExchange ? '' : 'disabled'}}"
+      class="card"
       data-id="{{item.id}}"
-      bindtap="exchange"
+      bindtap="openDetail"
     >
-      <image wx:if="{{item.image}}" class="cover" src="{{item.image}}" mode="aspectFill" />
-      <view wx:else class="cover placeholder">兑</view>
-      <view class="name">{{item.title}}</view>
-      <view class="price">{{item.price}} 积分</view>
-      <view wx:if="{{!item.canExchange}}" class="mask">{{item.stockHint || '暂不可兑'}}</view>
+      <view class="cover-wrap">
+        <image wx:if="{{item.image}}" class="cover" src="{{item.image}}" mode="aspectFill" />
+        <view wx:else class="cover placeholder">兑</view>
+        <view wx:if="{{!item.canExchange}}" class="cover-mask">{{item.stockHint || '暂不可兑'}}</view>
+      </view>
+      <view class="card-body">
+        <view class="name">{{item.title}}</view>
+        <view class="card-foot">
+          <view class="price"><text class="price-num">{{item.price}}</text> 积分</view>
+          <view class="go">兑换 ›</view>
+        </view>
+      </view>
     </view>
   </view>
-  <view wx:elif="{{!loading}}" class="empty">积分商城暂无商品</view>
+
+  <view wx:elif="{{!loading}}" class="empty">
+    <view class="empty-icon"><text class="iconfont icon-jifenshangcheng"></text></view>
+    <view>积分商城暂无商品</view>
+  </view>
   <view wx:if="{{loading}}" class="loading">加载中…</view>
 </view>

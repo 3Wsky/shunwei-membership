@@ -1,0 +1,60 @@
+<view class="page">
+  <swiper wx:if="{{images.length > 1}}" class="hero" indicator-dots="{{true}}" autoplay="{{true}}" circular="{{true}}" interval="4000">
+    <swiper-item wx:for="{{images}}" wx:key="*this">
+      <image class="hero-img" src="{{item}}" mode="aspectFill"/>
+    </swiper-item>
+  </swiper>
+  <view wx:elif="{{image}}" class="hero">
+    <image class="hero-img" src="{{image}}" mode="aspectFill"/>
+  </view>
+  <view wx:else class="hero placeholder"><text>兑</text></view>
+
+  <view class="info-card">
+    <view class="price-row">
+      <view class="price"><text class="price-num">{{price}}</text> 积分</view>
+      <view class="stock">库存 {{stock}}</view>
+    </view>
+    <view class="title">{{title}}</view>
+    <view wx:if="{{info}}" class="subtitle">{{info}}</view>
+    <view class="tags">
+      <view class="tag gold">积分兑换</view>
+      <view class="tag blue">锦程会员专享</view>
+      <view wx:if="{{sales}}" class="tag plain">已兑 {{sales}}</view>
+    </view>
+  </view>
+
+  <view class="rule-card">
+    <view class="rule-row">
+      <view class="rk"><text class="iconfont icon-jifenshangcheng"></text> 兑换方式</view>
+      <view class="rv">积分在线兑换</view>
+    </view>
+    <view class="rule-row">
+      <view class="rk"><text class="iconfont icon-yue2"></text> 我的积分</view>
+      <view class="rv gold">{{balance}}</view>
+    </view>
+    <view class="rule-row">
+      <view class="rk"><text class="iconfont icon-shuoming2"></text> 温馨提示</view>
+      <view class="rv muted">兑换后请按门店指引领取</view>
+    </view>
+  </view>
+
+  <view class="section-title">商品详情</view>
+  <view class="desc-card">
+    <rich-text wx:if="{{description}}" nodes="{{description}}"></rich-text>
+    <view wx:else class="desc-empty">
+      <view class="de-title">锦程数码会员积分专享好礼</view>
+      <view class="de-sub">数量有限，先兑先得。更多权益请关注锦程数码会员中心。</view>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+  <view class="bottom-bar">
+    <view class="bb-left">
+      <text class="bb-num">{{balance}}</text>
+      <text class="bb-label">可用积分</text>
+    </view>
+    <view class="bb-btn {{canExchange ? '' : 'disabled'}}" bindtap="exchange">
+      {{canExchange ? '立即兑换' : (stockHint || '暂不可兑')}}
+    </view>
+  </view>
+</view>

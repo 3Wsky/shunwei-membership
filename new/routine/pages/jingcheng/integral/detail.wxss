@@ -1,0 +1,268 @@
+page {
+  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+  box-sizing: border-box;
+  color: #0B1F3A;
+  background:
+    radial-gradient(circle at 82% 4%, rgba(77, 155, 255, 0.12), transparent 280rpx),
+    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+}
+
+/* Hero image */
+.hero {
+  width: 100%;
+  height: 600rpx;
+  background: #DDE7F5;
+}
+
+.hero-img {
+  width: 100%;
+  height: 600rpx;
+}
+
+.hero.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 120rpx;
+  font-weight: 900;
+  background: linear-gradient(135deg, #2F6BEA, #B8862B);
+}
+
+/* Info card */
+.info-card {
+  position: relative;
+  margin: -40rpx 28rpx 0;
+  padding: 30rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  box-shadow: 0 14rpx 38rpx rgba(15, 35, 70, 0.08);
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.price {
+  color: #B8862B;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.price-num {
+  font-size: 56rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stock {
+  color: #8A95A6;
+  font-size: 23rpx;
+}
+
+.title {
+  margin-top: 18rpx;
+  color: #0B1F3A;
+  font-size: 36rpx;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.subtitle {
+  margin-top: 10rpx;
+  color: #8A95A6;
+  font-size: 24rpx;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 20rpx;
+}
+
+.tag {
+  padding: 6rpx 18rpx;
+  border-radius: 12rpx;
+  font-size: 21rpx;
+  font-weight: 700;
+}
+
+.tag.gold {
+  color: #9b7715;
+  background: #FBF3DF;
+}
+
+.tag.blue {
+  color: #1E54D6;
+  background: #EAF1FF;
+}
+
+.tag.plain {
+  color: #6B7686;
+  background: #EEF1F6;
+}
+
+/* Rule card */
+.rule-card {
+  margin: 22rpx 28rpx 0;
+  padding: 10rpx 30rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  box-shadow: 0 12rpx 32rpx rgba(15, 35, 70, 0.05);
+}
+
+.rule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #F0F4FA;
+}
+
+.rule-row:last-child {
+  border-bottom: 0;
+}
+
+.rk {
+  display: flex;
+  align-items: center;
+  color: #8A95A6;
+  font-size: 25rpx;
+}
+
+.rk .iconfont {
+  margin-right: 12rpx;
+  color: #A9B4C4;
+  font-size: 30rpx;
+}
+
+.rv {
+  max-width: 56%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1A2236;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.rv.gold {
+  color: #B8862B;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.rv.muted {
+  color: #9AA5B8;
+  font-weight: 400;
+}
+
+/* Description */
+.section-title {
+  margin: 34rpx 32rpx 16rpx;
+  color: #0B1F3A;
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.desc-card {
+  margin: 0 28rpx;
+  padding: 30rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  box-shadow: 0 12rpx 32rpx rgba(15, 35, 70, 0.05);
+  font-size: 27rpx;
+  line-height: 1.7;
+  color: #42526E;
+}
+
+.desc-card rich-text image,
+.desc-card rich-text img {
+  max-width: 100%;
+}
+
+.desc-empty {
+  text-align: center;
+  padding: 30rpx 10rpx;
+}
+
+.de-title {
+  color: #1A2236;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.de-sub {
+  margin-top: 12rpx;
+  color: #9AA5B8;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+/* Bottom bar */
+.bottom-spacer {
+  height: 140rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 28rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.98);
+  border-top: 1rpx solid #EBF0F7;
+  box-shadow: 0 -6rpx 24rpx rgba(15, 35, 70, 0.06);
+}
+
+.bb-left {
+  display: flex;
+  flex-direction: column;
+  margin-right: 24rpx;
+}
+
+.bb-num {
+  color: #B8862B;
+  font-size: 36rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.bb-label {
+  margin-top: 6rpx;
+  color: #8A95A6;
+  font-size: 20rpx;
+}
+
+.bb-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 44rpx;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #2F6BEA, #1E54D6);
+  box-shadow: 0 12rpx 26rpx rgba(31, 84, 224, 0.32);
+}
+
+.bb-btn.disabled {
+  color: #fff;
+  background: #BCC6D6;
+  box-shadow: none;
+}
