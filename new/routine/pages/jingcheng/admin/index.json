@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "超级管理员",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "jc-auth-sync": "/components/jc-auth-sync/index"
+  }
+}

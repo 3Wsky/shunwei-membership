@@ -21,6 +21,7 @@
         "merchant/staff/index",
         "merchant/withdraw/index",
         "merchant/sn-scan/index",
+        "admin/index",
         "showcase/list",
         "showcase/detail",
         "integral/mall",

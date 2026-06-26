@@ -1,0 +1,72 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+
+  <view class="hero">
+    <view class="hero-badge">超级管理员</view>
+    <view class="hero-title">终审 · 免审 · 归属</view>
+  </view>
+
+  <!-- Auto-pass switches -->
+  <view class="card section">
+    <view class="section-head">免审开关</view>
+    <view class="switch-row">
+      <text>消费审批免审</text>
+      <switch checked="{{autoPass.consumption}}" bindchange="toggleAutoPass" data-type="consumption" color="#C9A227" />
+    </view>
+    <view class="switch-row">
+      <text>积分商城免审</text>
+      <switch checked="{{autoPass.integralMall}}" bindchange="toggleAutoPass" data-type="integralMall" color="#C9A227" />
+    </view>
+  </view>
+
+  <!-- Pending approvals -->
+  <view class="card section">
+    <view class="section-head">
+      <text>待终审 ({{pending.length}})</text>
+      <text class="refresh-btn" bindtap="loadPending">刷新</text>
+    </view>
+    <view wx:for="{{pending}}" wx:key="requestId" class="approval-item">
+      <view class="ai-top">
+        <text class="ai-id">#{{item.requestId}}</text>
+        <text class="ai-tier">{{item.matchedTierCode}}</text>
+      </view>
+      <view class="ai-row">
+        <text class="ai-label">会员</text>
+        <text>{{item.customerName || 'UID ' + item.customerUid}}</text>
+      </view>
+      <view class="ai-row">
+        <text class="ai-label">申请人</text>
+        <text>{{item.clerkName || 'UID ' + item.clerkUid}}</text>
+      </view>
+      <view class="ai-row">
+        <text class="ai-label">权益</text>
+        <text>{{item.matchedIntegral}}积分 + ¥{{item.matchedVoucher}}券</text>
+      </view>
+      <view wx:if="{{item.receiptNo}}" class="ai-row">
+        <text class="ai-label">产品</text>
+        <text>{{item.receiptNo}}</text>
+      </view>
+      <view class="ai-actions">
+        <view class="ai-btn reject" data-id="{{item.requestId}}" bindtap="reviewReject">驳回</view>
+        <view class="ai-btn approve" data-id="{{item.requestId}}" bindtap="reviewApprove">通过</view>
+      </view>
+    </view>
+    <view wx:if="{{!pending.length}}" class="empty-hint">暂无待终审</view>
+  </view>
+
+  <!-- Change spread -->
+  <view class="card section">
+    <view class="section-head">修改归属关系</view>
+    <view class="spread-form">
+      <view class="form-row">
+        <text class="form-label">会员UID</text>
+        <input class="form-input" type="number" placeholder="输入会员UID" value="{{spreadForm.memberUid}}" bindinput="onMemberUid" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">新客户经理UID</text>
+        <input class="form-input" type="number" placeholder="输入新归属UID（0=解除）" value="{{spreadForm.newSpreadUid}}" bindinput="onSpreadUid" />
+      </view>
+      <view class="form-btn" bindtap="changeSpread">确认修改归属</view>
+    </view>
+  </view>
+</view>

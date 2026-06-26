@@ -192,11 +192,33 @@ page {
   font-size: 60rpx;
 }
 
+.row-value-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 70%;
+}
+
+.row-name {
+  max-width: 240rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1A1A1A;
+  font-size: 27rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
 .uid-tag {
   font-size: 20rpx;
-  color: #999;
-  background: #f5f5f5;
-  padding: 2rpx 10rpx;
+  color: #C9A227;
+  background: rgba(201, 162, 39, 0.08);
+  border: 1rpx solid rgba(201, 162, 39, 0.15);
+  padding: 2rpx 12rpx;
   border-radius: 8rpx;
-  margin-left: 8rpx;
+  margin-left: 12rpx;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
