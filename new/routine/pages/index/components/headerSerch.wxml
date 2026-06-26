@@ -12,11 +12,11 @@
         ><view
           class="serch-wrapper acea-row row-middle data-v-41824f2f"
           style="{{$root.s2}}"
-          ><block wx:if="{{styleConfig==0&&styleTypeConfig==1}}"
+          >          <block wx:if="{{styleConfig==0&&styleTypeConfig==1}}"
             ><view
               class="title data-v-41824f2f"
               style="{{$root.s3}}"
-              >锦程祥瑞数码</view
+              >锦程数码</view
             ></block
           ><block
             wx:if="{{titleConfig&&(styleConfig==1||styleConfig==0&&styleTypeConfig==0)}}"
@@ -25,7 +25,7 @@
               class="title data-v-41824f2f"
               style="{{$root.s3}}"
               bindtap="__e"
-              >锦程祥瑞数码</view
+              >锦程数码</view
             ></block
           ><block wx:if="{{styleConfig===0}}"
             ><navigator
