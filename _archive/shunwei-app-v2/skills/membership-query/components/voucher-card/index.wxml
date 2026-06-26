@@ -1,5 +1,0 @@
-<view class="card">
-  <text class="title">现金券余额</text>
-  <text class="balance gold">¥{{data.balance || 0}}</text>
-  <text class="hint" wx:if="{{data.expiringSoon > 0}}">30天内即将过期 ¥{{data.expiringSoon}}</text>
-</view>

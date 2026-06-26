@@ -13,10 +13,22 @@ function todayStartTs() {
   return Math.floor(new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime() / 1000)
 }
 
+function isIntegralCode(code) {
+  var s = String(code || '').trim()
+  if (/^\d{6}$/.test(s)) return true
+  if (/^IG\d+/i.test(s)) return true
+  return false
+}
+
+function isCashVoucherToken(code) {
+  return String(code || '').trim().indexOf('sw-pay:') === 0
+}
+
 Page({
   data: {
     loading: true,
     scanning: false,
+    manualCode: '',
     todayAmount: 0,
     todayCount: 0,
     weekAmount: 0,
@@ -28,6 +40,12 @@ Page({
   },
   onShow: function () { this.load() },
   onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
+  onManualInput: function (e) { this.setData({ manualCode: e.detail.value }) },
+  manualVerify: function () {
+    var code = String(this.data.manualCode || '').trim()
+    if (!code) return wx.showToast({ title: '请输入核销码', icon: 'none' })
+    this.routeCode(code)
+  },
   load: function () {
     syncAuthFromApp()
     if (!getToken()) {
@@ -65,17 +83,26 @@ Page({
     wx.scanCode({
       onlyFromCamera: false,
       success: function (res) {
-        var token = String(res.result || '').trim()
-        if (!token) {
+        var code = String(res.result || '').trim()
+        if (!code) {
           this.setData({ scanning: false })
-          return wx.showToast({ title: '未识别到付款码', icon: 'none' })
+          return wx.showToast({ title: '未识别到核销码', icon: 'none' })
         }
-        this.preview(token)
+        this.routeCode(code)
       }.bind(this),
       fail: function () { this.setData({ scanning: false }) }.bind(this)
     })
   },
-  preview: function (token) {
+  routeCode: function (code) {
+    if (isCashVoucherToken(code)) {
+      this.previewCashVoucher(code)
+    } else if (isIntegralCode(code)) {
+      this.previewIntegral(code)
+    } else {
+      this.previewCashVoucher(code)
+    }
+  },
+  previewCashVoucher: function (token) {
     request('/api/merchant/preview-verify', {
       method: 'POST', data: { verifyToken: token }
     }).then(function (info) {
@@ -85,6 +112,49 @@ Page({
       this.setData({ scanning: false })
       wx.showModal({ title: '无法核销', content: err.message || '付款码无效，请让顾客刷新', showCancel: false })
     }.bind(this))
+  },
+  previewIntegral: function (code) {
+    request('/api/integral-mall/preview-by-code', {
+      method: 'POST', data: { verifyCode: code }
+    }).then(function (info) {
+      this.setData({ scanning: false, manualCode: '' })
+      this.confirmIntegral(code, info)
+    }.bind(this)).catch(function (err) {
+      this.setData({ scanning: false })
+      wx.showModal({ title: '无法核销', content: err.message || '核销码无效', showCancel: false })
+    }.bind(this))
+  },
+  confirmIntegral: function (code, info) {
+    var that = this
+    wx.showModal({
+      title: '积分礼品核销',
+      content: '顾客：' + (info.customerNickname || ('UID ' + info.customerUid)) +
+        '\n礼品：' + info.productName +
+        '\n消耗积分：' + info.integralCost +
+        '\n\n确认核销该积分礼品？',
+      confirmText: '确认核销',
+      success: function (res) {
+        if (!res.confirm) return
+        that.doIntegralVerify(code)
+      }
+    })
+  },
+  doIntegralVerify: function (code) {
+    wx.showLoading({ title: '核销中…', mask: true })
+    request('/api/integral-mall/verify-by-code', {
+      method: 'POST', data: { verifyCode: code }
+    }).then(function (data) {
+      wx.hideLoading()
+      wx.showModal({
+        title: '核销成功',
+        content: '积分礼品已核销\n商品：' + data.productName + '\n积分：' + data.integralCost,
+        showCancel: false
+      })
+      this.load()
+    }.bind(this)).catch(function (err) {
+      wx.hideLoading()
+      wx.showModal({ title: '核销失败', content: err.message || '请重试', showCancel: false })
+    })
   },
   askAmount: function (token, info) {
     var that = this
@@ -99,11 +169,11 @@ Page({
         var amount = Number(String(res.content || '').trim())
         if (!amount || amount <= 0) return wx.showToast({ title: '请输入有效金额', icon: 'none' })
         if (amount > Number(info.balance || 0)) return wx.showToast({ title: '超过顾客可用余额', icon: 'none' })
-        that.doVerify(token, amount)
+        that.doCashVerify(token, amount)
       }
     })
   },
-  doVerify: function (token, amount) {
+  doCashVerify: function (token, amount) {
     wx.showLoading({ title: '核销中…', mask: true })
     request('/api/merchant/verify-voucher', {
       method: 'POST', data: { verifyToken: token, amount: amount }

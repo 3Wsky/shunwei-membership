@@ -32,7 +32,7 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "",
+  "libVersion": "3.15.2",
   "appid": "wxd3d9178b9414d20b",
   "projectname": "锦程祥瑞数码",
   "condition": {

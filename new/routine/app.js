@@ -3,6 +3,20 @@ require('./common/runtime.js')
 require('./common/vendor.js')
 require('./common/main.js')
 
+// 自动捕获并绑定企微活码/欢迎语中的客户经理 UID
+try {
+  var jcBind = require('./services/jc-bind.js')
+  jcBind.captureSpreadFromLaunch()
+  jcBind.startAutoBind()
+  if (typeof wx.onAppShow === 'function') {
+    wx.onAppShow(function (opts) {
+      jcBind.captureSpreadFromLaunch(opts)
+    })
+  }
+} catch (e) {
+  /* ignore */
+}
+
 function copyTokenFromPages() {
   try {
     var pages = getCurrentPages() || []

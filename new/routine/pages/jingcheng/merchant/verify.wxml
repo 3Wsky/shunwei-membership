@@ -4,11 +4,15 @@
   <view class="hero">
     <image class="hero-bg" src="/pages/jingcheng/static/images/jc-merchant-verify-bg.jpg" mode="aspectFill"/>
     <view class="hero-body">
-      <view class="hero-badge"><text class="iconfont icon-hexiaoma"></text> 现金券核销</view>
-      <view class="hero-title">扫描顾客付款码</view>
-      <view class="hero-desc">请让顾客打开现金券钱包，出示付款码</view>
+      <view class="hero-badge"><text class="iconfont icon-hexiaoma"></text> 统一核销</view>
+      <view class="hero-title">扫描核销码</view>
+      <view class="hero-desc">支持现金券付款码和积分礼品核销码</view>
       <view class="scan-btn {{scanning ? 'disabled' : ''}}" bindtap="scanCustomer">
         <text class="iconfont icon-hexiaoma"></text> 扫一扫
+      </view>
+      <view class="manual-input-row">
+        <input class="code-input" type="number" maxlength="6" placeholder="或手动输入6位核销码" value="{{manualCode}}" bindinput="onManualInput" />
+        <view class="manual-btn {{!manualCode ? 'disabled' : ''}}" bindtap="manualVerify">核销</view>
       </view>
     </view>
   </view>
