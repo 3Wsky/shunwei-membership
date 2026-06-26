@@ -53,8 +53,21 @@
         <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{productType === item ? 'active' : ''}}" data-type="{{item}}" bindtap="chooseType">{{item}}</view>
       </view>
 
+      <view class="scan-row">
+        <view class="scan-tip">拍照自动识别产品信息</view>
+        <view class="scan-btn-sm {{scanning ? 'disabled' : ''}}" bindtap="scanSn">
+          <text class="iconfont icon-hexiaoma"></text> 拍照识别
+        </view>
+      </view>
+
       <view class="field-label">产品型号</view>
       <input class="field-input" value="{{productModel}}" bindinput="onModel" placeholder="请输入产品型号" placeholder-class="ph" maxlength="30"/>
+
+      <view class="field-label">SN 序列号</view>
+      <input class="field-input mono" value="{{productSn}}" bindinput="onSn" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="30"/>
+
+      <view class="field-label">IMEI（可选）</view>
+      <input class="field-input mono" value="{{productImei}}" bindinput="onImei" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="20"/>
 
       <view class="field-label">产品价格</view>
       <input class="field-input" type="digit" value="{{productPrice}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph"/>
