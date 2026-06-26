@@ -9,12 +9,12 @@
     </view>
 
     <view class="row">
-      <view class="row-label"><text class="iconfont icon-yonghu"></text>会员 UID</view>
-      <text class="row-value">{{item.customerUid}}</text>
+      <view class="row-label"><text class="iconfont icon-yonghu"></text>会员</view>
+      <text class="row-value">{{item.customerName || '未知'}} <text class="uid-tag">UID {{item.customerUid}}</text></text>
     </view>
     <view class="row">
-      <view class="row-label"><text class="iconfont icon-yonghu2"></text>申请店员 UID</view>
-      <text class="row-value">{{item.clerkUid}}</text>
+      <view class="row-label"><text class="iconfont icon-yonghu2"></text>申请店员</view>
+      <text class="row-value">{{item.clerkName || '未知'}} <text class="uid-tag">UID {{item.clerkUid}}</text></text>
     </view>
     <view class="row">
       <view class="row-label"><text class="iconfont icon-liwu"></text>产品信息</view>

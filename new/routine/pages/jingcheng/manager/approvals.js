@@ -40,7 +40,7 @@ Page({
     const action = e.currentTarget.dataset.action
     wx.showModal({
       title: action === 'approve' ? '通过申请' : '驳回申请',
-      content: `会员UID ${item.customerUid} · ${item.rangeText}\n${item.matchedIntegral}积分 + ¥${item.matchedVoucher}现金券`,
+      content: `会员：${item.customerName || 'UID ' + item.customerUid} · ${item.rangeText}\n申请人：${item.clerkName || 'UID ' + item.clerkUid}\n${item.matchedIntegral}积分 + ¥${item.matchedVoucher}现金券`,
       editable: true,
       placeholderText: '请输入审批备注（选填）',
       confirmText: action === 'approve' ? '确认通过' : '确认驳回',
