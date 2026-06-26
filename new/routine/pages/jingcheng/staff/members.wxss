@@ -1,15 +1,13 @@
 page {
-  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  background: #F5F3F0;
 }
 
 .page {
   min-height: 100vh;
   padding: 28rpx 32rpx 56rpx;
   box-sizing: border-box;
-  color: #0B1F3A;
-  background:
-    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
-    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  color: #1A1A1A;
+  background: #F5F3F0;
 }
 
 .manager-entry {
@@ -18,10 +16,10 @@ page {
   justify-content: space-between;
   margin-bottom: 22rpx;
   padding: 30rpx 32rpx;
-  border-radius: 26rpx;
+  border-radius: 24rpx;
   color: #fff;
-  background: linear-gradient(135deg, #1E5BB8, #14457F);
-  box-shadow: 0 14rpx 34rpx rgba(20, 69, 127, 0.28);
+  background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%);
+  box-shadow: 0 12rpx 36rpx rgba(26, 31, 54, 0.16);
 }
 
 .manager-entry text {
@@ -39,7 +37,7 @@ page {
 
 .badge {
   flex: 0 0 auto;
-  color: #FFE6A6;
+  color: #D4AF37;
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -49,18 +47,19 @@ page {
   align-items: center;
   padding: 14rpx;
   border-radius: 24rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.1);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .search input {
   flex: 1;
   height: 72rpx;
   padding: 0 24rpx;
-  background: #F1F5FB;
+  background: #F7F5F2;
   border-radius: 16rpx;
   font-size: 26rpx;
+  color: #1A1A1A;
 }
 
 .search button {
@@ -72,7 +71,7 @@ page {
   font-weight: 700;
   color: #fff;
   border-radius: 16rpx;
-  background: linear-gradient(135deg, #2F6BEA, #1E54D6);
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
 }
 
 .search button::after {
@@ -84,14 +83,14 @@ page {
   flex-direction: column;
   gap: 8rpx;
   padding: 28rpx 8rpx 16rpx;
-  color: #42526E;
+  color: #4A4A4A;
   font-size: 26rpx;
   font-weight: 700;
 }
 
 .uid-hint {
   font-size: 22rpx;
-  color: #A9B4C4;
+  color: #8C8C8C;
   font-weight: 400;
 }
 
@@ -108,16 +107,16 @@ page {
   margin-bottom: 18rpx;
   padding: 24rpx 26rpx;
   border-radius: 24rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 10rpx 30rpx rgba(15, 35, 70, 0.05);
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .avatar {
   width: 88rpx;
   height: 88rpx;
   border-radius: 50%;
-  background: #eef2f8;
+  background: #F5F3F0;
 }
 
 .info {
@@ -130,7 +129,7 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #1E54D6;
+  color: #1A1A1A;
   font-size: 30rpx;
   font-weight: 800;
 }
@@ -147,20 +146,20 @@ page {
 
 .meta {
   margin-top: 10rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 23rpx;
 }
 
 .balances {
   margin-top: 10rpx;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 24rpx;
 }
 
 .status {
   flex: 0 0 auto;
   margin-left: 14rpx;
-  color: #C99A2E;
+  color: #C9A227;
   font-size: 34rpx;
   font-weight: 700;
 }
@@ -169,13 +168,13 @@ page {
 .loading {
   text-align: center;
   padding: 70rpx 24rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
 }
 
 .empty-title {
   margin-bottom: 16rpx;
   font-size: 30rpx;
-  color: #42526E;
+  color: #1A1A1A;
   font-weight: 700;
 }
 
@@ -185,10 +184,10 @@ page {
   border-radius: 18rpx;
   font-size: 24rpx;
   line-height: 1.6;
-  color: #8A95A6;
+  color: #8C8C8C;
   text-align: left;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
 }
 
 .login-btn {
@@ -197,7 +196,7 @@ page {
   font-weight: 700;
   color: #fff;
   border-radius: 44rpx;
-  background: linear-gradient(135deg, #2F6BEA, #1E54D6);
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
 }
 
 .login-btn::after {

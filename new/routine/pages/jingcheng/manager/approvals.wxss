@@ -1,24 +1,22 @@
 page {
-  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  background: #F5F3F0;
 }
 
 .page {
   min-height: 100vh;
   padding: 28rpx 32rpx 56rpx;
   box-sizing: border-box;
-  color: #0B1F3A;
-  background:
-    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
-    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  color: #1A1A1A;
+  background: #F5F3F0;
 }
 
 .card {
   margin-bottom: 24rpx;
   padding: 28rpx;
-  border-radius: 28rpx;
-  background: rgba(255, 255, 255, 0.98);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .card-head {
@@ -43,7 +41,7 @@ page {
   margin-right: 16rpx;
   border-radius: 16rpx;
   color: #fff;
-  background: linear-gradient(135deg, #4A8CFF, #1F6BFF);
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
 }
 
 .ch-icon .iconfont {
@@ -51,7 +49,7 @@ page {
 }
 
 .ch-title {
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 32rpx;
   font-weight: 900;
 }
@@ -59,7 +57,7 @@ page {
 .ch-status {
   display: flex;
   align-items: center;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -69,7 +67,7 @@ page {
   height: 12rpx;
   margin-right: 10rpx;
   border-radius: 50%;
-  background: #E6A817;
+  background: #C9A227;
 }
 
 .row {
@@ -82,13 +80,13 @@ page {
 .row-label {
   display: flex;
   align-items: center;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 26rpx;
 }
 
 .row-label .iconfont {
   margin-right: 12rpx;
-  color: #A9B4C4;
+  color: #C9A227;
   font-size: 30rpx;
 }
 
@@ -97,7 +95,7 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #1A2236;
+  color: #1A1A1A;
   font-size: 27rpx;
   font-weight: 700;
   text-align: right;
@@ -114,8 +112,8 @@ page {
   margin-top: 24rpx;
   padding: 20rpx 12rpx;
   border-radius: 16rpx;
-  background: linear-gradient(135deg, #FBF3DF, #FCF8EC);
-  border: 1rpx solid rgba(200, 162, 39, 0.25);
+  background: linear-gradient(135deg, #FBF8F5, #FFFDF9);
+  border: 1rpx solid rgba(201, 162, 39, 0.15);
 }
 
 .benefit-seg {
@@ -129,7 +127,7 @@ page {
 }
 
 .benefit-seg + .benefit-seg {
-  border-left: 1rpx solid rgba(200, 162, 39, 0.28);
+  border-left: 1rpx solid rgba(201, 162, 39, 0.15);
 }
 
 .benefit-seg .iconfont {
@@ -164,8 +162,8 @@ page {
 
 .approve {
   color: #fff;
-  background: linear-gradient(135deg, #4A90F4, #2F6BEA);
-  box-shadow: 0 10rpx 24rpx rgba(47, 107, 234, 0.32);
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
+  box-shadow: 0 6rpx 16rpx rgba(201, 162, 39, 0.2);
 }
 
 .empty {
@@ -174,7 +172,7 @@ page {
   align-items: center;
   justify-content: center;
   padding: 120rpx 0;
-  color: #9AA5B4;
+  color: #8C8C8C;
   font-size: 27rpx;
 }
 
@@ -186,8 +184,8 @@ page {
   height: 120rpx;
   margin-bottom: 20rpx;
   border-radius: 36rpx;
-  color: #9CC0FF;
-  background: linear-gradient(145deg, #EAF2FF, #FFFFFF);
+  color: #D4AF37;
+  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
 }
 
 .empty-icon .iconfont {

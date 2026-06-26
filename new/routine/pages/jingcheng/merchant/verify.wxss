@@ -1,24 +1,22 @@
 page {
-  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  background: #F5F3F0;
 }
 
 .page {
   min-height: 100vh;
   padding: 28rpx 32rpx 56rpx;
   box-sizing: border-box;
-  color: #0B1F3A;
-  background:
-    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
-    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  color: #1A1A1A;
+  background: #F5F3F0;
 }
 
 /* Hero */
 .hero {
   position: relative;
   min-height: 300rpx;
-  border-radius: 32rpx;
+  border-radius: 24rpx;
   overflow: hidden;
-  box-shadow: 0 16rpx 40rpx rgba(15, 35, 90, 0.18);
+  box-shadow: 0 12rpx 36rpx rgba(26, 31, 54, 0.16);
 }
 
 .hero-bg {
@@ -64,11 +62,11 @@ page {
   margin-top: 26rpx;
   padding: 18rpx 44rpx;
   border-radius: 40rpx;
-  color: #2A2207;
+  color: #fff;
   font-size: 30rpx;
   font-weight: 800;
-  background: linear-gradient(135deg, #F8DC8E, #E0A93C);
-  box-shadow: 0 10rpx 24rpx rgba(180, 130, 30, 0.4);
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
+  box-shadow: 0 6rpx 20rpx rgba(201, 162, 39, 0.3);
 }
 
 .scan-btn .iconfont {
@@ -84,10 +82,10 @@ page {
 .data-card {
   margin-top: 22rpx;
   padding: 28rpx;
-  border-radius: 28rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .dc-head {
@@ -97,14 +95,14 @@ page {
 }
 
 .dc-kicker {
-  color: #B8862B;
+  color: #C9A227;
   font-size: 22rpx;
   font-weight: 800;
 }
 
 .dc-title {
   margin-top: 6rpx;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 30rpx;
   font-weight: 800;
 }
@@ -114,10 +112,10 @@ page {
   align-items: center;
   padding: 6rpx 18rpx;
   border-radius: 22rpx;
-  color: #1F6BFF;
+  color: #C9A227;
   font-size: 22rpx;
   font-weight: 700;
-  background: #EEF5FF;
+  background: #FFF9E6;
 }
 
 .dc-tag .iconfont {
@@ -129,8 +127,9 @@ page {
   display: flex;
   margin-top: 24rpx;
   padding: 24rpx;
-  border-radius: 22rpx;
-  background: linear-gradient(135deg, #FBF6E9, #FFF9EC);
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #FBF8F5, #FFFDF9);
+  border: 1rpx solid rgba(201, 162, 39, 0.1);
 }
 
 .dc-cell {
@@ -139,25 +138,25 @@ page {
 }
 
 .dc-cell + .dc-cell {
-  border-left: 1rpx solid rgba(184, 134, 43, 0.18);
+  border-left: 1rpx solid rgba(201, 162, 39, 0.15);
   padding-left: 28rpx;
 }
 
 .dc-label {
-  color: #9A8A5E;
+  color: #8C7355;
   font-size: 23rpx;
 }
 
 .dc-value {
   margin-top: 12rpx;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 48rpx;
   font-weight: 900;
   line-height: 1;
 }
 
 .dc-value.dark {
-  color: #0B1F3A;
+  color: #1A1A1A;
 }
 
 /* Section title */
@@ -165,7 +164,7 @@ page {
   display: flex;
   align-items: center;
   margin: 32rpx 4rpx 18rpx;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 32rpx;
   font-weight: 800;
 }
@@ -174,19 +173,19 @@ page {
   margin-left: 10rpx;
   padding: 2rpx 12rpx;
   border-radius: 14rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 20rpx;
   font-weight: 700;
-  background: #EEF1F6;
+  background: #EBF0F7;
 }
 
 /* Record list */
 .record-list {
   overflow: hidden;
   border-radius: 24rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .record-row {
@@ -210,8 +209,8 @@ page {
   flex: 0 0 66rpx;
   margin-right: 18rpx;
   border-radius: 50%;
-  color: #1F6BFF;
-  background: #EEF5FF;
+  color: #C9A227;
+  background: #FFF9E6;
 }
 
 .record-icon .iconfont {
@@ -227,7 +226,7 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 28rpx;
   font-weight: 800;
 }
@@ -237,14 +236,14 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 22rpx;
 }
 
 .record-amount {
   flex: 0 0 auto;
   margin-left: 16rpx;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 30rpx;
   font-weight: 900;
 }
@@ -257,11 +256,11 @@ page {
   justify-content: center;
   min-height: 200rpx;
   border-radius: 24rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 26rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .empty-icon {
@@ -272,8 +271,8 @@ page {
   height: 88rpx;
   margin-bottom: 14rpx;
   border-radius: 30rpx;
-  color: #82AEFF;
-  background: linear-gradient(145deg, #EEF5FF, #FFFFFF);
+  color: #D4AF37;
+  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
 }
 
 .empty-icon .iconfont {
@@ -283,11 +282,11 @@ page {
 /* Summary */
 .summary-card {
   margin-top: 24rpx;
-  border-radius: 26rpx;
+  border-radius: 24rpx;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .summary-head {
@@ -300,19 +299,19 @@ page {
 .sh-left {
   display: flex;
   align-items: center;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 28rpx;
   font-weight: 800;
 }
 
 .sh-left .iconfont {
   margin-right: 12rpx;
-  color: #1F6BFF;
+  color: #C9A227;
   font-size: 32rpx;
 }
 
 .sh-right {
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 24rpx;
 }
 
@@ -334,19 +333,19 @@ page {
 }
 
 .sc-label {
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 22rpx;
 }
 
 .sc-value {
   margin-top: 12rpx;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 34rpx;
   font-weight: 900;
 }
 
 .sc-desc {
   margin-top: 8rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 21rpx;
 }

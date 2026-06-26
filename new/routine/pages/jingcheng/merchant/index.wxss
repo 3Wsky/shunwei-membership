@@ -1,24 +1,22 @@
 page {
-  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  background: #F5F3F0;
 }
 
 .page {
   min-height: 100vh;
   padding: 28rpx 32rpx 56rpx;
   box-sizing: border-box;
-  color: #0B1F3A;
-  background:
-    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.14), transparent 260rpx),
-    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
+  color: #1A1A1A;
+  background: #F5F3F0;
 }
 
 /* Hero */
 .hero {
   position: relative;
   min-height: 252rpx;
-  border-radius: 32rpx;
+  border-radius: 24rpx;
   overflow: hidden;
-  box-shadow: 0 16rpx 40rpx rgba(15, 35, 90, 0.18);
+  box-shadow: 0 12rpx 36rpx rgba(26, 31, 54, 0.16);
 }
 
 .hero-bg {
@@ -73,10 +71,10 @@ page {
   align-items: center;
   margin-top: 22rpx;
   padding: 26rpx 28rpx;
-  border-radius: 26rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .ve-icon {
@@ -87,9 +85,9 @@ page {
   height: 84rpx;
   flex: 0 0 84rpx;
   margin-right: 22rpx;
-  border-radius: 24rpx;
-  color: #1F3A6B;
-  background: linear-gradient(145deg, #EAF1FF, #DCE7FF);
+  border-radius: 20rpx;
+  color: #C9A227;
+  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
 }
 
 .ve-icon .iconfont {
@@ -102,20 +100,20 @@ page {
 }
 
 .ve-title {
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 32rpx;
   font-weight: 800;
 }
 
 .ve-sub {
   margin-top: 8rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 23rpx;
 }
 
 .ve-action {
   flex: 0 0 auto;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 26rpx;
   font-weight: 800;
 }
@@ -123,7 +121,7 @@ page {
 /* Section title */
 .section-title {
   margin: 34rpx 4rpx 18rpx;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 32rpx;
   font-weight: 800;
 }
@@ -132,10 +130,10 @@ page {
 .overview-card {
   display: flex;
   padding: 30rpx 28rpx;
-  border-radius: 28rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
   box-sizing: border-box;
 }
 
@@ -146,7 +144,7 @@ page {
 
 .ov-label,
 .ov-desc {
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 23rpx;
 }
 
@@ -155,7 +153,7 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #B8862B;
+  color: #C9A227;
   font-size: 52rpx;
   font-weight: 900;
   line-height: 1;
@@ -165,7 +163,7 @@ page {
   display: flex;
   width: 280rpx;
   margin-left: 22rpx;
-  border-left: 1rpx solid #E6EEF8;
+  border-left: 1rpx solid #E5E5E5;
 }
 
 .ov-grid view {
@@ -182,14 +180,14 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 30rpx;
   font-weight: 800;
 }
 
 .ov-grid label {
   margin-top: 8rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 21rpx;
 }
 
@@ -203,10 +201,10 @@ page {
   flex: 1;
   min-width: 0;
   padding: 28rpx;
-  border-radius: 26rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
   box-sizing: border-box;
 }
 
@@ -216,7 +214,7 @@ page {
   justify-content: center;
   width: 76rpx;
   height: 76rpx;
-  border-radius: 22rpx;
+  border-radius: 20rpx;
 }
 
 .entry-icon .iconfont {
@@ -224,30 +222,30 @@ page {
 }
 
 .entry-icon.blue {
-  color: #1F6BFF;
-  background: linear-gradient(145deg, #E6F0FF, #D6E5FF);
+  color: #C9A227;
+  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
 }
 
 .entry-icon.gold {
-  color: #C9920F;
-  background: linear-gradient(145deg, #FFF3D6, #FFE9B8);
+  color: #C9A227;
+  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
 }
 
 .entry-icon.navy {
-  color: #1F3A6B;
-  background: linear-gradient(145deg, #E4ECFB, #D3DEF5);
+  color: #C9A227;
+  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
 }
 
 .entry-name {
   margin-top: 18rpx;
-  color: #0B1F3A;
+  color: #1A1A1A;
   font-size: 30rpx;
   font-weight: 800;
 }
 
 .entry-sub {
   margin-top: 8rpx;
-  color: #8A95A6;
+  color: #8C8C8C;
   font-size: 22rpx;
 }
 
@@ -256,10 +254,10 @@ page {
   align-items: center;
   margin-top: 22rpx;
   padding: 26rpx 28rpx;
-  border-radius: 26rpx;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1rpx solid rgba(230, 238, 248, 0.9);
-  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 
 .entry-row .entry-icon {
@@ -287,9 +285,9 @@ page {
   display: flex;
   margin-top: 24rpx;
   padding: 30rpx 20rpx;
-  border-radius: 26rpx;
-  background: linear-gradient(135deg, #1B2A5E, #24337A);
-  box-shadow: 0 16rpx 36rpx rgba(20, 35, 90, 0.22);
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%);
+  box-shadow: 0 12rpx 36rpx rgba(26, 31, 54, 0.16);
 }
 
 .total-card view {
@@ -305,13 +303,13 @@ page {
 }
 
 .total-card text {
-  color: #F4D58D;
+  color: #D4AF37;
   font-size: 36rpx;
   font-weight: 900;
 }
 
 .total-card label {
   margin-top: 8rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 21rpx;
 }
