@@ -20,6 +20,7 @@
         "merchant/records/index",
         "merchant/staff/index",
         "merchant/withdraw/index",
+        "merchant/sn-scan/index",
         "showcase/list",
         "showcase/detail",
         "integral/mall",

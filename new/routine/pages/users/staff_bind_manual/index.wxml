@@ -37,11 +37,11 @@
     </view>
 
     <view class="manager-actions">
-      <button wx:if="{{card.storePhone}}" class="manager-action primary" bindtap="makePhoneCall">电话联系</button>
-      <button wx:if="{{card.latitude && card.longitude}}" class="manager-action" bindtap="openLocation">导航到店</button>
+      <button wx:if="{{card.storePhone}}" class="manager-action primary" hover-class="button-hover" bindtap="makePhoneCall">电话联系</button>
+      <button wx:if="{{card.latitude && card.longitude}}" class="manager-action" hover-class="button-hover" bindtap="openLocation">导航到店</button>
     </view>
 
-    <view wx:if="{{card.wechatQrcode}}" class="qrcode-card" bindtap="previewQrcode">
+    <view wx:if="{{card.wechatQrcode}}" class="qrcode-card" hover-class="card-hover" bindtap="previewQrcode">
       <image class="qrcode-image" src="{{card.wechatQrcode}}" mode="aspectFill"></image>
       <view class="qrcode-text">
         <view>添加客户经理微信</view>
@@ -51,7 +51,9 @@
   </view>
 
   <view wx:elif="{{bound && !hasCard}}" class="state-card">
-    <view class="state-icon">ID</view>
+    <view class="state-icon">
+      <text class="iconfont icon-kehu" style="font-size: 42rpx;"></text>
+    </view>
     <view class="state-title">已绑定客户经理</view>
     <view class="state-desc">当前客户经理 UID：{{spreadUid}}。名片资料暂未发布，请联系门店完善。</view>
   </view>
@@ -70,6 +72,7 @@
         type="number"
         maxlength="12"
         placeholder="请输入 UID"
+        placeholder-style="color: #A6A6A6;"
         value="{{staffUid}}"
         bindinput="onUidInput"
       />
@@ -77,6 +80,7 @@
 
     <button
       class="staff-bind-button"
+      hover-class="button-hover"
       loading="{{submitting}}"
       disabled="{{submitting}}"
       bindtap="submitBind"

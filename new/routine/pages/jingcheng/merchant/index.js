@@ -49,6 +49,7 @@ Page({
     }.bind(this))
   },
   openVerify: function () { wx.navigateTo({ url: '/pages/jingcheng/merchant/verify' }) },
+  goSnScan: function () { wx.navigateTo({ url: '/pages/jingcheng/merchant/sn-scan/index' }) },
   goRecords: function () { wx.navigateTo({ url: '/pages/jingcheng/merchant/records/index' }) },
   goStaff: function () { wx.navigateTo({ url: '/pages/jingcheng/merchant/staff/index' }) },
   goWithdraw: function () { wx.navigateTo({ url: '/pages/jingcheng/merchant/withdraw/index' }) }

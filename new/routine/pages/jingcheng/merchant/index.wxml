@@ -14,10 +14,19 @@
   <view class="verify-entry" bindtap="openVerify">
     <view class="ve-icon"><text class="iconfont icon-hexiaoma"></text></view>
     <view class="ve-main">
-      <view class="ve-title">现金券核销</view>
-      <view class="ve-sub">扫描顾客付款码，安全核销</view>
+      <view class="ve-title">统一核销</view>
+      <view class="ve-sub">支持现金券和积分礼品核销</view>
     </view>
     <view class="ve-action">扫一扫 ›</view>
+  </view>
+
+  <view class="verify-entry sn-entry" bindtap="goSnScan">
+    <view class="ve-icon"><text class="iconfont icon-shouji"></text></view>
+    <view class="ve-main">
+      <view class="ve-title">SN码识别</view>
+      <view class="ve-sub">拍照识别手机SN/IMEI，关联订单</view>
+    </view>
+    <view class="ve-action">拍照 ›</view>
   </view>
 
   <view class="section-title">今日概览</view>

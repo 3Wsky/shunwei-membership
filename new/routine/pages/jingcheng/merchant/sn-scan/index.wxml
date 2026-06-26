@@ -1,0 +1,59 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+
+  <view class="hero">
+    <view class="hero-badge">SN 码识别</view>
+    <view class="hero-title">拍照识别序列号</view>
+    <view class="hero-desc">拍摄手机包装壳上的标签，自动提取 SN / IMEI</view>
+  </view>
+
+  <view class="action-area">
+    <view class="photo-btn {{scanning ? 'disabled' : ''}}" bindtap="takePhoto">
+      <text class="iconfont icon-hexiaoma"></text> 拍照识别
+    </view>
+  </view>
+
+  <view wx:if="{{result}}" class="result-card">
+    <view class="rc-head">识别结果</view>
+    <view class="rc-row">
+      <text class="rc-label">SN 码</text>
+      <input class="rc-input" value="{{result.sn}}" bindinput="editSn" placeholder="未识别到" />
+    </view>
+    <view class="rc-row">
+      <text class="rc-label">IMEI</text>
+      <input class="rc-input" value="{{result.imei}}" bindinput="editImei" placeholder="未识别到" />
+    </view>
+    <view class="rc-row">
+      <text class="rc-label">品牌</text>
+      <text class="rc-value">{{result.brand || '—'}}</text>
+    </view>
+    <view class="rc-row">
+      <text class="rc-label">型号</text>
+      <text class="rc-value">{{result.model || '—'}}</text>
+    </view>
+
+    <view class="bind-section">
+      <view class="rc-row">
+        <text class="rc-label">关联订单</text>
+        <input class="rc-input" value="{{orderId}}" bindinput="editOrder" placeholder="输入订单号（可选）" />
+      </view>
+      <view class="bind-btn {{!result.sn ? 'disabled' : ''}}" bindtap="bindSn">
+        确认绑定
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{history.length}}" class="section-title">
+    <text>最近绑定记录</text>
+    <view class="section-badge">{{history.length}}条</view>
+  </view>
+  <view wx:if="{{history.length}}" class="record-list">
+    <view wx:for="{{history}}" wx:key="id" class="record-row">
+      <view class="record-left">
+        <view class="record-name">{{item.sn_code}}</view>
+        <view class="record-meta">{{item.brand}} {{item.model}}{{item.order_id ? ' · 订单 ' + item.order_id : ''}}</view>
+      </view>
+      <view class="record-source">{{item.source === 'scan' ? '拍照' : '手动'}}</view>
+    </view>
+  </view>
+</view>

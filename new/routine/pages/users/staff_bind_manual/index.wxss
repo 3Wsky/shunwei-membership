@@ -253,12 +253,28 @@ page {
   font-weight: 800;
 }
 
+@keyframes pulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+}
+
 .loading-dot::after {
-  width: 24rpx;
-  height: 24rpx;
+  width: 28rpx;
+  height: 28rpx;
   border-radius: 50%;
   background: linear-gradient(135deg, #E6B84E, #C9A227);
   content: '';
+  animation: pulse 1.6s infinite ease-in-out;
 }
 
 .state-title {
@@ -302,6 +318,13 @@ page {
   color: #1A1A1A;
   font-size: 32rpx;
   box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.72);
+  transition: all 0.25s ease;
+}
+
+.staff-bind-input:focus {
+  border-color: #C9A227;
+  background: #FFFFFF;
+  box-shadow: 0 0 12rpx rgba(201, 162, 39, 0.12);
 }
 
 .staff-bind-button {
@@ -314,6 +337,7 @@ page {
   line-height: 88rpx;
   background: linear-gradient(135deg, #E6B84E, #C9A227);
   box-shadow: 0 6rpx 16rpx rgba(201, 162, 39, 0.2);
+  transition: all 0.2s ease;
 }
 
 .staff-bind-button[disabled] {
@@ -321,6 +345,16 @@ page {
   background: #BCC6D6;
   box-shadow: none;
   opacity: 1;
+}
+
+.button-hover {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.card-hover {
+  transform: scale(0.99);
+  opacity: 0.95;
 }
 
 .staff-bind-note {
