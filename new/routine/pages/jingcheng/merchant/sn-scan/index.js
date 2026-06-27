@@ -12,9 +12,6 @@ Page({
   editSn: function (e) {
     this.setData({ 'result.sn': e.detail.value })
   },
-  editImei: function (e) {
-    this.setData({ 'result.imei': e.detail.value })
-  },
   editOrder: function (e) {
     this.setData({ orderId: e.detail.value })
   },
@@ -65,7 +62,6 @@ Page({
       method: 'POST',
       data: {
         snCode: r.sn,
-        imei: r.imei || '',
         brand: r.brand || '',
         model: r.model || '',
         orderId: that.data.orderId || '',

@@ -128,7 +128,6 @@ Page({
       wx.hideLoading()
       var products = that.data.products
       if (d.sn) products[pIdx].sn = d.sn
-      if (d.imei) products[pIdx].imei = d.imei
       if (d.model) products[pIdx].model = d.model
       if (d.brand) {
         var brandMap = { apple: '手机', samsung: '手机', huawei: '手机', xiaomi: '手机', oppo: '手机', vivo: '手机' }
@@ -171,7 +170,6 @@ Page({
       if (p.model) itemParts.push(String(p.model).trim())
       if (p.price) itemParts.push('¥' + String(p.price).trim())
       if (p.sn) itemParts.push('SN:' + String(p.sn).trim())
-      if (p.imei) itemParts.push('IMEI:' + String(p.imei).trim())
       return `[产品${idx + 1}] ` + itemParts.join('/')
     })
 

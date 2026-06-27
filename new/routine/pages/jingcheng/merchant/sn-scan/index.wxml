@@ -4,7 +4,7 @@
   <view class="hero">
     <view class="hero-badge">SN 码识别</view>
     <view class="hero-title">拍照识别序列号</view>
-    <view class="hero-desc">拍摄手机包装壳上的标签，自动提取 SN / IMEI</view>
+    <view class="hero-desc">拍摄手机包装上的 SN 标签，自动识别序列号</view>
   </view>
 
   <view class="action-area">
@@ -17,11 +17,7 @@
     <view class="rc-head">识别结果</view>
     <view class="rc-row">
       <text class="rc-label">SN 码</text>
-      <input class="rc-input" value="{{result.sn}}" bindinput="editSn" placeholder="未识别到" />
-    </view>
-    <view class="rc-row">
-      <text class="rc-label">IMEI</text>
-      <input class="rc-input" value="{{result.imei}}" bindinput="editImei" placeholder="未识别到" />
+      <input class="rc-input" value="{{result.sn}}" bindinput="editSn" placeholder="未识别到，可手动输入" />
     </view>
     <view class="rc-row">
       <text class="rc-label">品牌</text>

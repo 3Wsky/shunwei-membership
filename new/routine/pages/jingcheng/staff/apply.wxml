@@ -121,15 +121,6 @@
           <view class="input-card">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
-              <view class="input-card-title">IMEI（可选）</view>
-              <input class="field-input-new mono" value="{{product.imei}}" data-pindex="{{pIndex}}" bindinput="onImei" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="20"/>
-            </view>
-            <text class="iconfont icon-kehu input-card-icon"></text>
-          </view>
-
-          <view class="input-card">
-            <view class="input-card-left-line"></view>
-            <view class="input-card-content">
               <view class="input-card-title">产品价格</view>
               <input class="field-input-new" type="digit" value="{{product.price}}" data-pindex="{{pIndex}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph"/>
             </view>
