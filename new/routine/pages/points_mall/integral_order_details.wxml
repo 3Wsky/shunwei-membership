@@ -26,6 +26,9 @@
     <view wx:if="{{cartInfo.status!=3&&cartInfo.status!=-1}}" data-event-opts="{{[['tap',[['cancelExchange',['$event']]]]]}}" class="cancelExchangeBtn data-v-4aac0955" bindtap="__e">
       <text class="iconfont icon-tuihuo data-v-4aac0955"></text>不想要了？撤销兑换并退回积分
     </view>
+    <view wx:if="{{cartInfo.status!=3&&cartInfo.status!=-1}}" class="cancelTip data-v-4aac0955">
+      <text class="iconfont icon-shijian data-v-4aac0955"></text>温馨提示：兑换后 24 小时内可自助撤销并退回积分；超过时间或已到店核销后将无法撤销，敬请留意～
+    </view>
   </view>
 </block>
 

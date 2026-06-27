@@ -260,6 +260,24 @@ page {
   opacity: 0.9 !important;
 }
 
+/* 撤销时限温馨提示：柔和灰字，委婉不强硬 */
+.order-details .writeOff .cancelTip.data-v-4aac0955 {
+  display: flex !important;
+  align-items: flex-start !important;
+  margin: 16rpx 32rpx 0 32rpx !important;
+  font-size: 22rpx !important;
+  line-height: 34rpx !important;
+  color: #A6927C !important;
+}
+
+.order-details .writeOff .cancelTip .iconfont.data-v-4aac0955 {
+  flex-shrink: 0 !important;
+  font-size: 24rpx !important;
+  margin-right: 8rpx !important;
+  margin-top: 2rpx !important;
+  color: #C9A227 !important;
+}
+
 /* 5. 订单信息参数列表 */
 .order-details .wrapper.data-v-4aac0955 {
   background-color: #FFFFFF !important;
