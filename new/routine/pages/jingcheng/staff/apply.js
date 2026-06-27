@@ -1,4 +1,5 @@
 const { request, getToken, BASE_URL } = require('../../../services/jc-request')
+const { recogniseSn } = require('../../../services/sn-recognise')
 
 Page({
   data: {
@@ -123,44 +124,27 @@ Page({
     if (!token) { wx.showToast({ title: '请先登录', icon: 'none' }); return }
     this.setData({ scanning: true })
     wx.showLoading({ title: '识别中…', mask: true })
-    wx.uploadFile({
-      url: BASE_URL + '/api/staff/scan-sn',
-      filePath: filePath,
-      name: 'file',
-      header: { 'Authori-zation': 'Bearer ' + token, 'Form-type': 'routine' },
-      success(res) {
-        wx.hideLoading()
-        try {
-          var body = JSON.parse(res.data)
-          if (body.status === 200 && body.data) {
-            var d = body.data
-            var products = that.data.products
-            if (d.sn) products[pIdx].sn = d.sn
-            if (d.imei) products[pIdx].imei = d.imei
-            if (d.model) products[pIdx].model = d.model
-            if (d.brand) {
-              var brandMap = { apple: '手机', samsung: '手机', huawei: '手机', xiaomi: '手机', oppo: '手机', vivo: '手机' }
-              var lower = String(d.brand).toLowerCase()
-              for (var k in brandMap) {
-                if (lower.indexOf(k) >= 0) { products[pIdx].type = brandMap[k]; break }
-              }
-            }
-            that.setData({ products, scanning: false })
-            wx.showToast({ title: d.sn ? '识别成功' : '未识别到SN，请手动输入', icon: d.sn ? 'success' : 'none' })
-          } else {
-            that.setData({ scanning: false })
-            wx.showToast({ title: body.msg || '识别失败', icon: 'none' })
-          }
-        } catch (e) {
-          that.setData({ scanning: false })
-          wx.showToast({ title: '识别异常', icon: 'none' })
+    recogniseSn(filePath, token).then(function (d) {
+      wx.hideLoading()
+      var products = that.data.products
+      if (d.sn) products[pIdx].sn = d.sn
+      if (d.imei) products[pIdx].imei = d.imei
+      if (d.model) products[pIdx].model = d.model
+      if (d.brand) {
+        var brandMap = { apple: '手机', samsung: '手机', huawei: '手机', xiaomi: '手机', oppo: '手机', vivo: '手机' }
+        var lower = String(d.brand).toLowerCase()
+        for (var k in brandMap) {
+          if (lower.indexOf(k) >= 0) { products[pIdx].type = brandMap[k]; break }
         }
-      },
-      fail() {
-        wx.hideLoading()
-        that.setData({ scanning: false })
-        wx.showToast({ title: '上传失败', icon: 'none' })
       }
+      that.setData({ products: products, scanning: false })
+      var tip = d.sn ? '识别成功' : '未识别到SN，请手动输入'
+      if (d.source === 'ocr') tip = d.sn ? '本地识别成功' : '未识别到SN，请手动输入'
+      wx.showToast({ title: tip, icon: d.sn ? 'success' : 'none' })
+    }).catch(function (err) {
+      wx.hideLoading()
+      that.setData({ scanning: false })
+      wx.showToast({ title: err.message || '识别失败', icon: 'none' })
     })
   },
   submit() {

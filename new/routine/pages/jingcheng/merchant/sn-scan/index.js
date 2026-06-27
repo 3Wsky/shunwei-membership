@@ -1,4 +1,5 @@
-const { request, getToken, openWechatReauth, BASE_URL } = require('../../../../services/jc-request')
+const { request, getToken, openWechatReauth } = require('../../../../services/jc-request')
+const { recogniseSn } = require('../../../../services/sn-recognise')
 
 Page({
   data: {
@@ -39,39 +40,18 @@ Page({
     this.setData({ scanning: true, result: null })
     wx.showLoading({ title: '识别中…', mask: true })
 
-    wx.uploadFile({
-      url: BASE_URL + '/api/staff/scan-sn',
-      filePath: filePath,
-      name: 'file',
-      header: {
-        'Authori-zation': 'Bearer ' + token,
-        'Form-type': 'routine'
-      },
-      success: function (res) {
-        wx.hideLoading()
-        try {
-          var body = JSON.parse(res.data)
-          if (body.status === 200 && body.data) {
-            that.setData({ result: body.data, scanning: false })
-            if (body.data.sn) {
-              wx.showToast({ title: '识别成功', icon: 'success' })
-            } else {
-              wx.showToast({ title: '未识别到SN码，请手动输入', icon: 'none' })
-            }
-          } else {
-            that.setData({ scanning: false })
-            wx.showModal({ title: '识别失败', content: body.msg || '请重试', showCancel: false })
-          }
-        } catch (e) {
-          that.setData({ scanning: false })
-          wx.showModal({ title: '识别失败', content: '返回数据异常', showCancel: false })
-        }
-      },
-      fail: function (err) {
-        wx.hideLoading()
-        that.setData({ scanning: false })
-        wx.showModal({ title: '上传失败', content: err.errMsg || '网络异常', showCancel: false })
+    recogniseSn(filePath, token).then(function (data) {
+      wx.hideLoading()
+      that.setData({ result: data, scanning: false })
+      if (data.sn) {
+        wx.showToast({ title: data.source === 'ocr' ? '本地识别成功' : '识别成功', icon: 'success' })
+      } else {
+        wx.showToast({ title: '未识别到SN码，请手动输入', icon: 'none' })
       }
+    }).catch(function (err) {
+      wx.hideLoading()
+      that.setData({ scanning: false })
+      wx.showModal({ title: '识别失败', content: err.message || '请重试', showCancel: false })
     })
   },
   bindSn: function () {
