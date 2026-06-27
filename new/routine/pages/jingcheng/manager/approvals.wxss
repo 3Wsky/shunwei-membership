@@ -1,13 +1,15 @@
 page {
-  background: #F5F3F0;
+  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
 }
 
 .page {
   min-height: 100vh;
   padding: 28rpx 32rpx 56rpx;
   box-sizing: border-box;
-  color: #1A1A1A;
-  background: #F5F3F0;
+  color: #0B1F3A;
+  background:
+    radial-gradient(circle at 82% 6%, rgba(77, 155, 255, 0.12), transparent 260rpx),
+    linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
 }
 
 .card {
@@ -15,8 +17,8 @@ page {
   padding: 28rpx;
   border-radius: 24rpx;
   background: #FFFFFF;
-  border: 1rpx solid rgba(201, 162, 39, 0.08);
-  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(230, 238, 248, 0.9);
+  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.06);
 }
 
 .card-head {
@@ -41,7 +43,7 @@ page {
   margin-right: 16rpx;
   border-radius: 16rpx;
   color: #fff;
-  background: linear-gradient(135deg, #E6B84E, #C9A227);
+  background: linear-gradient(135deg, #4D9BFF, #1F6BFF);
 }
 
 .ch-icon .iconfont {
@@ -49,7 +51,7 @@ page {
 }
 
 .ch-title {
-  color: #1A1A1A;
+  color: #0B1F3A;
   font-size: 32rpx;
   font-weight: 900;
 }
@@ -80,13 +82,13 @@ page {
 .row-label {
   display: flex;
   align-items: center;
-  color: #8C8C8C;
+  color: #8A95A6;
   font-size: 26rpx;
 }
 
 .row-label .iconfont {
   margin-right: 12rpx;
-  color: #C9A227;
+  color: #1F6BFF;
   font-size: 30rpx;
 }
 
@@ -95,7 +97,7 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #1A1A1A;
+  color: #0B1F3A;
   font-size: 27rpx;
   font-weight: 700;
   text-align: right;
@@ -137,7 +139,6 @@ page {
 
 .buttons {
   display: flex;
-  gap: 20rpx;
   margin-top: 26rpx;
 }
 
@@ -158,12 +159,13 @@ page {
   color: #E34D59;
   background: #fff;
   border: 1rpx solid #F3B4BA;
+  margin-right: 20rpx;
 }
 
 .approve {
   color: #fff;
-  background: linear-gradient(135deg, #E6B84E, #C9A227);
-  box-shadow: 0 6rpx 16rpx rgba(201, 162, 39, 0.2);
+  background: linear-gradient(135deg, #4D9BFF, #1F6BFF);
+  box-shadow: 0 8rpx 20rpx rgba(31, 107, 255, 0.28);
 }
 
 .empty {
@@ -172,7 +174,7 @@ page {
   align-items: center;
   justify-content: center;
   padding: 120rpx 0;
-  color: #8C8C8C;
+  color: #8A95A6;
   font-size: 27rpx;
 }
 
@@ -184,8 +186,8 @@ page {
   height: 120rpx;
   margin-bottom: 20rpx;
   border-radius: 36rpx;
-  color: #D4AF37;
-  background: linear-gradient(145deg, #FFF9E6, #FFF0CC);
+  color: #82AEFF;
+  background: linear-gradient(145deg, #EEF5FF, #FFFFFF);
 }
 
 .empty-icon .iconfont {
@@ -204,7 +206,7 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #1A1A1A;
+  color: #0B1F3A;
   font-size: 27rpx;
   font-weight: 700;
   text-align: right;
@@ -212,9 +214,9 @@ page {
 
 .uid-tag {
   font-size: 20rpx;
-  color: #C9A227;
-  background: rgba(201, 162, 39, 0.08);
-  border: 1rpx solid rgba(201, 162, 39, 0.15);
+  color: #1F6BFF;
+  background: #EEF5FF;
+  border: 1rpx solid rgba(31, 107, 255, 0.15);
   padding: 2rpx 12rpx;
   border-radius: 8rpx;
   margin-left: 12rpx;

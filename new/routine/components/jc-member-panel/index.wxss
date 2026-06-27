@@ -48,3 +48,42 @@
   border:2rpx solid #ffffff;
   box-shadow:0 2rpx 8rpx rgba(255,59,48,0.3)
 }
+
+/* ---------------------------------------------------------------- */
+/* 【UX/UI 视觉与交互设计师】 精致多彩扁平轻奢风图标 (对齐 img_1.jpg)   */
+/* ---------------------------------------------------------------- */
+
+.menu-icon.icon-s-bianji {
+  color: #1F6BFF !important; /* 优雅深蓝 (店长审批) */
+  text-shadow: 0 4rpx 10rpx rgba(31, 107, 255, 0.15);
+}
+
+.menu-icon.icon-qiandai {
+  color: #C9A227 !important; /* 金黄色 (现金券) */
+  text-shadow: 0 4rpx 10rpx rgba(201, 162, 39, 0.15);
+}
+
+.menu-icon.icon-huiyuanzhongxin {
+  color: #2F7BFF !important; /* 科技浅蓝 (会员管理) */
+  text-shadow: 0 4rpx 10rpx rgba(47, 123, 255, 0.15);
+}
+
+.menu-icon.icon-kehu {
+  color: #C9A227 !important; /* 温暖金 (客户经理) */
+  text-shadow: 0 4rpx 10rpx rgba(201, 162, 39, 0.15);
+}
+
+.menu-icon.icon-dianpu {
+  color: #1A1F36 !important; /* 高端深蓝/黑色 (商家核销) */
+  text-shadow: 0 4rpx 10rpx rgba(26, 31, 54, 0.15);
+}
+
+.menu-icon.icon-liwu {
+  color: #FF5A5F !important; /* 优雅珊瑚红/礼品红 (礼品核销) */
+  text-shadow: 0 4rpx 10rpx rgba(255, 90, 95, 0.15);
+}
+
+.menu-icon.icon-huangguan {
+  color: #B11E2F !important; /* 尊贵暗红 (超级管理，与超管页主题一致) */
+  text-shadow: 0 4rpx 10rpx rgba(177, 30, 47, 0.18);
+}

@@ -1,1 +1,158 @@
-.bargain-record .item .picTxt .text .time .styleAll{color:#fc4141;font-size:24rpx}.bargain-record .item .picTxt .text .time .red{color:#999;font-size:24rpx}.bargain-record .item{background-color:#fff;margin:15rpx 15rpx;border-radius:6rpx}.bargain-record .item .exchange_record-time{color:#333;border-bottom:1px solid #eee;padding:22rpx 30rpx;display:flex;justify-content:space-between}.bargain-record .item .exchange_record-time .status{color:var(--view-theme)}.bargain-record .item .picTxt{border-bottom:1px solid #f0f0f0;padding:30rpx 30rpx}.bargain-record .item .picTxt .pictrue{width:120rpx;height:120rpx;margin-right:30rpx}.bargain-record .item .picTxt .pictrue image{width:100%;height:100%;border-radius:6rpx}.bargain-record .item .picTxt .text{width:77%;font-size:30rpx;color:#282828}.bargain-record .item .picTxt .text .time{font-size:24rpx;color:#868686;justify-content:left!important}.bargain-record .item .picTxt .text .successTxt{font-size:24rpx}.bargain-record .item .picTxt .text .endTxt{font-size:24rpx;color:#999}.bargain-record .item .picTxt .text .money{font-size:24rpx}.bargain-record .item .picTxt .text .money .num{font-size:32rpx;font-weight:700}.bargain-record .item .picTxt .text .money .symbol{font-weight:700}.bargain-record .item .bottom{height:100rpx;padding:0 30rpx;font-size:27rpx}.bargain-record .item .bottom .purple{color:#f78513}.bargain-record .item .bottom .end{color:#999}.bargain-record .item .bottom .success{color:#e93323}.bargain-record .item .bottom .bnt{font-size:27rpx;color:#fff;width:176rpx;height:60rpx;border-radius:32rpx;text-align:center;line-height:60rpx}.bargain-record .item .bottom .bnt.cancel{color:#aaa;border:1px solid #ddd}.bargain-record .item .bottom .bnt ~ .bnt{margin-left:18rpx}.gray-sty{width:100%;font-size:24rpx;color:#999}
+/* ---------------------------------------------------------------- */
+/* 【UX/UI 视觉与交互设计师】 礼品兑换记录页 极致轻奢风重构 (对齐 24_UI) */
+/* ---------------------------------------------------------------- */
+
+page {
+  background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%) !important;
+  min-height: 100vh;
+}
+
+.bargain-record {
+  padding: 12rpx 0 40rpx !important;
+  box-sizing: border-box !important;
+}
+
+/* 1. 精致兑换卡片容器 */
+.bargain-record .item {
+  background-color: #ffffff !important;
+  margin: 24rpx 32rpx !important;
+  border-radius: 24rpx !important;
+  box-shadow: 0 12rpx 36rpx rgba(15, 35, 70, 0.04) !important;
+  border: 1rpx solid rgba(230, 238, 248, 0.9) !important;
+  overflow: hidden !important;
+  transition: all 0.25s ease !important;
+}
+
+/* 2. 卡片头部：订单时间与状态标签胶囊化 */
+.bargain-record .item .exchange_record-time {
+  color: #0B1F3A !important;
+  border-bottom: 1rpx solid #F0F4FA !important;
+  padding: 24rpx 28rpx !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 26rpx !important;
+  font-weight: 700 !important;
+}
+
+.bargain-record .item .exchange_record-time .status {
+  font-size: 22rpx !important;
+  font-weight: 700 !important;
+  color: #1F6BFF !important; /* 科技蓝状态色 */
+  background: #EEF5FF !important;
+  padding: 6rpx 18rpx !important;
+  border-radius: 12rpx !important;
+  border: 1rpx solid rgba(31, 107, 255, 0.15) !important;
+}
+
+/* 3. 商品核心信息区域 */
+.bargain-record .item .picTxt {
+  border-bottom: 1rpx solid #F0F4FA !important;
+  padding: 28rpx !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 缩略图大圆角与柔和阴影 */
+.bargain-record .item .picTxt .pictrue {
+  width: 120rpx !important;
+  height: 120rpx !important;
+  margin-right: 24rpx !important;
+  flex-shrink: 0 !important;
+}
+
+.bargain-record .item .picTxt .pictrue image {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 16rpx !important;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05) !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.03) !important;
+}
+
+/* 文本详情与排版 */
+.bargain-record .item .picTxt .text {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bargain-record .item .picTxt .text .line1 {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  color: #0B1F3A !important;
+  font-size: 28rpx !important;
+  font-weight: 700 !important;
+  width: 100% !important;
+}
+
+/* 规格文字 */
+.bargain-record .item .picTxt .text .gray-sty {
+  width: 100% !important;
+  font-size: 22rpx !important;
+  color: #8A95A6 !important;
+  margin-top: 8rpx !important;
+  font-weight: 400 !important;
+}
+
+/* 金额/积分高亮 (最后一个 gray-sty 用于展示价格) */
+.bargain-record .item .picTxt .text .gray-sty:last-child {
+  color: #B8862B !important; /* 金色重点 */
+  font-size: 24rpx !important;
+  font-weight: 700 !important;
+  margin-top: 8rpx !important;
+}
+
+/* 4. 尾部按钮区域 */
+.bargain-record .item .bottom {
+  height: 100rpx !important;
+  padding: 0 28rpx !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  background: #ffffff !important;
+}
+
+.bargain-record .item .bottom .end {
+  display: none !important; /* 移除冗余占位 */
+}
+
+/* 按钮微交互手感与精致配色 */
+.bargain-record .item .bottom .bnt {
+  font-size: 24rpx !important;
+  font-weight: 700 !important;
+  width: 176rpx !important;
+  height: 60rpx !important;
+  border-radius: 30rpx !important;
+  text-align: center !important;
+  line-height: 60rpx !important;
+  box-sizing: border-box !important;
+  display: inline-block !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 物流按钮 (白底蓝边) */
+.bargain-record .item .bottom .bnt.cancel {
+  color: #8A95A6 !important;
+  background: #ffffff !important;
+  border: 1rpx solid #E6EEF8 !important;
+}
+
+/* 查看详情主按钮 (科技蓝渐变) */
+.bargain-record .item .bottom .bnt.bg-color-red {
+  background: linear-gradient(135deg, #4D9BFF, #1F6BFF) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4rpx 12rpx rgba(31, 107, 255, 0.2) !important;
+  border: none !important;
+}
+
+.bargain-record .item .bottom .bnt ~ .bnt {
+  margin-left: 18rpx !important;
+}
+
+/* 按下时微缩回弹 */
+.bargain-record .item .bottom .bnt:active {
+  transform: scale(0.96) !important;
+  opacity: 0.9 !important;
+}

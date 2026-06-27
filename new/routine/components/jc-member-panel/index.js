@@ -15,6 +15,7 @@ Component({
     showWallet: true,
     showMerchant: true,
     showManagerApproval: false,
+    showSuperAdmin: false,
     pendingCount: 0
   },
   lifetimes: {
@@ -40,18 +41,21 @@ Component({
         }),
         request('/api/staff/me').catch(function () { return null }),
         request('/api/merchant/access').then(function () { return true }).catch(function () { return false }),
-        request('/api/approval/todos', { data: { role: 'manager' } }).catch(function () { return [] })
+        request('/api/approval/todos', { data: { role: 'manager' } }).catch(function () { return [] }),
+        request('/api/superadmin/check').then(function (d) { return !!(d && d.isSuperAdmin) }).catch(function () { return false })
       ]).then(function (res) {
         var config = res[0]
         var staff = res[1]
         var hasMerchant = res[2]
         var todos = res[3]
+        var isSuperAdmin = res[4]
         var isManager = !!(staff && (staff.isManager || staff.is_manager))
         this.setData({
           showManagerApproval: isManager,
           pendingCount: (todos || []).length,
           showMemberMgmt: config.staffEntryRoleOnly ? !!(staff && (staff.isStaff || staff.is_staff || isManager)) : true,
-          showMerchant: config.merchantEntryRoleOnly ? !!hasMerchant : true
+          showMerchant: config.merchantEntryRoleOnly ? !!hasMerchant : true,
+          showSuperAdmin: isSuperAdmin
         })
       }.bind(this)).catch(function () {})
     }

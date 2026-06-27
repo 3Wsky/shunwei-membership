@@ -1,42 +1,69 @@
 <view class="page">
-  <view class="profile">
-    <view class="profile-top">
-      <image class="avatar" src="{{member.avatar || '/static/images/def_avatar.png'}}" mode="aspectFill"/>
-      <view class="profile-info">
-        <view class="profile-name">{{member.nickname || '未设置昵称'}}</view>
-        <view class="profile-meta">UID {{member.uid}} · {{member.phone || '未绑定手机'}}</view>
+  <!-- User Member Card Area -->
+  <view class="user-card-wrapper">
+    <view class="user-card-blue">
+      <view class="profile-top">
+        <image class="avatar" src="{{member.avatar || '/static/images/def_avatar.png'}}" mode="aspectFill"/>
+        <view class="profile-info">
+          <view class="profile-name">{{member.nickname || '未设置昵称'}}</view>
+          <view class="profile-meta">UID {{member.uid}} · {{member.phone || '未绑定手机'}}</view>
+        </view>
+        <view class="profile-badge">
+          <text class="iconfont icon-huiyuandengji"></text>
+          <text>会员权益</text>
+        </view>
       </view>
-      <view class="profile-badge"><text class="iconfont icon-huiyuandengji"></text> 会员权益</view>
+      <!-- Semi-transparent decorative crown in background -->
+      <view class="card-deco"><text class="iconfont icon-huiyuandengji"></text></view>
     </view>
-    <view class="assets">
+    <view class="user-card-white">
       <view class="asset-cell">
-        <view class="asset-icon blue"><text class="iconfont icon-jifenshangcheng"></text></view>
+        <text class="iconfont icon-jifenshangcheng asset-icon-3d blue-icon"></text>
         <view class="asset-text">
           <view class="asset-value">{{member.integral || 0}}</view>
           <view class="asset-label">当前积分</view>
         </view>
       </view>
+      <view class="asset-divider"></view>
       <view class="asset-cell">
-        <view class="asset-icon gold"><text class="iconfont icon-yue2"></text></view>
+        <text class="iconfont icon-yue2 asset-icon-3d gold-icon"></text>
         <view class="asset-text">
-          <view class="asset-value gold">￥{{member.cashVoucher || 0}}</view>
+          <view class="asset-value">￥{{member.cashVoucher || 0}}</view>
           <view class="asset-label">现金券</view>
         </view>
       </view>
     </view>
   </view>
 
-  <view class="heading">请选择固定权益档位</view>
+  <!-- Benefit Tier Area -->
+  <view class="heading">
+    <view class="heading-bar"></view>
+    <text>请选择固定权益档位</text>
+  </view>
   <view class="tier-grid">
-    <view wx:for="{{rules}}" wx:key="id" class="tier-card">
-      <view class="tier-range">{{item.maxAmount ? item.minAmount + '-' + item.maxAmount + '元档' : item.minAmount + '元以上档'}}</view>
+    <view wx:for="{{rules}}" wx:key="id" class="tier-card {{showProduct && selectedIndex === index ? 'active' : ''}}">
+      <view class="tier-badge">{{item.maxAmount ? item.minAmount + '-' + item.maxAmount + '元档' : item.minAmount + '元以上档'}}</view>
       <view class="tier-integral">{{item.giftIntegral}}<text>积分</text></view>
+      <view class="tier-divider"></view>
       <view class="tier-voucher">￥{{item.voucherAmount}}<text>现金券</text></view>
-      <view class="tier-btn" data-index="{{index}}" bindtap="openProduct">立即选择</view>
+      <view class="tier-btn-select" data-index="{{index}}" bindtap="openProduct">
+        <text>立即选择</text>
+        <view class="check-icon-circle" wx:if="{{showProduct && selectedIndex === index}}">
+          <text class="iconfont icon-xuanzhong6"></text>
+        </view>
+      </view>
+      <!-- Background watermark -->
+      <view class="tier-watermark"><text class="iconfont icon-liwu"></text></view>
     </view>
   </view>
-  <view class="tip"><text class="iconfont icon-shuoming2"></text> 提交后依次由店长和超管审批，终审通过后权益到账。</view>
 
+  <!-- Bottom Tip -->
+  <view class="tip">
+    <text class="iconfont icon-shuoming2"></text>
+    <text>提交后依次由店长和超管审批，终审通过后权益到账。</text>
+  </view>
+
+  <!-- Popup Modal -->
   <view wx:if="{{showProduct}}" class="modal-mask" catchtouchmove="true" bindtap="closeProduct">
     <view class="modal" catchtap="noop">
       <view class="modal-head">
@@ -48,35 +75,83 @@
         <view class="modal-close" bindtap="closeProduct"><text class="iconfont icon-guanbi6"></text></view>
       </view>
 
-      <view class="field-label">产品类型</view>
-      <view class="type-row">
-        <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{productType === item ? 'active' : ''}}" data-type="{{item}}" bindtap="chooseType">{{item}}</view>
-      </view>
+      <!-- Scrollable Product List -->
+      <scroll-view scroll-y="true" class="modal-scroll">
+        <view wx:for="{{products}}" wx:key="index" wx:for-item="product" wx:for-index="pIndex" class="product-section">
+          <view class="product-section-header">
+            <text class="product-section-title">产品信息 #{{pIndex + 1}}</text>
+            <view wx:if="{{products.length > 1}}" class="product-section-remove" data-index="{{pIndex}}" bindtap="removeProduct">
+              <text class="iconfont icon-guanbi6"></text>
+              <text>删除</text>
+            </view>
+          </view>
 
-      <view class="scan-row">
-        <view class="scan-tip">拍照自动识别产品信息</view>
-        <view class="scan-btn-sm {{scanning ? 'disabled' : ''}}" bindtap="scanSn">
-          <text class="iconfont icon-hexiaoma"></text> 拍照识别
+          <view class="field-label">产品类型</view>
+          <view class="type-row">
+            <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{product.type === item ? 'active' : ''}}" data-pindex="{{pIndex}}" data-type="{{item}}" bindtap="chooseType">
+              <text>{{item}}</text>
+            </view>
+          </view>
+
+          <view class="scan-row">
+            <view class="scan-tip">拍照自动识别产品信息</view>
+            <view class="scan-btn-sm {{scanning ? 'disabled' : ''}}" data-pindex="{{pIndex}}" bindtap="scanSn">
+              <text class="iconfont icon-hexiaoma"></text> 拍照识别
+            </view>
+          </view>
+
+          <view class="input-card">
+            <view class="input-card-left-line"></view>
+            <view class="input-card-content">
+              <view class="input-card-title">产品型号</view>
+              <input class="field-input-new" value="{{product.model}}" data-pindex="{{pIndex}}" bindinput="onModel" placeholder="请输入产品型号" placeholder-class="ph" maxlength="30"/>
+            </view>
+            <text class="iconfont icon-s-bianji input-card-icon"></text>
+          </view>
+
+          <view class="input-card">
+            <view class="input-card-left-line"></view>
+            <view class="input-card-content">
+              <view class="input-card-title">SN 序列号</view>
+              <input class="field-input-new mono" value="{{product.sn}}" data-pindex="{{pIndex}}" bindinput="onSn" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="30"/>
+            </view>
+            <text class="iconfont icon-hexiaoma input-card-icon"></text>
+          </view>
+
+          <view class="input-card">
+            <view class="input-card-left-line"></view>
+            <view class="input-card-content">
+              <view class="input-card-title">IMEI（可选）</view>
+              <input class="field-input-new mono" value="{{product.imei}}" data-pindex="{{pIndex}}" bindinput="onImei" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="20"/>
+            </view>
+            <text class="iconfont icon-kehu input-card-icon"></text>
+          </view>
+
+          <view class="input-card">
+            <view class="input-card-left-line"></view>
+            <view class="input-card-content">
+              <view class="input-card-title">产品价格</view>
+              <input class="field-input-new" type="digit" value="{{product.price}}" data-pindex="{{pIndex}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph"/>
+            </view>
+            <text class="iconfont icon-qiandai input-card-icon"></text>
+          </view>
         </view>
-      </view>
 
-      <view class="field-label">产品型号</view>
-      <input class="field-input" value="{{productModel}}" bindinput="onModel" placeholder="请输入产品型号" placeholder-class="ph" maxlength="30"/>
-
-      <view class="field-label">SN 序列号</view>
-      <input class="field-input mono" value="{{productSn}}" bindinput="onSn" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="30"/>
-
-      <view class="field-label">IMEI（可选）</view>
-      <input class="field-input mono" value="{{productImei}}" bindinput="onImei" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="20"/>
-
-      <view class="field-label">产品价格</view>
-      <input class="field-input" type="digit" value="{{productPrice}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph"/>
+        <!-- Add Product Button -->
+        <view class="add-product-btn" bindtap="addProduct">
+          <text class="iconfont icon-s-bianji"></text>
+          <text>添加产品信息</text>
+        </view>
+      </scroll-view>
 
       <view class="modal-actions">
         <view class="modal-btn cancel" bindtap="closeProduct">取消</view>
         <view class="modal-btn submit {{submitting ? 'disabled' : ''}}" bindtap="submit">提交申请</view>
       </view>
-      <view class="modal-tip">提交后将由店长和超管审批，终审通过后权益到账</view>
+      <view class="modal-tip">
+        <text class="iconfont icon-shuoming2"></text>
+        <text>提交后将由店长和超管审批，终审通过后权益到账</text>
+      </view>
     </view>
   </view>
 </view>

@@ -3,6 +3,7 @@
   "usingComponents": {
     "home": "/components/home/index",
     "order-goods": "/components/orderGoods/index",
-    "authorize": "/components/Authorize"
+    "authorize": "/components/Authorize",
+    "zb-code": "/components/zb-code/zb-code"
   }
 }

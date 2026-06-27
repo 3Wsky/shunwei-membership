@@ -2,7 +2,16 @@
   <jc-auth-sync></jc-auth-sync>
 
   <view class="hero">
-    <image class="hero-bg" src="/pages/jingcheng/static/images/jc-merchant-workbench-bg.jpg" mode="aspectFill"/>
+    <view class="hero-orbit hero-orbit-a"></view>
+    <view class="hero-orbit hero-orbit-b"></view>
+    <view class="hero-spark hero-spark-1"></view>
+    <view class="hero-spark hero-spark-2"></view>
+    <view class="hero-spark hero-spark-3"></view>
+    <view class="hero-art">
+      <view class="art-crown"><text class="iconfont icon-huangguan4"></text></view>
+      <view class="art-shop"><text class="iconfont icon-dianpu2"></text></view>
+      <view class="art-shield"><text class="iconfont icon-shenhetongguo"></text></view>
+    </view>
     <view class="hero-body">
       <view class="hero-kicker">商家工作台</view>
       <view class="hero-title">{{merchantName || '锦程数码'}}</view>

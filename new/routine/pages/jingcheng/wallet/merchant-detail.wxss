@@ -95,7 +95,6 @@ page {
 
 .actions {
   display: flex;
-  gap: 18rpx;
   margin-top: 30rpx;
 }
 
@@ -109,6 +108,10 @@ page {
   font-weight: 700;
   background: #FFFFFF;
   border: 2rpx solid #C9A227;
+}
+
+.actions button + button {
+  margin-left: 18rpx;
 }
 
 .actions button::after {

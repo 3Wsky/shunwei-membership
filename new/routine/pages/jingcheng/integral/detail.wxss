@@ -83,7 +83,6 @@ page {
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 14rpx;
   margin-top: 20rpx;
 }
 
@@ -92,6 +91,8 @@ page {
   border-radius: 12rpx;
   font-size: 21rpx;
   font-weight: 700;
+  margin-right: 14rpx;
+  margin-bottom: 14rpx;
 }
 
 .tag.gold {

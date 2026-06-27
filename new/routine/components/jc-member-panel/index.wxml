@@ -1,6 +1,10 @@
 <view wx:if="{{loggedIn}}" class="user-menus" style="margin-top:20rpx">
   <view class="menu-title">锦程服务</view>
   <view class="list-box">
+    <navigator wx:if="{{showSuperAdmin}}" class="item" url="/pages/jingcheng/admin/index">
+      <text class="iconfont icon-huangguan menu-icon"></text>
+      <text class="name">超级管理</text>
+    </navigator>
     <navigator wx:if="{{showManagerApproval}}" class="item" url="/pages/jingcheng/manager/approvals">
       <view class="jc-icon-wrap">
         <text class="iconfont icon-s-bianji menu-icon"></text>
@@ -19,6 +23,10 @@
     <navigator class="item" url="/pages/users/staff_bind_manual/index">
       <text class="iconfont icon-kehu menu-icon"></text>
       <text class="name">客户经理</text>
+    </navigator>
+    <navigator class="item" url="/pages/points_mall/exchange_record">
+      <text class="iconfont icon-liwu menu-icon"></text>
+      <text class="name">礼品兑换</text>
     </navigator>
     <navigator wx:if="{{showMerchant}}" class="item" url="/pages/jingcheng/merchant/index">
       <text class="iconfont icon-dianpu menu-icon"></text>
