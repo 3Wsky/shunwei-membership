@@ -24,7 +24,7 @@ Page({
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
-      sourceType: ['camera'],
+      sourceType: ['camera', 'album'],
       camera: 'back',
       success: function (res) {
         var tempPath = res.tempFiles[0].tempFilePath
@@ -44,7 +44,7 @@ Page({
       wx.hideLoading()
       that.setData({ result: data, scanning: false })
       if (data.sn) {
-        wx.showToast({ title: data.source === 'ocr' ? '本地识别成功' : '识别成功', icon: 'success' })
+        wx.showToast({ title: data.source === 'wechat_ocr' ? '微信OCR识别成功' : '识别成功', icon: 'success' })
       } else {
         wx.showToast({ title: '未识别到SN码，请手动输入', icon: 'none' })
       }

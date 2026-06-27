@@ -110,7 +110,7 @@ Page({
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
-      sourceType: ['camera'],
+      sourceType: ['camera', 'album'],
       camera: 'back',
       success(res) {
         var filePath = res.tempFiles[0].tempFilePath
@@ -139,7 +139,7 @@ Page({
       }
       that.setData({ products: products, scanning: false })
       var tip = d.sn ? '识别成功' : '未识别到SN，请手动输入'
-      if (d.source === 'ocr') tip = d.sn ? '本地识别成功' : '未识别到SN，请手动输入'
+      if (d.source === 'wechat_ocr') tip = d.sn ? '微信OCR识别成功' : '未识别到SN，请手动输入'
       wx.showToast({ title: tip, icon: d.sn ? 'success' : 'none' })
     }).catch(function (err) {
       wx.hideLoading()
