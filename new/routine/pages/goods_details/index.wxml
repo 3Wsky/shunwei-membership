@@ -5,34 +5,36 @@
   <view class="buy-modal-mask data-v-53cfd8e3" catchtouchmove="true" bindtap="closeBuyModal">
     <view class="buy-modal data-v-53cfd8e3" catchtap="noop">
       <view class="bm-head data-v-53cfd8e3">
-        <view class="bm-title data-v-53cfd8e3">线下真机体验购买</view>
-        <view class="bm-close data-v-53cfd8e3" bindtap="closeBuyModal"><text class="iconfont icon-guanbi6 data-v-53cfd8e3"></text></view>
+        <view class="bm-head-text data-v-53cfd8e3">
+          <view class="bm-title data-v-53cfd8e3">到店真机体验</view>
+          <view class="bm-subtitle data-v-53cfd8e3">线下看机 · 专属顾问 · 放心购买</view>
+        </view>
+        <view class="bm-close data-v-53cfd8e3" bindtap="closeBuyModal">
+          <text class="iconfont icon-guanbi6 data-v-53cfd8e3"></text>
+        </view>
       </view>
 
       <view class="bm-body data-v-53cfd8e3">
         <view class="bm-tip-card data-v-53cfd8e3">
           <text class="iconfont icon-shuoming2 bm-tip-icon data-v-53cfd8e3"></text>
-          <text class="bm-tip-text data-v-53cfd8e3">温馨提示：当前小程序商品仅作展示与线下引流。您可以联系您的客户经理，或直接前往门店，现场体验真机、确认无误后再行购买。</text>
+          <text class="bm-tip-text data-v-53cfd8e3">商品仅作展示与线下引流。联系专属客户经理或到店体验真机，确认无误后再购买。</text>
         </view>
 
-        <!-- 客户经理名片展示 -->
         <block wx:if="{{managerCard}}">
           <view class="bm-section-title data-v-53cfd8e3">您的客户经理</view>
           <view class="bm-manager-card data-v-53cfd8e3">
             <image class="bmm-avatar data-v-53cfd8e3" src="{{managerCard.avatar || '/static/images/def_avatar.png'}}" mode="aspectFill"></image>
             <view class="bmm-info data-v-53cfd8e3">
               <view class="bmm-name data-v-53cfd8e3">{{managerCard.displayName || '客户经理'}}</view>
-              <view class="bmm-role data-v-53cfd8e3">{{managerCard.jobTitle || '顾问'}}</view>
+              <view class="bmm-role data-v-53cfd8e3">{{managerCard.jobTitle || '专属顾问'}}</view>
               <view class="bmm-uid data-v-53cfd8e3">UID {{managerCard.staffUid}}</view>
             </view>
-            <!-- 电话联系按钮 -->
             <view wx:if="{{managerCard.storePhone || managerCard.contactPhone}}" class="bmm-phone-btn data-v-53cfd8e3" bindtap="callManagerPhone">
               <text class="iconfont icon-dianhua data-v-53cfd8e3"></text>
             </view>
           </view>
 
-          <!-- 门店信息展示 -->
-          <view class="bm-section-title data-v-53cfd8e3">服务门店信息</view>
+          <view class="bm-section-title data-v-53cfd8e3">服务门店</view>
           <view class="bm-store-card data-v-53cfd8e3">
             <view class="bms-row data-v-53cfd8e3">
               <text class="iconfont icon-dianpu bms-icon data-v-53cfd8e3"></text>
@@ -49,25 +51,24 @@
           </view>
         </block>
 
-        <!-- 未绑定经理或加载中时的兜底信息 -->
         <block wx:else>
-          <view class="bm-store-card data-v-53cfd8e3" style="margin-top: 24rpx;">
-            <view class="bms-row data-v-53cfd8e3">
-              <text class="iconfont icon-dianpu bms-icon data-v-53cfd8e3"></text>
-              <text class="bms-text data-v-53cfd8e3">锦程祥瑞数码门店</text>
-            </view>
-            <view class="bms-row data-v-53cfd8e3">
-              <text class="iconfont icon-didiandingwei_o bms-icon data-v-53cfd8e3"></text>
-              <text class="bms-text data-v-53cfd8e3">地址：广东省深圳市龙岗区锦程数码体验店</text>
-            </view>
+          <view class="bm-empty-card data-v-53cfd8e3">
+            <text class="iconfont icon-dianpu bm-empty-icon data-v-53cfd8e3"></text>
+            <view class="bm-empty-title data-v-53cfd8e3">锦程祥瑞数码门店</view>
+            <view class="bm-empty-desc data-v-53cfd8e3">欢迎到店体验真机，现场咨询更放心</view>
           </view>
         </block>
       </view>
 
       <view class="bm-footer data-v-53cfd8e3">
-        <button class="bm-btn cancel data-v-53cfd8e3" bindtap="closeBuyModal">返回</button>
-        <button wx:if="{{managerCard && managerCard.latitude && managerCard.longitude}}" class="bm-btn primary data-v-53cfd8e3" bindtap="navigateManagerStore">导航到店</button>
-        <button wx:else class="bm-btn primary data-v-53cfd8e3" bindtap="closeBuyModal">知道了</button>
+        <button class="bm-btn ghost data-v-53cfd8e3" bindtap="closeBuyModal">返回看看</button>
+        <button wx:if="{{managerCard && (managerCard.storePhone || managerCard.contactPhone)}}" class="bm-btn outline data-v-53cfd8e3" bindtap="callManagerPhone">
+          <text class="iconfont icon-dianhua data-v-53cfd8e3"></text> 联系经理
+        </button>
+        <button wx:if="{{managerCard && managerCard.latitude && managerCard.longitude}}" class="bm-btn primary data-v-53cfd8e3" bindtap="navigateManagerStore">
+          <text class="iconfont icon-didiandingwei_o data-v-53cfd8e3"></text> 导航到店
+        </button>
+        <button wx:elif="{{!(managerCard && (managerCard.storePhone || managerCard.contactPhone))}}" class="bm-btn primary data-v-53cfd8e3" bindtap="closeBuyModal">知道了</button>
       </view>
     </view>
   </view>
