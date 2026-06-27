@@ -232,6 +232,34 @@ page {
   line-height: 38rpx !important;
 }
 
+/* 撤销兑换按钮：核销码卡片内、显眼且精致 */
+.order-details .writeOff .cancelExchangeBtn.data-v-4aac0955 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 28rpx 28rpx 0 28rpx !important;
+  height: 84rpx !important;
+  border-radius: 44rpx !important;
+  font-size: 28rpx !important;
+  font-weight: 700 !important;
+  color: #E1502E !important;
+  background: linear-gradient(135deg, #FFF3EF, #FFEAE2) !important;
+  border: 1rpx solid rgba(225, 80, 46, 0.25) !important;
+  box-shadow: 0 6rpx 18rpx rgba(225, 80, 46, 0.08) !important;
+  transition: all 0.2s ease !important;
+}
+
+.order-details .writeOff .cancelExchangeBtn .iconfont.data-v-4aac0955 {
+  font-size: 30rpx !important;
+  margin-right: 12rpx !important;
+  color: #E1502E !important;
+}
+
+.order-details .writeOff .cancelExchangeBtn.data-v-4aac0955:active {
+  transform: scale(0.97) !important;
+  opacity: 0.9 !important;
+}
+
 /* 5. 订单信息参数列表 */
 .order-details .wrapper.data-v-4aac0955 {
   background-color: #FFFFFF !important;
