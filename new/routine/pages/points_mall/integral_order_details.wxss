@@ -5,6 +5,8 @@
 page {
   background: linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%) !important;
   min-height: 100vh;
+  padding-bottom: calc(200rpx + env(safe-area-inset-bottom)) !important;
+  box-sizing: border-box !important;
 }
 
 /* 1. 顶部状态 Banner 区：深蓝奢华渐变 */
@@ -232,50 +234,68 @@ page {
   line-height: 38rpx !important;
 }
 
-/* 撤销兑换按钮：核销码卡片内、显眼且精致 */
-.order-details .writeOff .cancelExchangeBtn.data-v-4aac0955 {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 28rpx 28rpx 0 28rpx !important;
-  height: 84rpx !important;
-  border-radius: 44rpx !important;
-  font-size: 28rpx !important;
-  font-weight: 700 !important;
-  color: #E1502E !important;
-  background: linear-gradient(135deg, #FFF3EF, #FFEAE2) !important;
-  border: 1rpx solid rgba(225, 80, 46, 0.25) !important;
-  box-shadow: 0 6rpx 18rpx rgba(225, 80, 46, 0.08) !important;
-  transition: all 0.2s ease !important;
+/* 撤销兑换：固定底部操作条（始终可见、显眼不隐蔽） */
+.order-details .cancelBar.data-v-4aac0955 {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 50 !important;
+  padding: 18rpx 32rpx calc(18rpx + env(safe-area-inset-bottom)) 32rpx !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(10px) !important;
+  border-top: 1rpx solid #EEF1F6 !important;
+  box-shadow: 0 -8rpx 28rpx rgba(15, 35, 70, 0.06) !important;
+  box-sizing: border-box !important;
 }
 
-.order-details .writeOff .cancelExchangeBtn .iconfont.data-v-4aac0955 {
-  font-size: 30rpx !important;
-  margin-right: 12rpx !important;
-  color: #E1502E !important;
-}
-
-.order-details .writeOff .cancelExchangeBtn.data-v-4aac0955:active {
-  transform: scale(0.97) !important;
-  opacity: 0.9 !important;
-}
-
-/* 撤销时限温馨提示：柔和灰字，委婉不强硬 */
-.order-details .writeOff .cancelTip.data-v-4aac0955 {
+/* 时限温馨提示：柔和灰字，委婉不强硬 */
+.order-details .cancelBar .cancelBar-tip.data-v-4aac0955 {
   display: flex !important;
   align-items: flex-start !important;
-  margin: 16rpx 32rpx 0 32rpx !important;
+  margin-bottom: 14rpx !important;
   font-size: 22rpx !important;
-  line-height: 34rpx !important;
-  color: #A6927C !important;
+  line-height: 32rpx !important;
+  color: #9AA3B2 !important;
 }
 
-.order-details .writeOff .cancelTip .iconfont.data-v-4aac0955 {
+.order-details .cancelBar .cancelBar-tip .iconfont.data-v-4aac0955 {
   flex-shrink: 0 !important;
   font-size: 24rpx !important;
   margin-right: 8rpx !important;
-  margin-top: 2rpx !important;
+  margin-top: 1rpx !important;
   color: #C9A227 !important;
+}
+
+/* 撤销按钮：整行宽、克制优雅的描边胶囊（白底金边金字，与轻奢风统一） */
+.order-details .cancelBar .cancelBar-btn.data-v-4aac0955 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 88rpx !important;
+  border-radius: 16rpx !important;
+  font-size: 30rpx !important;
+  font-weight: 700 !important;
+  letter-spacing: 1rpx !important;
+  color: #8C6D16 !important;
+  background: linear-gradient(135deg, #FBF6EA, #FFFDF8) !important;
+  border: 1rpx solid rgba(201, 162, 39, 0.45) !important;
+  box-shadow: 0 6rpx 18rpx rgba(201, 162, 39, 0.10) !important;
+  box-sizing: border-box !important;
+  transition: all 0.18s ease !important;
+}
+
+.order-details .cancelBar .cancelBar-btn .iconfont.data-v-4aac0955 {
+  font-size: 32rpx !important;
+  margin-right: 12rpx !important;
+  color: #C9A227 !important;
+}
+
+.order-details .cancelBar .cancelBar-btn-hover.data-v-4aac0955 {
+  transform: scale(0.985) !important;
+  background: linear-gradient(135deg, #F6EFDD, #FBF6EA) !important;
+  box-shadow: 0 3rpx 10rpx rgba(201, 162, 39, 0.12) !important;
 }
 
 /* 5. 订单信息参数列表 */
