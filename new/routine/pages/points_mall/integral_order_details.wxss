@@ -176,6 +176,11 @@ page {
   margin: 0 auto !important;
 }
 
+/* 隐藏 CRMEB 原生齿轮装饰图（灰盒与金码已直接相连，齿轮多余且未对齐） */
+.order-details .writeOff .gear.data-v-4aac0955 {
+  display: none !important;
+}
+
 /* 金底黑字核销码 */
 .order-details .writeOff .num.data-v-4aac0955 {
   background-color: #F0C34C !important;
@@ -191,6 +196,40 @@ page {
   padding-top: 0 !important;
   letter-spacing: 4rpx !important;
   box-shadow: 0 4rpx 12rpx rgba(240, 195, 76, 0.2) !important;
+}
+
+/* 使用说明区：核销码下方提示卡 */
+.order-details .writeOff .rules.data-v-4aac0955 {
+  margin: 28rpx 28rpx 0 28rpx !important;
+  padding: 24rpx 28rpx !important;
+  background: #FBF8F2 !important;
+  border: 1rpx solid rgba(201, 162, 39, 0.12) !important;
+  border-radius: 16rpx !important;
+}
+
+.order-details .writeOff .rules .item.data-v-4aac0955 {
+  display: block !important;
+}
+
+.order-details .writeOff .rules .rulesTitle.data-v-4aac0955 {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 26rpx !important;
+  font-weight: 700 !important;
+  color: #8C6D16 !important;
+  margin-bottom: 10rpx !important;
+}
+
+.order-details .writeOff .rules .rulesTitle .iconfont.data-v-4aac0955 {
+  margin-right: 10rpx !important;
+  font-size: 28rpx !important;
+  color: #C9A227 !important;
+}
+
+.order-details .writeOff .rules .info.data-v-4aac0955 {
+  font-size: 24rpx !important;
+  color: #8A7A52 !important;
+  line-height: 38rpx !important;
 }
 
 /* 5. 订单信息参数列表 */
