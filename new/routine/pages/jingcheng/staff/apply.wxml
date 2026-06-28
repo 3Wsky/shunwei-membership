@@ -93,7 +93,7 @@
             </view>
           </view>
 
-          <view class="scan-row">
+          <view wx:if="{{ocrEnabled}}" class="scan-row">
             <view class="scan-tip">拍照自动识别产品信息</view>
             <view class="scan-btn-sm {{scanning ? 'disabled' : ''}}" data-pindex="{{pIndex}}" bindtap="scanSn">
               <text class="iconfont icon-hexiaoma"></text> 拍照识别
@@ -113,7 +113,7 @@
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
               <view class="input-card-title">SN 序列号</view>
-              <input class="field-input-new mono" value="{{product.sn}}" data-pindex="{{pIndex}}" bindinput="onSn" placeholder="拍照识别或手动输入" placeholder-class="ph" maxlength="30"/>
+              <input class="field-input-new mono" value="{{product.sn}}" data-pindex="{{pIndex}}" bindinput="onSn" placeholder="{{ocrEnabled ? '拍照识别或手动输入' : '请输入 SN 序列号'}}" placeholder-class="ph" maxlength="30"/>
             </view>
             <text class="iconfont icon-hexiaoma input-card-icon"></text>
           </view>

@@ -1,21 +1,30 @@
 const { request, getToken, openWechatReauth } = require('../../../../services/jc-request')
 const { recogniseSn } = require('../../../../services/sn-recognise')
+const { OCR_SN_SCAN_ENABLED } = require('../../../../services/feature-flags')
 
 Page({
   data: {
+    ocrEnabled: OCR_SN_SCAN_ENABLED,
     scanning: false,
-    result: null,
+    form: { sn: '', brand: '', model: '' },
     orderId: '',
     history: []
   },
   onShow: function () { this.loadHistory() },
   editSn: function (e) {
-    this.setData({ 'result.sn': e.detail.value })
+    this.setData({ 'form.sn': e.detail.value })
+  },
+  editBrand: function (e) {
+    this.setData({ 'form.brand': e.detail.value })
+  },
+  editModel: function (e) {
+    this.setData({ 'form.model': e.detail.value })
   },
   editOrder: function (e) {
     this.setData({ orderId: e.detail.value })
   },
   takePhoto: function () {
+    if (!this.data.ocrEnabled) return
     if (this.data.scanning) return
     var that = this
     wx.chooseMedia({
@@ -34,12 +43,19 @@ Page({
     var token = getToken()
     if (!token) { openWechatReauth(); return }
 
-    this.setData({ scanning: true, result: null })
+    this.setData({ scanning: true })
     wx.showLoading({ title: '识别中…', mask: true })
 
     recogniseSn(filePath, token).then(function (data) {
       wx.hideLoading()
-      that.setData({ result: data, scanning: false })
+      that.setData({
+        form: {
+          sn: data.sn || '',
+          brand: data.brand || '',
+          model: data.model || ''
+        },
+        scanning: false
+      })
       if (data.sn) {
         wx.showToast({ title: data.source === 'wechat_ocr' ? '微信OCR识别成功' : '识别成功', icon: 'success' })
       } else {
@@ -52,25 +68,25 @@ Page({
     })
   },
   bindSn: function () {
-    var r = this.data.result
-    if (!r || !r.sn) {
-      return wx.showToast({ title: '请先识别或输入SN码', icon: 'none' })
+    var form = this.data.form
+    if (!form || !form.sn || !String(form.sn).trim()) {
+      return wx.showToast({ title: '请先输入 SN 码', icon: 'none' })
     }
     var that = this
     wx.showLoading({ title: '绑定中…', mask: true })
     request('/api/staff/sn-binding', {
       method: 'POST',
       data: {
-        snCode: r.sn,
-        brand: r.brand || '',
-        model: r.model || '',
+        snCode: String(form.sn).trim(),
+        brand: form.brand || '',
+        model: form.model || '',
         orderId: that.data.orderId || '',
-        source: 'scan'
+        source: that.data.ocrEnabled ? 'scan' : 'manual'
       }
     }).then(function () {
       wx.hideLoading()
       wx.showToast({ title: '绑定成功', icon: 'success' })
-      that.setData({ result: null, orderId: '' })
+      that.setData({ form: { sn: '', brand: '', model: '' }, orderId: '' })
       that.loadHistory()
     }).catch(function (err) {
       wx.hideLoading()

@@ -2,30 +2,32 @@
   <jc-auth-sync></jc-auth-sync>
 
   <view class="hero">
-    <view class="hero-badge">SN 码识别</view>
-    <view class="hero-title">拍照识别序列号</view>
-    <view class="hero-desc">拍摄手机包装上的 SN 标签，自动识别序列号</view>
+    <view class="hero-badge">SN 码绑定</view>
+    <view class="hero-title">{{ocrEnabled ? '拍照识别序列号' : '手动录入 SN 码'}}</view>
+    <view class="hero-desc">{{ocrEnabled ? '拍摄手机包装上的 SN 标签，自动识别序列号' : '请手动输入产品 SN 序列号，拍照识别功能暂时关闭'}}</view>
   </view>
 
-  <view class="action-area">
+  <view wx:if="{{ocrEnabled}}" class="action-area">
     <view class="photo-btn {{scanning ? 'disabled' : ''}}" bindtap="takePhoto">
       <text class="iconfont icon-hexiaoma"></text> 拍照识别
     </view>
   </view>
 
-  <view wx:if="{{result}}" class="result-card">
-    <view class="rc-head">识别结果</view>
+  <view class="result-card">
+    <view class="rc-head">{{ocrEnabled ? '识别结果' : '录入信息'}}</view>
     <view class="rc-row">
       <text class="rc-label">SN 码</text>
-      <input class="rc-input" value="{{result.sn}}" bindinput="editSn" placeholder="未识别到，可手动输入" />
+      <input class="rc-input" value="{{form.sn}}" bindinput="editSn" placeholder="请输入 SN 序列号" />
     </view>
     <view class="rc-row">
       <text class="rc-label">品牌</text>
-      <text class="rc-value">{{result.brand || '—'}}</text>
+      <input wx:if="{{!ocrEnabled}}" class="rc-input" value="{{form.brand}}" bindinput="editBrand" placeholder="选填" />
+      <text wx:else class="rc-value">{{form.brand || '—'}}</text>
     </view>
     <view class="rc-row">
       <text class="rc-label">型号</text>
-      <text class="rc-value">{{result.model || '—'}}</text>
+      <input wx:if="{{!ocrEnabled}}" class="rc-input" value="{{form.model}}" bindinput="editModel" placeholder="选填" />
+      <text wx:else class="rc-value">{{form.model || '—'}}</text>
     </view>
 
     <view class="bind-section">
@@ -33,7 +35,7 @@
         <text class="rc-label">关联订单</text>
         <input class="rc-input" value="{{orderId}}" bindinput="editOrder" placeholder="输入订单号（可选）" />
       </view>
-      <view class="bind-btn {{!result.sn ? 'disabled' : ''}}" bindtap="bindSn">
+      <view class="bind-btn {{!form.sn ? 'disabled' : ''}}" bindtap="bindSn">
         确认绑定
       </view>
     </view>

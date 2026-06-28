@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "SN码识别",
+  "navigationBarTitleText": "SN码绑定",
   "usingComponents": {
     "jc-auth-sync": "/components/jc-auth-sync/index"
   }

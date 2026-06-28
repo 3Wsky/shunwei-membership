@@ -1,8 +1,10 @@
 const { request, getToken, BASE_URL } = require('../../../services/jc-request')
 const { recogniseSn } = require('../../../services/sn-recognise')
+const { OCR_SN_SCAN_ENABLED } = require('../../../services/feature-flags')
 
 Page({
   data: {
+    ocrEnabled: OCR_SN_SCAN_ENABLED,
     member: {},
     rules: [],
     submitting: false,
@@ -104,6 +106,7 @@ Page({
     this.setData({ products })
   },
   scanSn(e) {
+    if (!this.data.ocrEnabled) return
     if (this.data.scanning) return
     const pIdx = Number(e.currentTarget.dataset.pindex)
     var that = this
