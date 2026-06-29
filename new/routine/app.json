@@ -25,7 +25,8 @@
         "showcase/list",
         "showcase/detail",
         "integral/mall",
-        "integral/detail"
+        "integral/detail",
+        "activity/index"
       ],
       "name": "jingcheng"
     },
