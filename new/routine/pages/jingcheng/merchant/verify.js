@@ -70,8 +70,28 @@ Page({
     pendingIntegralCode: ''
   },
   onShow: function () { this.load() },
+  onUnload: function () {
+    if (this._dingAudio) { try { this._dingAudio.destroy() } catch (e) {} this._dingAudio = null }
+  },
   onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
   preventMove: function () {},
+  // 核销成功提示音：懒加载 InnerAudioContext，复用同一个实例
+  playDing: function () {
+    try {
+      if (!this._dingAudio) {
+        this._dingAudio = wx.createInnerAudioContext()
+        this._dingAudio.src = '/static/audio/ding.wav'
+      }
+      this._dingAudio.stop()
+      this._dingAudio.seek(0)
+      this._dingAudio.play()
+    } catch (e) { /* 播放失败不影响核销 */ }
+  },
+  // 核销成功统一反馈：叮一声 + 重震动
+  onVerifySuccess: function () {
+    this.playDing()
+    feedbackSuccess()
+  },
   onManualInput: function (e) { this.setData({ manualCode: e.detail.value }) },
   manualVerify: function () {
     var code = String(this.data.manualCode || '').trim()
@@ -181,7 +201,7 @@ Page({
     }).then(function (data) {
       wx.hideLoading()
       this._verifyingIntegral = false
-      feedbackSuccess()
+      this.onVerifySuccess()
       this.showSuccessModal('积分礼品已核销\n商品：' + data.productName + '\n积分：' + data.integralCost)
     }.bind(this)).catch(function (err) {
       wx.hideLoading()
@@ -219,7 +239,7 @@ Page({
         // preview 报「已核销/已使用」(409) → 说明上一笔其实成功了
         if (/已核销|已使用|已被/.test(m)) {
           wx.hideLoading()
-          feedbackSuccess()
+          self.onVerifySuccess()
           self.showSuccessModal('已确认核销成功\n积分礼品已核销')
           return
         }
@@ -295,7 +315,7 @@ Page({
     }).then(function (data) {
       wx.hideLoading()
       this._verifying = false
-      feedbackSuccess()
+      this.onVerifySuccess()
       this.showSuccessModal('本次核销 ¥' + data.amount + '\n顾客剩余 ¥' + data.balanceAfter)
     }.bind(this)).catch(function (err) {
       wx.hideLoading()
@@ -340,7 +360,7 @@ Page({
       }).then(function (status) {
         if (status && status.verified) {
           wx.hideLoading()
-          feedbackSuccess()
+          self.onVerifySuccess()
           var line = '本次核销 ¥' + status.amount
           if (status.balanceAfter !== null && status.balanceAfter !== undefined) {
             line += '\n顾客剩余 ¥' + status.balanceAfter
