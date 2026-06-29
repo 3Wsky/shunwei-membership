@@ -213,11 +213,14 @@ Page({
     this.doCashVerify(token, amount)
   },
   doCashVerify: function (token, amount) {
+    if (this._verifying) return
+    this._verifying = true
     wx.showLoading({ title: '核销中…', mask: true })
     request('/api/merchant/verify-voucher', {
       method: 'POST', data: { verifyToken: token, amount: amount }
     }).then(function (data) {
       wx.hideLoading()
+      this._verifying = false
       wx.showModal({
         title: '核销成功',
         content: '本次核销 ¥' + data.amount + '\n顾客剩余 ¥' + data.balanceAfter,
@@ -226,7 +229,18 @@ Page({
       this.load()
     }.bind(this)).catch(function (err) {
       wx.hideLoading()
-      wx.showModal({ title: '核销失败', content: err.message || '请重试', showCancel: false })
-    })
+      this._verifying = false
+      // 网络/超时类错误：核销结果未知，提示店员务必核对，避免“以为成功其实没扣”或重复核销
+      var msg = err.message || '请重试'
+      var unknown = /网络|超时|timeout|fail/i.test(msg)
+      wx.showModal({
+        title: unknown ? '核销结果未确认' : '核销失败',
+        content: unknown
+          ? '网络异常，本次核销是否成功未知。请勿重复核销，先下拉刷新「今日核销」核对是否已记录，再决定是否重试。'
+          : msg,
+        showCancel: false
+      })
+      this.load()
+    }.bind(this))
   }
 })
