@@ -53,8 +53,8 @@
       <text class="bb-num">{{balance}}</text>
       <text class="bb-label">可用积分</text>
     </view>
-    <view class="bb-btn {{canExchange ? '' : 'disabled'}}" bindtap="exchange">
-      {{canExchange ? '立即兑换' : (stockHint || '暂不可兑')}}
+    <view class="bb-btn {{(canExchange && !submitting) ? '' : 'disabled'}}" bindtap="exchange">
+      {{submitting ? '兑换中…' : (canExchange ? '立即兑换' : (stockHint || '暂不可兑'))}}
     </view>
   </view>
 </view>
