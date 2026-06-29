@@ -665,6 +665,29 @@ page {
   font-size: 40rpx;
 }
 
+.quick-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.quick-chip {
+  padding: 14rpx 28rpx;
+  border-radius: 14rpx;
+  background: #FFFDF7;
+  border: 2rpx solid #E8C97A;
+  color: #C9A227;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.quick-chip.all {
+  background: linear-gradient(135deg, #F8DC8E 0%, #E6B84E 100%);
+  border-color: #E6B84E;
+  color: #2A2207;
+}
+
 .amount-hint {
   display: flex;
   align-items: center;

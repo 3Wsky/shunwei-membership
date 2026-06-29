@@ -122,6 +122,10 @@
       <text class="amount-yen">¥</text>
       <input class="amount-input" type="digit" focus="{{showAmountModal}}" value="{{amountInput}}" bindinput="onAmountInput" placeholder="0.00" placeholder-class="amount-ph" />
     </view>
+    <view class="quick-amounts" wx:if="{{quickAmounts.length}}">
+      <view wx:for="{{quickAmounts}}" wx:key="*this" class="quick-chip" hover-class="button-hover" data-amount="{{item}}" bindtap="pickQuickAmount">¥{{item}}</view>
+      <view class="quick-chip all" hover-class="button-hover" bindtap="useFullBalance">全部</view>
+    </view>
     <view class="amount-hint" wx:if="{{verifyMode === 'hundred'}}"><text class="iconfont icon-tishi"></text> 当前为整百核销模式，仅支持 100、200 等整百金额</view>
     <view class="amount-hint" wx:else><text class="iconfont icon-tishi"></text> 支持整数或两位小数，如 212 或 212.33</view>
     <view class="vmodal-actions">
