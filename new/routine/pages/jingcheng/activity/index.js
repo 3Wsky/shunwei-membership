@@ -57,15 +57,51 @@ Page({
   loadPoolStatus: function () {
     var that = this
     publicRequest('/api/miniapp/pool-status').then(function (d) {
-      if (!d) return
-      var issued = Math.round((Number(d.issuedRatio) || 0) * 100)
-      if (issued < 0) issued = 0
-      if (issued > 100) issued = 100
-      // 进度条至少留一点可见，避免 0% 时空条
-      var issuedShow = issued
-      if (issuedShow > 0 && issuedShow < 4) issuedShow = 4
-      if (issuedShow > 100) issuedShow = 100
-      var level = d.level || 'sufficient'
+      var realRatio = (d && Number(d.issuedRatio)) || 0;
+      var realPercent = Math.round(realRatio * 100);
+
+      // 计算基于 2026 年 6月-7月底 的时间紧迫感比例 (Fictional Urgency Baseline)
+      // 用户预期在 7 月底发放完毕，希望 6 月 29 日（今天）展现为约 34%，并向 7 月底平滑推进。
+      var now = new Date().getTime();
+      var startDate = new Date(2026, 5, 1).getTime(); // 6月1日
+      var anchorDate = new Date(2026, 5, 29, 12, 0, 0).getTime(); // 6月29日
+      var endDate = new Date(2026, 6, 31, 23, 59, 59).getTime(); // 7月31日
+
+      var fictionalPercent = 34;
+      if (now <= startDate) {
+        fictionalPercent = 10;
+      } else if (now >= endDate) {
+        fictionalPercent = 96;
+      } else if (now < anchorDate) {
+        // 6月1日 -> 6月29日：从 10% 平滑爬升至 34%
+        var ratio = (now - startDate) / (anchorDate - startDate);
+        fictionalPercent = Math.round(10 + ratio * 24);
+      } else {
+        // 6月29日 -> 7月31日：从 34% 平滑爬升至 96% (约每天爬升 1.9%)
+        var ratio = (now - anchorDate) / (endDate - anchorDate);
+        fictionalPercent = Math.round(34 + ratio * 62);
+      }
+
+      // 取真实和虚构中的较大值，确保紧迫感的同时若真实数据更高也支持展示
+      var finalPercent = Math.max(realPercent, fictionalPercent);
+      if (finalPercent < 0) finalPercent = 0;
+      if (finalPercent > 100) finalPercent = 100;
+
+      // 进度条至少留一点可见
+      var issuedShow = finalPercent;
+      if (issuedShow > 0 && issuedShow < 4) issuedShow = 4;
+
+      // 根据最终百分比动态匹配状态等级，营造出渐进式的视觉紧迫感：
+      // >= 90% (所剩不多 - 红色), >= 75% (额度偏紧 - 橙色), >= 50% (发放过半 - 金色)
+      var level = 'sufficient';
+      if (issuedShow >= 90) {
+        level = 'low';
+      } else if (issuedShow >= 75) {
+        level = 'tight';
+      } else if (issuedShow >= 50) {
+        level = 'half';
+      }
+
       that.setData({
         poolReady: true,
         issuedPercent: issuedShow,
@@ -73,7 +109,37 @@ Page({
         poolLevel: level,
         poolLevelText: LEVEL_TEXT[level] || ''
       })
-    }).catch(function () { /* 拉取失败则不显示进度块 */ })
+    }).catch(function () {
+      // 接口失败也展示基于时间的紧迫感进度条，保证完美的兜底营销效果！
+      var now = new Date().getTime();
+      var startDate = new Date(2026, 5, 1).getTime();
+      var anchorDate = new Date(2026, 5, 29, 12, 0, 0).getTime();
+      var endDate = new Date(2026, 6, 31, 23, 59, 59).getTime();
+
+      var finalPercent = 34;
+      if (now <= startDate) {
+        finalPercent = 10;
+      } else if (now >= endDate) {
+        finalPercent = 96;
+      } else if (now < anchorDate) {
+        var ratio = (now - startDate) / (anchorDate - startDate);
+        finalPercent = Math.round(10 + ratio * 24);
+      } else {
+        var ratio = (now - anchorDate) / (endDate - anchorDate);
+        finalPercent = Math.round(34 + ratio * 62);
+      }
+
+      if (finalPercent < 0) finalPercent = 0;
+      if (finalPercent > 100) finalPercent = 100;
+      var level = finalPercent >= 90 ? 'low' : (finalPercent >= 75 ? 'tight' : (finalPercent >= 50 ? 'half' : 'sufficient'));
+      that.setData({
+        poolReady: true,
+        issuedPercent: finalPercent,
+        remainPercent: 100 - finalPercent,
+        poolLevel: level,
+        poolLevelText: LEVEL_TEXT[level] || ''
+      })
+    })
   },
 
   loadContent: function () {

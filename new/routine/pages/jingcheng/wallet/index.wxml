@@ -18,7 +18,7 @@
         <view wx:else class="pay-loading">{{payLoading ? '生成中…' : '点击下方刷新生成付款码'}}</view>
       </view>
       <view wx:if="{{qrText}}" class="pay-hint">商家/店员扫码核销 · {{payCountdown}}s 后自动刷新</view>
-      <view class="pay-refresh" bindtap="refreshCode"><text class="iconfont icon-shuaxin"></text> 刷新付款码</view>
+      <view class="pay-refresh" hover-class="button-hover" bindtap="refreshCode"><text class="iconfont icon-shuaxin"></text> 刷新付款码</view>
       <view class="pay-links">
         <text class="pay-link" bindtap="openTerms">现金券使用须知</text>
         <text class="pay-link-divider">|</text>
@@ -50,7 +50,7 @@
       <view class="vs-title">核销成功</view>
       <view class="vs-amount">本次核销 <text class="vs-amount-num">￥{{verifyAmount}}</text></view>
       <view class="vs-balance">现金券余额 ￥{{verifyBalanceAfter}}</view>
-      <view class="vs-btn" bindtap="closeVerifySuccess">我知道了</view>
+      <view class="vs-btn" hover-class="button-hover" bindtap="closeVerifySuccess">我知道了</view>
     </view>
   </view>
 
@@ -64,14 +64,14 @@
           <text class="terms-text">{{item}}</text>
         </view>
       </scroll-view>
-      <button class="terms-agree-btn {{countdown > 0 ? 'disabled' : ''}}" disabled="{{countdown > 0}}" bindtap="agreeTerms">
+      <button class="terms-agree-btn {{countdown > 0 ? 'disabled' : ''}}" disabled="{{countdown > 0}}" hover-class="button-hover" bindtap="agreeTerms">
         {{countdown > 0 ? '请阅读（' + countdown + 's）' : '我已阅读并同意'}}
       </button>
     </view>
   </view>
 
   <view class="title"><text>可核销商家</text><label>{{merchants.length}} 家</label></view>
-  <view wx:for="{{merchants}}" wx:key="id" class="merchant-card" data-index="{{index}}" bindtap="openMerchantDetail">
+  <view wx:for="{{merchants}}" wx:key="id" class="merchant-card" hover-class="card-hover" data-index="{{index}}" bindtap="openMerchantDetail">
     <view class="mc-head">
       <view class="mc-name">{{item.merchantName}}</view>
       <view class="mc-arrow">›</view>

@@ -160,12 +160,19 @@ page {
   background: #fff;
   border: 1rpx solid #F3B4BA;
   margin-right: 20rpx;
+  transition: all 0.15s ease;
 }
 
 .approve {
   color: #fff;
   background: linear-gradient(135deg, #4D9BFF, #1F6BFF);
   box-shadow: 0 8rpx 20rpx rgba(31, 107, 255, 0.28);
+  transition: all 0.15s ease;
+}
+
+.button-hover {
+  transform: scale(0.97) !important;
+  opacity: 0.92 !important;
 }
 
 .empty {
@@ -223,4 +230,102 @@ page {
   font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* Product Info Box */
+.product-info-box {
+  margin-top: 24rpx;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  background: #F8FBFF;
+  border: 1rpx solid #E6EEF8;
+}
+
+.product-info-title {
+  display: flex;
+  align-items: center;
+  color: #8A95A6;
+  font-size: 26rpx;
+  font-weight: 700;
+  margin-bottom: 16rpx;
+}
+
+.product-info-title .iconfont {
+  margin-right: 12rpx;
+  color: #1F6BFF;
+  font-size: 30rpx;
+}
+
+.product-info-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-item-card {
+  background: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  border: 1rpx solid #E6EEF8;
+  box-shadow: 0 4rpx 12rpx rgba(15, 35, 70, 0.02);
+}
+
+.product-item-card + .product-item-card {
+  margin-top: 14rpx;
+}
+
+.product-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12rpx;
+  border-bottom: 1rpx dashed #E6EEF8;
+  margin-bottom: 12rpx;
+}
+
+.product-type-badge {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #1F6BFF;
+  background: #EEF5FF;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.product-price {
+  font-size: 26rpx;
+  font-weight: 800;
+  color: #B8862B;
+}
+
+.product-item-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-row {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  line-height: 36rpx;
+}
+
+.product-row + .product-row {
+  margin-top: 6rpx;
+}
+
+.p-label {
+  color: #8A95A6;
+  width: 80rpx;
+  flex-shrink: 0;
+}
+
+.p-val {
+  color: #0B1F3A;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.p-val.mono {
+  font-family: monospace;
+  color: #1F6BFF;
 }

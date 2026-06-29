@@ -7,6 +7,39 @@ function rangeText(rule) {
     : rule.minAmount + '元以上'
 }
 
+function parseProducts(receiptNo) {
+  if (!receiptNo) return null
+  var s = String(receiptNo).trim()
+  if (s.indexOf('[产品') < 0) return null
+  
+  var parts = s.split(/;\s*(?=\[产品)/)
+  var items = []
+  parts.forEach(function(part) {
+    var m = part.match(/^\[产品\d+\]\s*(.*)$/)
+    if (!m) return
+    var content = m[1]
+    var segments = content.split('/')
+    var type = '其他'
+    var model = ''
+    var price = ''
+    var sn = ''
+    segments.forEach(function(seg) {
+      seg = seg.trim()
+      if (['手机', '平板', '电脑', '智能穿戴'].indexOf(seg) >= 0) {
+        type = seg
+      } else if (seg.indexOf('¥') === 0 || seg.indexOf('￥') === 0) {
+        price = seg
+      } else if (seg.indexOf('SN:') === 0) {
+        sn = seg.substring(3).trim()
+      } else if (seg) {
+        model = seg
+      }
+    })
+    items.push({ type: type, model: model || '未知型号', price: price || '未知价格', sn: sn })
+  })
+  return items.length > 0 ? items : null
+}
+
 Page({
   data: { list: [], loading: false },
   onLoad() { this.boot() },
@@ -24,10 +57,12 @@ Page({
         const map = this._ruleMap || {}
         const items = (list || []).map((it) => {
           const rule = map[Number(it.consumeAmount)]
+          const productItems = parseProducts(it.receiptNo)
           return Object.assign({}, it, {
             rangeText: rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档'),
             productText: it.receiptNo || '未填写产品信息',
-            hasProduct: !!it.receiptNo
+            hasProduct: !!it.receiptNo,
+            productItems: productItems
           })
         })
         this.setData({ list: items })

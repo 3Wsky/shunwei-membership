@@ -16,8 +16,13 @@
       <text class="pool-title">消费券发放进度</text>
       <text wx:if="{{poolLevelText}}" class="pool-level">{{poolLevelText}}</text>
     </view>
-    <view class="pool-bar">
-      <view class="pool-bar-issued" style="width:{{issuedPercent}}%"></view>
+    <view class="pool-progress-wrap">
+      <view class="pool-tooltip" style="left:{{issuedPercent}}%">已发放 {{issuedPercent}}%</view>
+      <view class="pool-bar">
+        <view class="pool-bar-issued" style="width:{{issuedPercent}}%">
+          <view class="sweep-light"></view>
+        </view>
+      </view>
     </view>
     <view class="pool-legend">
       <view class="pl-item"><text class="pl-dot pl-dot-issued"></text><text class="pl-label">已发放</text></view>

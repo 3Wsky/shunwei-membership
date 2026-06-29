@@ -338,10 +338,19 @@ page {
 
 /* 6. 底部操作按钮区 */
 .order-details .footer.data-v-4aac0955 {
-  height: 100rpx !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 100 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
   background-color: #FFFFFF !important;
   border-top: 1rpx solid #F0F4FA !important;
   padding: 0 32rpx !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+  height: calc(100rpx + env(safe-area-inset-bottom)) !important;
   box-sizing: border-box !important;
 }
 

@@ -16,6 +16,7 @@
       wx:for="{{products}}"
       wx:key="id"
       class="card"
+      hover-class="card-hover"
       data-id="{{item.id}}"
       bindtap="openDetail"
     >

@@ -22,10 +22,37 @@
         <text class="uid-tag">UID {{item.clerkUid}}</text>
       </view>
     </view>
-    <view class="row">
-      <view class="row-label"><text class="iconfont icon-liwu"></text>产品信息</view>
-      <text class="row-value {{item.hasProduct ? '' : 'muted'}}">{{item.productText}}</text>
-    </view>
+    <block wx:if="{{item.productItems}}">
+      <view class="product-info-box">
+        <view class="product-info-title">
+          <text class="iconfont icon-liwu"></text>产品信息
+        </view>
+        <view class="product-info-list">
+          <view wx:for="{{item.productItems}}" wx:for-item="prod" wx:for-index="pIdx" wx:key="pIdx" class="product-item-card">
+            <view class="product-item-header">
+              <text class="product-type-badge">{{prod.type}}</text>
+              <text class="product-price">{{prod.price}}</text>
+            </view>
+            <view class="product-item-body">
+              <view class="product-row">
+                <text class="p-label">型号：</text>
+                <text class="p-val">{{prod.model}}</text>
+              </view>
+              <view class="product-row" wx:if="{{prod.sn}}">
+                <text class="p-label">SN：</text>
+                <text class="p-val mono">{{prod.sn}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="row">
+        <view class="row-label"><text class="iconfont icon-liwu"></text>产品信息</view>
+        <text class="row-value {{item.hasProduct ? '' : 'muted'}}">{{item.productText}}</text>
+      </view>
+    </block>
 
     <view class="benefit">
       <view class="benefit-seg"><text class="iconfont icon-yue2"></text>{{item.rangeText}}</view>
@@ -34,8 +61,8 @@
     </view>
 
     <view class="buttons">
-      <button class="reject" data-index="{{index}}" data-action="reject" bindtap="review">驳回</button>
-      <button class="approve" data-index="{{index}}" data-action="approve" bindtap="review">通过</button>
+      <button class="reject" hover-class="button-hover" data-index="{{index}}" data-action="reject" bindtap="review">驳回</button>
+      <button class="approve" hover-class="button-hover" data-index="{{index}}" data-action="approve" bindtap="review">通过</button>
     </view>
   </view>
 

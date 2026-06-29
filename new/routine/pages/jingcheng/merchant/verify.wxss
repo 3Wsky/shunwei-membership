@@ -221,6 +221,13 @@ page {
   letter-spacing: 8rpx;
   text-align: center;
   margin-right: 16rpx;
+  transition: all 0.25s ease;
+}
+
+.code-input:focus {
+  border-color: #1F6BFF !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 0 12rpx rgba(31, 107, 255, 0.15) !important;
 }
 
 .code-input-ph {
@@ -240,11 +247,14 @@ page {
   font-size: 28rpx;
   font-weight: 800;
   white-space: nowrap;
-  transition: transform 0.18s ease, opacity 0.18s ease;
+  transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6rpx 16rpx rgba(201, 162, 39, 0.25);
 }
 
 .manual-btn.disabled {
   opacity: 0.45;
+  box-shadow: none !important;
+  pointer-events: none;
 }
 
 /* Personal data card */
