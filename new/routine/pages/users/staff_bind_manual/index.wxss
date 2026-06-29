@@ -429,9 +429,25 @@ page {
   content: '';
 }
 
-.store-address {
-  margin-top: 8rpx;
+.store-meta {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 10rpx;
   padding-left: 22rpx;
+}
+
+.store-meta-icon {
+  flex: 0 0 auto;
+  width: 32rpx;
+  margin-right: 8rpx;
+  color: #C9A227;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.store-meta-text {
+  flex: 1;
+  min-width: 0;
   color: #8C8C8C;
   font-size: 25rpx;
   line-height: 1.6;

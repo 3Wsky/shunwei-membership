@@ -102,7 +102,18 @@
     <view wx:else class="store-list">
       <view wx:for="{{stores}}" wx:key="id" class="store-item">
         <view class="store-name">{{item.name}}</view>
-        <view class="store-address">{{item.address || '地址待完善'}}</view>
+        <view class="store-meta">
+          <text class="iconfont icon-didiandingwei_o store-meta-icon"></text>
+          <text class="store-meta-text">{{item.address || '地址待完善'}}</text>
+        </view>
+        <view wx:if="{{item.phone}}" class="store-meta">
+          <text class="iconfont icon-dianhua store-meta-icon"></text>
+          <text class="store-meta-text">{{item.phone}}</text>
+        </view>
+        <view wx:if="{{item.dayTime}}" class="store-meta">
+          <text class="iconfont icon-shijian store-meta-icon"></text>
+          <text class="store-meta-text">{{item.dayTime}}</text>
+        </view>
       </view>
     </view>
   </view>

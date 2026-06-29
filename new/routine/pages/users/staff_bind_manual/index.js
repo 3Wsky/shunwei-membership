@@ -57,7 +57,9 @@ Page({
         return {
           id: Number(item.id || 0),
           name: item.name || '门店',
-          address: item.address || ''
+          address: item.address || '',
+          phone: item.phone || '',
+          dayTime: item.dayTime || ''
         }
       })
       self.setData({ storeLoading: false, stores: stores })
