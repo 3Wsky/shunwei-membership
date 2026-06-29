@@ -96,3 +96,20 @@
     </view>
   </view>
 </view>
+
+<view wx:if="{{showAmountModal}}" class="amount-mask" catchtouchmove="preventMove">
+  <view class="amount-modal">
+    <view class="amount-title">现金券核销</view>
+    <view class="amount-desc">顾客：{{pendingInfo.nickname || ('UID ' + pendingInfo.uid)}}</view>
+    <view class="amount-desc">可用现金券 ¥{{pendingInfo.balance}}</view>
+    <view class="amount-field">
+      <text class="amount-yen">¥</text>
+      <input class="amount-input" type="digit" focus="{{showAmountModal}}" value="{{amountInput}}" bindinput="onAmountInput" placeholder="请输入核销金额" placeholder-class="amount-ph" />
+    </view>
+    <view class="amount-hint">支持小数，如 212.33</view>
+    <view class="amount-actions">
+      <view class="amount-btn cancel" bindtap="closeAmountModal">取消</view>
+      <view class="amount-btn confirm" bindtap="confirmAmount">确认核销</view>
+    </view>
+  </view>
+</view>

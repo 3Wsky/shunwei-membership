@@ -24,6 +24,14 @@ function isCashVoucherToken(code) {
   return String(code || '').trim().indexOf('sw-pay:') === 0
 }
 
+function parseMoneyAmount(raw) {
+  var s = String(raw || '').trim()
+    .replace(/[￥¥,\s，]/g, '')
+    .replace(/．/g, '.')
+  if (!s || !/^\d+(\.\d{1,2})?$/.test(s)) return NaN
+  return Math.round(parseFloat(s) * 100) / 100
+}
+
 Page({
   data: {
     loading: true,
@@ -36,7 +44,11 @@ Page({
     monthAmount: 0,
     monthCount: 0,
     todayRecords: [],
-    showSummary: false
+    showSummary: false,
+    showAmountModal: false,
+    amountInput: '',
+    pendingToken: '',
+    pendingInfo: null
   },
   onShow: function () { this.load() },
   onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
@@ -157,21 +169,28 @@ Page({
     })
   },
   askAmount: function (token, info) {
-    var that = this
-    wx.showModal({
-      title: '现金券核销',
-      content: '顾客：' + (info.nickname || ('UID ' + info.uid)) + '\n可用现金券 ¥' + info.balance + '\n请输入核销金额（元）',
-      editable: true,
-      placeholderText: '本次核销金额',
-      confirmText: '确认核销',
-      success: function (res) {
-        if (!res.confirm) return
-        var amount = Number(String(res.content || '').trim())
-        if (!amount || amount <= 0) return wx.showToast({ title: '请输入有效金额', icon: 'none' })
-        if (amount > Number(info.balance || 0)) return wx.showToast({ title: '超过顾客可用余额', icon: 'none' })
-        that.doCashVerify(token, amount)
-      }
+    this.setData({
+      showAmountModal: true,
+      amountInput: '',
+      pendingToken: token,
+      pendingInfo: info
     })
+  },
+  onAmountInput: function (e) {
+    this.setData({ amountInput: e.detail.value })
+  },
+  closeAmountModal: function () {
+    this.setData({ showAmountModal: false, amountInput: '', pendingToken: '', pendingInfo: null })
+  },
+  confirmAmount: function () {
+    var info = this.data.pendingInfo || {}
+    var token = this.data.pendingToken
+    var amount = parseMoneyAmount(this.data.amountInput)
+    if (!amount || amount <= 0) return wx.showToast({ title: '请输入有效金额（最多两位小数）', icon: 'none' })
+    var balance = Math.round(Number(info.balance || 0) * 100) / 100
+    if (amount > balance + 0.001) return wx.showToast({ title: '超过顾客可用余额', icon: 'none' })
+    this.closeAmountModal()
+    this.doCashVerify(token, amount)
   },
   doCashVerify: function (token, amount) {
     wx.showLoading({ title: '核销中…', mask: true })

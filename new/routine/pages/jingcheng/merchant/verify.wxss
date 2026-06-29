@@ -518,3 +518,99 @@ page {
   color: #8C8C8C;
   font-size: 21rpx;
 }
+
+.amount-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(26, 31, 54, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
+.amount-modal {
+  width: 100%;
+  max-width: 620rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx 36rpx 32rpx;
+  box-shadow: 0 24rpx 60rpx rgba(26, 31, 54, 0.18);
+}
+
+.amount-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.amount-desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.amount-field {
+  margin-top: 28rpx;
+  display: flex;
+  align-items: center;
+  border: 2rpx solid #E8EEF8;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  background: #F8FAFF;
+}
+
+.amount-yen {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #C9A227;
+  margin-right: 12rpx;
+}
+
+.amount-input {
+  flex: 1;
+  height: 88rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.amount-ph {
+  color: #B8C0CC;
+  font-weight: 400;
+}
+
+.amount-hint {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.amount-actions {
+  margin-top: 32rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.amount-btn {
+  flex: 1;
+  height: 84rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.amount-btn.cancel {
+  background: #F3F5F9;
+  color: #666;
+}
+
+.amount-btn.confirm {
+  background: linear-gradient(135deg, #C9A227 0%, #E6B84E 100%);
+  color: #fff;
+}

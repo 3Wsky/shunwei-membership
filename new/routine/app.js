@@ -17,6 +17,16 @@ try {
   /* ignore */
 }
 
+try {
+  var sys = wx.getSystemInfoSync ? wx.getSystemInfoSync() : {}
+  var sdk = sys.SDKVersion || '3.0.0'
+  var parts = String(sdk).split('.').map(function (n) { return Number(n) || 0 })
+  var ok = parts[0] > 2 || (parts[0] === 2 && (parts[1] > 21 || (parts[1] === 21 && parts[2] >= 3)))
+  wx.setStorageSync('MP_VERSION_ISNEW', ok)
+} catch (e) {
+  try { wx.setStorageSync('MP_VERSION_ISNEW', true) } catch (err) {}
+}
+
 function copyTokenFromPages() {
   try {
     var pages = getCurrentPages() || []

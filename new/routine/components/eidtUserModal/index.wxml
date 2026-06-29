@@ -22,26 +22,16 @@
         ><view class="avatar edit-box data-v-747da517"
           ><view class="left data-v-747da517"
             ><view class="head data-v-747da517">{{$root.m2}}</view
-            ><block wx:if="{{!mp_is_new}}"
-              ><view
-                data-event-opts="{{[['tap',[['uploadpic',['$event']]]]]}}"
-                class="avatar-box data-v-747da517"
-                catchtap="__e"
-                ><image
-                  src="{{userInfo.avatar||defHead}}"
-                  class="data-v-747da517"
-                ></image></view></block
-            ><block wx:else
-              ><button
-                class="avatar-box data-v-747da517"
-                open-type="chooseAvatar"
-                data-event-opts="{{[['chooseavatar',[['onChooseAvatar',['$event']]]]]}}"
-                bindchooseavatar="__e"
-              >
-                <image
-                  src="{{userInfo.avatar||defHead}}"
-                  class="data-v-747da517"
-                ></image></button></block></view></view
+            ><button
+              class="avatar-box data-v-747da517"
+              open-type="chooseAvatar"
+              data-event-opts="{{[['chooseavatar',[['onChooseAvatar',['$event']]]]]}}"
+              bindchooseavatar="__e"
+            >
+              <image
+                src="{{userInfo.avatar||defHead}}"
+                class="data-v-747da517"
+              ></image></button></view></view
         ><view class="nickname edit-box data-v-747da517"
           ><view class="left data-v-747da517"
             ><view class="head data-v-747da517">{{$root.m3}}</view
@@ -53,6 +43,8 @@
                 name="nickname"
                 maxlength="{{16}}"
                 value="{{userInfo.nickname}}"
+                data-event-opts="{{[['input',[['onNicknameInput',['$event']]]]]}}"
+                bindinput="__e"
                 class="data-v-747da517" /></view></view></view></view
       ><view class="bottom data-v-747da517"
         ><button
