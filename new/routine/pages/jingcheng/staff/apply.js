@@ -128,7 +128,6 @@ Page({
     this.setData({ scanning: true })
     wx.showLoading({ title: '识别中…', mask: true })
     recogniseSn(filePath, token).then(function (d) {
-      wx.hideLoading()
       var products = that.data.products
       if (d.sn) products[pIdx].sn = d.sn
       if (d.model) products[pIdx].model = d.model
@@ -139,14 +138,41 @@ Page({
           if (lower.indexOf(k) >= 0) { products[pIdx].type = brandMap[k]; break }
         }
       }
-      that.setData({ products: products, scanning: false })
-      var tip = d.sn ? '识别成功' : '未识别到SN，请手动输入'
-      if (d.source === 'wechat_ocr') tip = d.sn ? '微信OCR识别成功' : '未识别到SN，请手动输入'
-      wx.showToast({ title: tip, icon: d.sn ? 'success' : 'none' })
+      that.setData({ products: products })
+
+      // 识别到 SN 后查产品库：命中则用库里的型号/价格自动回填（库为准）
+      if (d.sn) {
+        that.lookupSn(d.sn, pIdx)
+        return
+      }
+      wx.hideLoading()
+      that.setData({ scanning: false })
+      wx.showToast({ title: '未识别到SN，请手动输入', icon: 'none' })
     }).catch(function (err) {
       wx.hideLoading()
       that.setData({ scanning: false })
       wx.showToast({ title: err.message || '识别失败', icon: 'none' })
+    })
+  },
+  lookupSn(sn, pIdx) {
+    var that = this
+    request('/api/staff/sn-lookup', { data: { sn: sn } }).then(function (r) {
+      wx.hideLoading()
+      that.setData({ scanning: false })
+      var products = that.data.products
+      if (r && r.found) {
+        if (r.model) products[pIdx].model = r.model
+        if (r.price > 0) products[pIdx].price = String(r.price)
+        that.setData({ products: products })
+        wx.showToast({ title: '已识别并匹配产品', icon: 'success' })
+      } else {
+        wx.showToast({ title: 'SN已识别，型号/价格请手动填', icon: 'none' })
+      }
+    }).catch(function () {
+      // 查询失败不影响 SN 录入，型号价格手输即可
+      wx.hideLoading()
+      that.setData({ scanning: false })
+      wx.showToast({ title: 'SN已识别，型号/价格请手动填', icon: 'none' })
     })
   },
   submit() {
