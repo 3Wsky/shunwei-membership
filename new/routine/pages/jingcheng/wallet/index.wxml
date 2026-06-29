@@ -50,6 +50,7 @@
 
   <view class="title"><text>可核销商家</text><label>{{merchants.length}} 家</label></view>
   <view wx:for="{{merchants}}" wx:key="id" class="merchant-card" data-index="{{index}}" bindtap="openMerchantDetail">
+    <image wx:if="{{item.cover}}" class="mc-cover" src="{{item.cover}}" mode="aspectFill" lazy-load="true"></image>
     <view class="mc-head">
       <view class="mc-name">{{item.merchantName}}</view>
       <view class="mc-arrow">›</view>

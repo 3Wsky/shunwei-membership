@@ -141,6 +141,8 @@ Page({
         hoursText: merchant.businessHours || '营业时间请咨询',
         addressText: merchant.storeAddress || '门店地址请咨询',
         contactPhone: merchant.contactPhone || '',
+        cover: merchant.cover || '',
+        images: merchant.images || (merchant.cover ? [merchant.cover] : []),
         latitude: merchant.latitude,
         longitude: merchant.longitude
       })

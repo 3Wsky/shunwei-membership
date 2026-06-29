@@ -12,8 +12,11 @@ Page({
       categoryText: '数码3C',
       hoursText: '营业时间请咨询',
       addressText: '门店地址请咨询',
-      contactPhone: ''
+      contactPhone: '',
+      cover: '',
+      images: []
     }, merchant)
+    if (!Array.isArray(merchant.images)) merchant.images = merchant.cover ? [merchant.cover] : []
     this.setData({ merchant })
     wx.setNavigationBarTitle({ title: merchant.merchantName || '商家详情' })
   },

@@ -1,4 +1,18 @@
 <view class="page">
+  <swiper
+    wx:if="{{merchant.images.length}}"
+    class="store-gallery"
+    indicator-dots="{{merchant.images.length > 1}}"
+    autoplay="{{merchant.images.length > 1}}"
+    circular="{{true}}"
+    interval="3500"
+    indicator-active-color="#C9A227"
+  >
+    <swiper-item wx:for="{{merchant.images}}" wx:for-item="img" wx:key="*this">
+      <image class="store-gallery-img" src="{{img}}" mode="aspectFill" lazy-load="true"></image>
+    </swiper-item>
+  </swiper>
+
   <view class="merchant-head">
     <view class="head-label">当前权益商家</view>
     <view class="merchant-name">{{merchant.merchantName}}</view>
