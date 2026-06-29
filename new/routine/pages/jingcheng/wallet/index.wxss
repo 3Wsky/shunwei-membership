@@ -140,11 +140,28 @@ page {
   font-size: 28rpx;
 }
 
-.pay-terms {
-  margin-top: 20rpx;
+.pay-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24rpx;
+}
+
+.pay-link {
   color: #C9A227;
-  font-size: 22rpx;
+  font-size: 24rpx;
   text-decoration: underline;
+  padding: 6rpx 4rpx;
+}
+
+.pay-link-divider {
+  margin: 0 18rpx;
+  color: rgba(201, 162, 39, 0.4);
+  font-size: 22rpx;
+}
+
+.pay-links-standalone {
+  margin: 28rpx 0 8rpx;
 }
 
 .lock-card {

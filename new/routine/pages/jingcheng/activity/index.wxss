@@ -50,6 +50,31 @@ page {
   font-size: 22rpx;
 }
 
+.activity-notice {
+  margin: 28rpx 32rpx 0;
+  padding: 24rpx 28rpx;
+  border: 1rpx solid rgba(230, 184, 78, 0.35);
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, rgba(230, 184, 78, 0.12), rgba(201, 162, 39, 0.06));
+}
+
+.notice-tag {
+  display: inline-block;
+  margin-right: 12rpx;
+  padding: 2rpx 14rpx;
+  border-radius: 8rpx;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
+}
+
+.notice-text {
+  color: #6B5114;
+  font-size: 25rpx;
+  line-height: 1.7;
+}
+
 .section-card {
   margin: 28rpx 32rpx 0;
   padding: 30rpx 32rpx 12rpx;

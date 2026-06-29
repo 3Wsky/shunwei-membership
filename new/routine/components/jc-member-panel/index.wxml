@@ -24,10 +24,6 @@
       <text class="iconfont icon-kehu menu-icon"></text>
       <text class="name">客户经理</text>
     </navigator>
-    <navigator class="item" url="/pages/jingcheng/activity/index">
-      <text class="iconfont icon-shuoming menu-icon"></text>
-      <text class="name">活动说明</text>
-    </navigator>
     <navigator class="item" url="/pages/points_mall/exchange_record">
       <text class="iconfont icon-liwu menu-icon"></text>
       <text class="name">礼品兑换</text>

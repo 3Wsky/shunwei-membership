@@ -2,8 +2,13 @@
   <view class="activity-hero">
     <view class="hero-badge"><text class="iconfont icon-tishi"></text></view>
     <view class="hero-title">{{activityName}}</view>
-    <view class="hero-sub">活动说明与免责条款</view>
+    <view wx:if="{{subTitle}}" class="hero-sub">{{subTitle}}</view>
     <view wx:if="{{updatedAt}}" class="hero-date">更新时间：{{updatedAt}}</view>
+  </view>
+
+  <view wx:if="{{notice}}" class="activity-notice">
+    <text class="notice-tag">重要提示</text>
+    <text class="notice-text">{{notice}}</text>
   </view>
 
   <view wx:for="{{sections}}" wx:key="title" class="section-card">
@@ -16,5 +21,6 @@
     </view>
   </view>
 
-  <view class="activity-foot">如对活动有疑问，请咨询您的专属客户经理或到店了解。</view>
+  <view wx:if="{{loading}}" class="activity-foot">内容加载中…</view>
+  <view wx:else class="activity-foot">如对活动有疑问，请咨询您的专属客户经理或到店了解。</view>
 </view>

@@ -1,8 +1,9 @@
-const { request } = require('../../../services/jc-request')
+const { request, publicRequest } = require('../../../services/jc-request')
 
 // 须知版本化：条款更新时改版本号即可让用户重新确认
 const VOUCHER_TERMS_KEY = 'JC_VOUCHER_TERMS_AGREED_V1'
 const TERMS_COUNTDOWN = 5
+// 本地兜底文案：后端 /api/miniapp/content 拉取失败时使用，正常情况下以后台配置为准
 const TERMS_LIST = [
   '本券为您在本店消费达对应档位后获赠的抵扣权益，仅用于抵扣消费，不可兑换现金、不设找零。',
   '适用范围：限锦程数码门店及合作商家的指定商品/服务，以券面或本页标注为准。',
@@ -32,6 +33,7 @@ Page({
     termsAgreed: false,
     showTerms: false,
     countdown: 0,
+    termsTitle: '现金券使用须知',
     termsList: TERMS_LIST,
     qrText: '',
     payLoading: false,
@@ -39,11 +41,28 @@ Page({
   },
   onShow() {
     this.setData({ termsAgreed: !!wx.getStorageSync(VOUCHER_TERMS_KEY) })
+    this.loadContent()
     this.load()
   },
   onHide() { this.clearTermsTimer(); this.clearPayTimer() },
   onUnload() { this.clearTermsTimer(); this.clearPayTimer() },
   onPullDownRefresh() { this.load().finally(() => wx.stopPullDownRefresh()) },
+
+  // 现金券使用须知文案：后台可在「内容管理」里改，拉取失败则用本地兜底
+  loadContent() {
+    publicRequest('/api/miniapp/content').then((d) => {
+      const terms = (d && d.cashVoucherTerms) || {}
+      const items = Array.isArray(terms.items) ? terms.items.filter((x) => x && String(x).trim()) : []
+      this.setData({
+        termsTitle: terms.title || '现金券使用须知',
+        termsList: items.length ? items : TERMS_LIST
+      })
+    }).catch(() => { /* 用本地兜底，不打扰用户 */ })
+  },
+
+  goActivity() {
+    wx.navigateTo({ url: '/pages/jingcheng/activity/index' })
+  },
 
   load() {
     this.setData({ loading: true })

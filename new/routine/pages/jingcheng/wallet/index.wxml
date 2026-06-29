@@ -19,7 +19,11 @@
       </view>
       <view wx:if="{{qrText}}" class="pay-hint">商家/店员扫码核销 · {{payCountdown}}s 后自动刷新</view>
       <view class="pay-refresh" bindtap="refreshCode"><text class="iconfont icon-shuaxin"></text> 刷新付款码</view>
-      <view class="pay-terms" bindtap="openTerms">《现金券使用须知》</view>
+      <view class="pay-links">
+        <text class="pay-link" bindtap="openTerms">现金券使用须知</text>
+        <text class="pay-link-divider">|</text>
+        <text class="pay-link" bindtap="goActivity">消费券活动说明</text>
+      </view>
     </view>
     <view wx:else class="lock-card" bindtap="openTerms">
       <view class="lock-ic"><text class="iconfont icon-shoudanyouhui"></text></view>
@@ -32,9 +36,15 @@
     <view class="eb-sub">当前现金券余额为 0，无法生成付款码</view>
   </view>
 
+  <view wx:if="{{!(balance > 0 && termsAgreed)}}" class="pay-links pay-links-standalone">
+    <text class="pay-link" bindtap="openTerms">现金券使用须知</text>
+    <text class="pay-link-divider">|</text>
+    <text class="pay-link" bindtap="goActivity">消费券活动说明</text>
+  </view>
+
   <view wx:if="{{showTerms}}" class="terms-mask" catchtouchmove="true">
     <view class="terms-sheet">
-      <view class="terms-title">现金券使用须知</view>
+      <view class="terms-title">{{termsTitle}}</view>
       <view class="terms-tip">请阅读以下条款，同意后方可使用现金券</view>
       <scroll-view scroll-y="true" class="terms-body">
         <view wx:for="{{termsList}}" wx:key="*this" class="terms-item">
