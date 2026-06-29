@@ -14,7 +14,7 @@
     <view wx:if="{{termsAgreed}}" class="pay-card">
       <view class="pay-title">出示付款码核销现金券</view>
       <view class="pay-qr">
-        <zb-code wx:if="{{qrText}}" cid="wallet-pay-qr" val="{{qrText}}" size="320" load-make="{{true}}" foreground="#0B1F3A" background="#ffffff"></zb-code>
+        <zb-code wx:if="{{qrText}}" cid="wallet-pay-qr" val="{{qrText}}" size="320" load-make="{{true}}" onval="{{true}}" foreground="#0B1F3A" background="#ffffff"></zb-code>
         <view wx:else class="pay-loading">{{payLoading ? '生成中…' : '点击下方刷新生成付款码'}}</view>
       </view>
       <view wx:if="{{qrText}}" class="pay-hint">商家/店员扫码核销 · {{payCountdown}}s 后自动刷新</view>

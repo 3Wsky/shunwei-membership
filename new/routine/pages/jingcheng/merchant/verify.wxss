@@ -519,7 +519,8 @@ page {
   font-size: 21rpx;
 }
 
-.amount-mask {
+/* Unified verify modal (cash voucher + integral gift) */
+.vmodal-mask {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -531,86 +532,218 @@ page {
   box-sizing: border-box;
 }
 
-.amount-modal {
+.vmodal {
   width: 100%;
   max-width: 620rpx;
   background: #fff;
-  border-radius: 24rpx;
-  padding: 40rpx 36rpx 32rpx;
-  box-shadow: 0 24rpx 60rpx rgba(26, 31, 54, 0.18);
+  border-radius: 28rpx;
+  padding: 36rpx 36rpx 32rpx;
+  box-shadow: 0 24rpx 60rpx rgba(26, 31, 54, 0.22);
 }
 
-.amount-title {
+.vmodal-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 26rpx;
+}
+
+.vmodal-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76rpx;
+  height: 76rpx;
+  flex: 0 0 76rpx;
+  margin-right: 20rpx;
+  border-radius: 22rpx;
+  color: #7A5B12;
+  background: linear-gradient(135deg, #F8DC8E, #E6B84E);
+  box-shadow: 0 8rpx 18rpx rgba(201, 162, 39, 0.3);
+}
+
+.vmodal-ic.gift {
+  color: #fff;
+  background: linear-gradient(135deg, #5B7BFF, #3B53C8);
+  box-shadow: 0 8rpx 18rpx rgba(59, 83, 200, 0.3);
+}
+
+.vmodal-ic .iconfont {
+  font-size: 40rpx;
+}
+
+.vmodal-htxt {
+  flex: 1;
+  min-width: 0;
+}
+
+.vmodal-title {
   font-size: 34rpx;
-  font-weight: 700;
+  font-weight: 800;
   color: #1A1A1A;
 }
 
-.amount-desc {
-  margin-top: 12rpx;
-  font-size: 26rpx;
-  color: #666;
+.vmodal-sub {
+  margin-top: 8rpx;
+  font-size: 25rpx;
+  color: #8C8C8C;
+}
+
+/* Balance highlight card */
+.balance-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26rpx 24rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%);
+  box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.06);
+}
+
+.balance-card-k {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24rpx;
+}
+
+.balance-card-v {
+  margin-top: 10rpx;
+  color: #F4D58D;
+  font-size: 60rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.balance-card-yen {
+  margin-right: 6rpx;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+/* Amount label row */
+.amount-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 28rpx 4rpx 14rpx;
+  color: #1A1A1A;
+  font-size: 27rpx;
+  font-weight: 700;
+}
+
+.amount-all {
+  color: #C9A227;
+  font-size: 25rpx;
+  font-weight: 700;
 }
 
 .amount-field {
-  margin-top: 28rpx;
   display: flex;
   align-items: center;
-  border: 2rpx solid #E8EEF8;
-  border-radius: 16rpx;
+  border: 2rpx solid #E8C97A;
+  border-radius: 18rpx;
   padding: 0 24rpx;
-  background: #F8FAFF;
+  background: #FFFDF7;
 }
 
 .amount-yen {
-  font-size: 32rpx;
-  font-weight: 700;
+  font-size: 40rpx;
+  font-weight: 800;
   color: #C9A227;
-  margin-right: 12rpx;
+  margin-right: 14rpx;
 }
 
 .amount-input {
   flex: 1;
-  height: 88rpx;
-  font-size: 36rpx;
-  font-weight: 700;
+  height: 100rpx;
+  font-size: 48rpx;
+  font-weight: 800;
   color: #1A1A1A;
 }
 
 .amount-ph {
-  color: #B8C0CC;
-  font-weight: 400;
+  color: #CBB785;
+  font-weight: 600;
+  font-size: 40rpx;
 }
 
 .amount-hint {
-  margin-top: 12rpx;
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
   font-size: 22rpx;
-  color: #999;
+  color: #A08858;
 }
 
-.amount-actions {
+.amount-hint .iconfont {
+  margin-right: 6rpx;
+  font-size: 24rpx;
+  color: #C9A227;
+}
+
+/* Gift info card */
+.gift-card {
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #FBF8F5, #FFFDF9);
+  border: 1rpx solid rgba(201, 162, 39, 0.12);
+}
+
+.gift-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(201, 162, 39, 0.1);
+}
+
+.gift-row:last-child {
+  border-bottom: 0;
+}
+
+.gift-k {
+  color: #8C7355;
+  font-size: 26rpx;
+}
+
+.gift-v {
+  flex: 1;
+  margin-left: 24rpx;
+  text-align: right;
+  color: #1A1A1A;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.gift-v.gold {
+  color: #C9A227;
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.vmodal-actions {
   margin-top: 32rpx;
   display: flex;
   gap: 20rpx;
 }
 
-.amount-btn {
+.vmodal-btn {
   flex: 1;
-  height: 84rpx;
-  border-radius: 16rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
-  font-weight: 700;
+  font-size: 29rpx;
+  font-weight: 800;
+  transition: transform 0.18s ease, opacity 0.18s ease;
 }
 
-.amount-btn.cancel {
+.vmodal-btn.cancel {
   background: #F3F5F9;
   color: #666;
 }
 
-.amount-btn.confirm {
-  background: linear-gradient(135deg, #C9A227 0%, #E6B84E 100%);
-  color: #fff;
+.vmodal-btn.confirm {
+  color: #2A2207;
+  background: linear-gradient(135deg, #F8DC8E 0%, #E6B84E 100%);
+  box-shadow: 0 8rpx 22rpx rgba(201, 162, 39, 0.34);
 }

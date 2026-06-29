@@ -97,20 +97,59 @@
   </view>
 </view>
 
-<view wx:if="{{showAmountModal}}" class="amount-mask" catchtouchmove="preventMove">
-  <view class="amount-modal">
-    <view class="amount-title">现金券核销</view>
-    <view class="amount-desc">顾客：{{pendingInfo.nickname || ('UID ' + pendingInfo.uid)}}</view>
-    <view class="amount-desc">可用现金券 ¥{{pendingInfo.balance}}</view>
+<view wx:if="{{showAmountModal}}" class="vmodal-mask" catchtouchmove="preventMove">
+  <view class="vmodal">
+    <view class="vmodal-head">
+      <view class="vmodal-ic"><text class="iconfont icon-shengqian"></text></view>
+      <view class="vmodal-htxt">
+        <view class="vmodal-title">现金券核销</view>
+        <view class="vmodal-sub">顾客：{{pendingInfo.nickname || ('UID ' + pendingInfo.uid)}}</view>
+      </view>
+    </view>
+
+    <view class="balance-card">
+      <view class="balance-card-k">顾客可用现金券余额</view>
+      <view class="balance-card-v">
+        <text class="balance-card-yen">¥</text>{{pendingInfo.balance}}
+      </view>
+    </view>
+
+    <view class="amount-label">
+      <text>本次核销金额</text>
+      <text class="amount-all" bindtap="useFullBalance">全部核销</text>
+    </view>
     <view class="amount-field">
       <text class="amount-yen">¥</text>
-      <input class="amount-input" type="digit" focus="{{showAmountModal}}" value="{{amountInput}}" bindinput="onAmountInput" placeholder="请输入核销金额" placeholder-class="amount-ph" />
+      <input class="amount-input" type="digit" focus="{{showAmountModal}}" value="{{amountInput}}" bindinput="onAmountInput" placeholder="0.00" placeholder-class="amount-ph" />
     </view>
-    <view class="amount-hint" wx:if="{{verifyMode === 'hundred'}}">当前为整百核销模式，仅支持 100、200 等整百金额</view>
-    <view class="amount-hint" wx:else>支持整数或小数，如 212 或 212.33</view>
-    <view class="amount-actions">
-      <view class="amount-btn cancel" bindtap="closeAmountModal">取消</view>
-      <view class="amount-btn confirm" bindtap="confirmAmount">确认核销</view>
+    <view class="amount-hint" wx:if="{{verifyMode === 'hundred'}}"><text class="iconfont icon-tishi"></text> 当前为整百核销模式，仅支持 100、200 等整百金额</view>
+    <view class="amount-hint" wx:else><text class="iconfont icon-tishi"></text> 支持整数或两位小数，如 212 或 212.33</view>
+    <view class="vmodal-actions">
+      <view class="vmodal-btn cancel" hover-class="button-hover" bindtap="closeAmountModal">取消</view>
+      <view class="vmodal-btn confirm" hover-class="button-hover" bindtap="confirmAmount">确认核销</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{showIntegralModal}}" class="vmodal-mask" catchtouchmove="preventMove">
+  <view class="vmodal">
+    <view class="vmodal-head">
+      <view class="vmodal-ic gift"><text class="iconfont icon-liwu"></text></view>
+      <view class="vmodal-htxt">
+        <view class="vmodal-title">积分礼品核销</view>
+        <view class="vmodal-sub">顾客：{{integralInfo.customerNickname || ('UID ' + integralInfo.customerUid)}}</view>
+      </view>
+    </view>
+
+    <view class="gift-card">
+      <view class="gift-row"><text class="gift-k">兑换礼品</text><text class="gift-v">{{integralInfo.productName}}</text></view>
+      <view class="gift-row"><text class="gift-k">消耗积分</text><text class="gift-v gold">{{integralInfo.integralCost}}</text></view>
+    </view>
+
+    <view class="amount-hint"><text class="iconfont icon-tishi"></text> 确认无误后点击核销，核销后不可撤销</view>
+    <view class="vmodal-actions">
+      <view class="vmodal-btn cancel" hover-class="button-hover" bindtap="closeIntegralModal">取消</view>
+      <view class="vmodal-btn confirm" hover-class="button-hover" bindtap="confirmIntegralVerify">确认核销</view>
     </view>
   </view>
 </view>

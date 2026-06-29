@@ -53,7 +53,10 @@ Page({
     amountInput: '',
     pendingToken: '',
     pendingInfo: null,
-    verifyMode: 'any'
+    verifyMode: 'any',
+    showIntegralModal: false,
+    integralInfo: null,
+    pendingIntegralCode: ''
   },
   onShow: function () { this.load() },
   onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
@@ -134,27 +137,26 @@ Page({
     request('/api/integral-mall/preview-by-code', {
       method: 'POST', data: { verifyCode: code }
     }).then(function (info) {
-      this.setData({ scanning: false, manualCode: '' })
-      this.confirmIntegral(code, info)
+      this.setData({
+        scanning: false,
+        manualCode: '',
+        showIntegralModal: true,
+        integralInfo: info,
+        pendingIntegralCode: code
+      })
     }.bind(this)).catch(function (err) {
       this.setData({ scanning: false })
       wx.showModal({ title: '无法核销', content: err.message || '核销码无效', showCancel: false })
     }.bind(this))
   },
-  confirmIntegral: function (code, info) {
-    var that = this
-    wx.showModal({
-      title: '积分礼品核销',
-      content: '顾客：' + (info.customerNickname || ('UID ' + info.customerUid)) +
-        '\n礼品：' + info.productName +
-        '\n消耗积分：' + info.integralCost +
-        '\n\n确认核销该积分礼品？',
-      confirmText: '确认核销',
-      success: function (res) {
-        if (!res.confirm) return
-        that.doIntegralVerify(code)
-      }
-    })
+  closeIntegralModal: function () {
+    this.setData({ showIntegralModal: false, integralInfo: null, pendingIntegralCode: '' })
+  },
+  confirmIntegralVerify: function () {
+    var code = this.data.pendingIntegralCode
+    if (!code) return
+    this.closeIntegralModal()
+    this.doIntegralVerify(code)
   },
   doIntegralVerify: function (code) {
     wx.showLoading({ title: '核销中…', mask: true })
@@ -184,6 +186,15 @@ Page({
   },
   onAmountInput: function (e) {
     this.setData({ amountInput: e.detail.value })
+  },
+  useFullBalance: function () {
+    var info = this.data.pendingInfo || {}
+    var balance = Math.round(Number(info.balance || 0) * 100) / 100
+    if (balance <= 0) return wx.showToast({ title: '暂无可用余额', icon: 'none' })
+    if (this.data.verifyMode === 'hundred' && !isHundredAmount(balance)) {
+      return wx.showToast({ title: '整百模式请手动输入整百金额', icon: 'none' })
+    }
+    this.setData({ amountInput: String(balance) })
   },
   closeAmountModal: function () {
     this.setData({ showAmountModal: false, amountInput: '', pendingToken: '', pendingInfo: null })
