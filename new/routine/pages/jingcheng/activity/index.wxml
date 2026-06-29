@@ -11,6 +11,21 @@
     <text class="notice-text">{{notice}}</text>
   </view>
 
+  <view wx:if="{{poolReady}}" class="pool-card pool-{{poolLevel}}">
+    <view class="pool-head">
+      <text class="pool-title">消费券发放进度</text>
+      <text wx:if="{{poolLevelText}}" class="pool-level">{{poolLevelText}}</text>
+    </view>
+    <view class="pool-bar">
+      <view class="pool-bar-issued" style="width:{{issuedPercent}}%"></view>
+    </view>
+    <view class="pool-legend">
+      <view class="pl-item"><text class="pl-dot pl-dot-issued"></text><text class="pl-label">已发放</text></view>
+      <view class="pl-item"><text class="pl-dot pl-dot-remain"></text><text class="pl-label">剩余额度</text></view>
+    </view>
+    <view class="pool-tip">数量有限 · 发完即止（仅展示发放进度，不代表具体金额）</view>
+  </view>
+
   <view wx:for="{{sections}}" wx:key="title" class="section-card">
     <view class="section-head">
       <text class="section-bar"></text>

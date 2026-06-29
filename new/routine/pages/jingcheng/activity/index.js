@@ -26,6 +26,13 @@ var FALLBACK = {
   ]
 }
 
+var LEVEL_TEXT = {
+  sufficient: '消费券额度充足',
+  half: '消费券发放过半',
+  tight: '消费券额度偏紧',
+  low: '消费券所剩不多'
+}
+
 Page({
   data: {
     activityName: FALLBACK.activityName,
@@ -33,11 +40,40 @@ Page({
     notice: FALLBACK.notice,
     updatedAt: '',
     sections: FALLBACK.sections,
-    loading: true
+    loading: true,
+    // 现金池进度（只显示图形，不显示具体金额）
+    poolReady: false,
+    issuedPercent: 0,
+    remainPercent: 0,
+    poolLevel: 'sufficient',
+    poolLevelText: ''
   },
 
   onLoad: function () {
     this.loadContent()
+    this.loadPoolStatus()
+  },
+
+  loadPoolStatus: function () {
+    var that = this
+    publicRequest('/api/miniapp/pool-status').then(function (d) {
+      if (!d) return
+      var issued = Math.round((Number(d.issuedRatio) || 0) * 100)
+      if (issued < 0) issued = 0
+      if (issued > 100) issued = 100
+      // 进度条至少留一点可见，避免 0% 时空条
+      var issuedShow = issued
+      if (issuedShow > 0 && issuedShow < 4) issuedShow = 4
+      if (issuedShow > 100) issuedShow = 100
+      var level = d.level || 'sufficient'
+      that.setData({
+        poolReady: true,
+        issuedPercent: issuedShow,
+        remainPercent: 100 - issuedShow,
+        poolLevel: level,
+        poolLevelText: LEVEL_TEXT[level] || ''
+      })
+    }).catch(function () { /* 拉取失败则不显示进度块 */ })
   },
 
   loadContent: function () {
