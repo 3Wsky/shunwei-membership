@@ -179,10 +179,15 @@ Page({
     let receiptNo = parts.join('; ')
     if (receiptNo.length > 240) receiptNo = receiptNo.slice(0, 240)
 
+    const consumeAmount = products.reduce((sum, p) => {
+      const v = parseFloat(String(p.price).replace(/[^\d.]/g, ''))
+      return sum + (isNaN(v) ? 0 : v)
+    }, 0)
+
     this.setData({ submitting: true })
     request('/api/approval/submit', {
       method: 'POST',
-      data: { customerUid: this.data.member.uid, tierRuleId: rule.id, receiptNo }
+      data: { customerUid: this.data.member.uid, tierRuleId: rule.id, consumeAmount, receiptNo }
     }).then(() => {
       this.setData({ showProduct: false })
       wx.showToast({ title: '已提交店长审批', icon: 'success' })
