@@ -32,6 +32,10 @@ function parseMoneyAmount(raw) {
   return Math.round(parseFloat(s) * 100) / 100
 }
 
+function isHundredAmount(amount) {
+  return Math.round(amount * 100) % 10000 === 0
+}
+
 Page({
   data: {
     loading: true,
@@ -48,7 +52,8 @@ Page({
     showAmountModal: false,
     amountInput: '',
     pendingToken: '',
-    pendingInfo: null
+    pendingInfo: null,
+    verifyMode: 'any'
   },
   onShow: function () { this.load() },
   onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
@@ -173,7 +178,8 @@ Page({
       showAmountModal: true,
       amountInput: '',
       pendingToken: token,
-      pendingInfo: info
+      pendingInfo: info,
+      verifyMode: info.verifyMode || 'any'
     })
   },
   onAmountInput: function (e) {
@@ -187,6 +193,9 @@ Page({
     var token = this.data.pendingToken
     var amount = parseMoneyAmount(this.data.amountInput)
     if (!amount || amount <= 0) return wx.showToast({ title: '请输入有效金额（最多两位小数）', icon: 'none' })
+    if (this.data.verifyMode === 'hundred' && !isHundredAmount(amount)) {
+      return wx.showToast({ title: '当前仅允许整百核销（如 100、200）', icon: 'none' })
+    }
     var balance = Math.round(Number(info.balance || 0) * 100) / 100
     if (amount > balance + 0.001) return wx.showToast({ title: '超过顾客可用余额', icon: 'none' })
     this.closeAmountModal()
