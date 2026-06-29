@@ -230,17 +230,64 @@ Page({
     }.bind(this)).catch(function (err) {
       wx.hideLoading()
       this._verifying = false
-      // 网络/超时类错误：核销结果未知，提示店员务必核对，避免“以为成功其实没扣”或重复核销
+      // 网络/超时类错误：核销结果未知 → 不直接报失败，先按原核销码自动回查这笔到底成没成功
       var msg = err.message || '请重试'
       var unknown = /网络|超时|timeout|fail/i.test(msg)
-      wx.showModal({
-        title: unknown ? '核销结果未确认' : '核销失败',
-        content: unknown
-          ? '网络异常，本次核销是否成功未知。请勿重复核销，先下拉刷新「今日核销」核对是否已记录，再决定是否重试。'
-          : msg,
-        showCancel: false
-      })
-      this.load()
+      if (unknown) {
+        this.recheckCashVerify(token)
+      } else {
+        wx.showModal({ title: '核销失败', content: msg, showCancel: false })
+        this.load()
+      }
     }.bind(this))
+  },
+  // 网络恢复后自动回查：凭原核销码确认这笔是否已成功核销，免去核销员手动核对
+  recheckCashVerify: function (token) {
+    var self = this
+    wx.showLoading({ title: '正在确认结果…', mask: true })
+    var attempt = function (left) {
+      request('/api/merchant/verify-status', {
+        method: 'POST', data: { verifyToken: token }
+      }).then(function (status) {
+        if (status && status.verified) {
+          wx.hideLoading()
+          var line = '本次核销 ¥' + status.amount
+          if (status.balanceAfter !== null && status.balanceAfter !== undefined) {
+            line += '\n顾客剩余 ¥' + status.balanceAfter
+          }
+          wx.showModal({ title: '核销成功', content: '已确认核销成功\n' + line, showCancel: false })
+          self.load()
+        } else if (status && status.unknown) {
+          // 后端暂时无法判定，按未确认处理
+          self.showRecheckUnconfirmed()
+        } else {
+          // 明确查到没成功 → 可安全重试
+          wx.hideLoading()
+          wx.showModal({
+            title: '本次核销未成功',
+            content: '已确认本次核销未生效（顾客未被扣款），可重新核销。',
+            showCancel: false
+          })
+          self.load()
+        }
+      }).catch(function () {
+        // 回查本身又失败（网络仍未恢复）→ 重试几次，仍不行则提示手动核对
+        if (left > 0) {
+          setTimeout(function () { attempt(left - 1) }, 1500)
+        } else {
+          self.showRecheckUnconfirmed()
+        }
+      })
+    }
+    attempt(3)
+  },
+  showRecheckUnconfirmed: function () {
+    wx.hideLoading()
+    wx.showModal({
+      title: '核销结果未确认',
+      content: '网络异常，暂时无法确认本次核销是否成功。请勿重复核销，先下拉刷新「今日核销」核对是否已记录，再决定是否重试。',
+      showCancel: false
+    })
+    this.load()
   }
 })
