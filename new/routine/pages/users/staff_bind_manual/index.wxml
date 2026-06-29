@@ -88,4 +88,22 @@
 
     <view class="staff-bind-note">已有归属时不会重复覆盖，请确认 UID 后再提交。</view>
   </view>
+
+  <view class="store-section">
+    <view class="store-section-head">
+      <text class="iconfont icon-dianpu store-section-icon"></text>
+      <text class="store-section-title">全部门店</text>
+    </view>
+
+    <view wx:if="{{storeLoading}}" class="store-empty">门店加载中…</view>
+
+    <view wx:elif="{{stores.length === 0}}" class="store-empty">暂无门店信息</view>
+
+    <view wx:else class="store-list">
+      <view wx:for="{{stores}}" wx:key="id" class="store-item">
+        <view class="store-name">{{item.name}}</view>
+        <view class="store-address">{{item.address || '地址待完善'}}</view>
+      </view>
+    </view>
+  </view>
 </view>

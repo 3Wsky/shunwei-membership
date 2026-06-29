@@ -364,3 +364,75 @@ page {
   line-height: 1.6;
   text-align: center;
 }
+
+.store-section {
+  margin-top: 28rpx;
+  padding: 28rpx 32rpx 12rpx;
+  border: 1rpx solid rgba(201, 162, 39, 0.08);
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.04);
+}
+
+.store-section-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.store-section-icon {
+  margin-right: 12rpx;
+  color: #C9A227;
+  font-size: 34rpx;
+}
+
+.store-section-title {
+  color: #1A1A1A;
+  font-size: 30rpx;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.store-empty {
+  padding: 32rpx 0;
+  color: #A6A6A6;
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.store-item {
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #F0F4FA;
+}
+
+.store-item:last-child {
+  border-bottom: 0;
+}
+
+.store-name {
+  position: relative;
+  padding-left: 22rpx;
+  color: #1A1A1A;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.store-name::before {
+  position: absolute;
+  left: 0;
+  top: 12rpx;
+  width: 8rpx;
+  height: 24rpx;
+  border-radius: 4rpx;
+  background: linear-gradient(135deg, #E6B84E, #C9A227);
+  content: '';
+}
+
+.store-address {
+  margin-top: 8rpx;
+  padding-left: 22rpx;
+  color: #8C8C8C;
+  font-size: 25rpx;
+  line-height: 1.6;
+}

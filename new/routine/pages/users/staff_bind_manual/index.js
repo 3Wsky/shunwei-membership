@@ -33,17 +33,37 @@ Page({
     staffUid: '',
     spreadUid: 0,
     card: {},
-    submitting: false
+    submitting: false,
+    storeLoading: true,
+    stores: []
   },
 
   onLoad: function (options) {
     var uid = normalizeUid(options && (options.staffUid || options.uid || options.spread))
     if (uid) this.setData({ staffUid: uid })
     this.loadManagerCard()
+    this.loadStores()
   },
 
   onShow: function () {
     if (!this.data.loading) this.loadManagerCard()
+  },
+
+  loadStores: function () {
+    var self = this
+    jcRequest.publicRequest('/api/stores').then(function (list) {
+      var stores = (list || []).map(function (item) {
+        item = item || {}
+        return {
+          id: Number(item.id || 0),
+          name: item.name || '门店',
+          address: item.address || ''
+        }
+      })
+      self.setData({ storeLoading: false, stores: stores })
+    }).catch(function () {
+      self.setData({ storeLoading: false, stores: [] })
+    })
   },
 
   loadManagerCard: function () {
