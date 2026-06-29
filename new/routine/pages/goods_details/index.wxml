@@ -2,14 +2,14 @@
 
 <!-- 【UX/UI 视觉与交互设计师】 立即购买 -> 弹出客户经理名片与门店地址弹出层 -->
 <block wx:if="{{showBuyModal}}">
-  <view class="buy-modal-mask data-v-53cfd8e3" catchtouchmove="true" bindtap="closeBuyModal">
-    <view class="buy-modal data-v-53cfd8e3" catchtap="noop">
+  <view class="buy-modal-mask data-v-53cfd8e3" catchtouchmove="true" data-event-opts="{{[['tap',[['closeBuyModal',['$event']]]]]}}" bindtap="__e">
+    <view class="buy-modal data-v-53cfd8e3" data-event-opts="{{[['tap',[['noop',['$event']]]]]}}" catchtap="__e">
       <view class="bm-head data-v-53cfd8e3">
         <view class="bm-head-text data-v-53cfd8e3">
           <view class="bm-title data-v-53cfd8e3">到店真机体验</view>
           <view class="bm-subtitle data-v-53cfd8e3">线下看机 · 专属顾问 · 放心购买</view>
         </view>
-        <view class="bm-close data-v-53cfd8e3" bindtap="closeBuyModal">
+        <view class="bm-close data-v-53cfd8e3" data-event-opts="{{[['tap',[['closeBuyModal',['$event']]]]]}}" bindtap="__e">
           <text class="iconfont icon-guanbi6 data-v-53cfd8e3"></text>
         </view>
       </view>
@@ -29,7 +29,7 @@
               <view class="bmm-role data-v-53cfd8e3">{{managerCard.jobTitle || '专属顾问'}}</view>
               <view class="bmm-uid data-v-53cfd8e3">UID {{managerCard.staffUid}}</view>
             </view>
-            <view wx:if="{{managerCard.storePhone || managerCard.contactPhone}}" class="bmm-phone-btn data-v-53cfd8e3" bindtap="callManagerPhone">
+            <view wx:if="{{managerCard.storePhone || managerCard.contactPhone}}" class="bmm-phone-btn data-v-53cfd8e3" data-event-opts="{{[['tap',[['callManagerPhone',['$event']]]]]}}" bindtap="__e">
               <text class="iconfont icon-dianhua data-v-53cfd8e3"></text>
             </view>
           </view>
@@ -61,14 +61,14 @@
       </view>
 
       <view class="bm-footer data-v-53cfd8e3">
-        <button class="bm-btn ghost data-v-53cfd8e3" bindtap="closeBuyModal">返回看看</button>
-        <button wx:if="{{managerCard && (managerCard.storePhone || managerCard.contactPhone)}}" class="bm-btn outline data-v-53cfd8e3" bindtap="callManagerPhone">
+        <button class="bm-btn ghost data-v-53cfd8e3" data-event-opts="{{[['tap',[['closeBuyModal',['$event']]]]]}}" bindtap="__e">返回看看</button>
+        <button wx:if="{{managerCard && (managerCard.storePhone || managerCard.contactPhone)}}" class="bm-btn outline data-v-53cfd8e3" data-event-opts="{{[['tap',[['callManagerPhone',['$event']]]]]}}" bindtap="__e">
           <text class="iconfont icon-dianhua data-v-53cfd8e3"></text> 联系经理
         </button>
-        <button wx:if="{{managerCard && managerCard.latitude && managerCard.longitude}}" class="bm-btn primary data-v-53cfd8e3" bindtap="navigateManagerStore">
+        <button wx:if="{{managerCard && managerCard.latitude && managerCard.longitude}}" class="bm-btn primary data-v-53cfd8e3" data-event-opts="{{[['tap',[['navigateManagerStore',['$event']]]]]}}" bindtap="__e">
           <text class="iconfont icon-didiandingwei_o data-v-53cfd8e3"></text> 导航到店
         </button>
-        <button wx:elif="{{!(managerCard && (managerCard.storePhone || managerCard.contactPhone))}}" class="bm-btn primary data-v-53cfd8e3" bindtap="closeBuyModal">知道了</button>
+        <button wx:elif="{{!(managerCard && (managerCard.storePhone || managerCard.contactPhone))}}" class="bm-btn primary data-v-53cfd8e3" data-event-opts="{{[['tap',[['closeBuyModal',['$event']]]]]}}" bindtap="__e">知道了</button>
       </view>
     </view>
   </view>

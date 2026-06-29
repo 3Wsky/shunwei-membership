@@ -18,44 +18,61 @@
 .product-con .footer.eject {
   display: flex !important;
   align-items: center !important;
-  padding: 0 24rpx !important;
+  min-height: 104rpx !important;
+  padding: 10rpx 22rpx !important;
   padding-bottom: constant(safe-area-inset-bottom) !important;
   padding-bottom: env(safe-area-inset-bottom) !important;
-  background: rgba(255, 255, 255, 0.96) !important;
-  border-top: 1rpx solid rgba(26, 31, 54, 0.06) !important;
-  box-shadow: 0 -8rpx 32rpx rgba(26, 31, 54, 0.06) !important;
+  background: #FFFFFF !important;
+  border-top: 1rpx solid #EEEEEE !important;
+  box-shadow: 0 -6rpx 18rpx rgba(0, 0, 0, 0.05) !important;
+}
+
+.product-con .footer.eject .item {
+  width: 88rpx !important;
+  flex: 0 0 88rpx !important;
+  color: #666666 !important;
+  font-size: 20rpx !important;
+}
+
+.product-con .footer.eject .item .iconfont {
+  margin-bottom: 4rpx !important;
+  color: #333333 !important;
 }
 
 .product-con .footer .bnt {
   width: auto !important;
   flex: 1 !important;
-  margin-left: 16rpx !important;
+  height: 82rpx !important;
+  margin-left: 14rpx !important;
 }
 
 .product-con .footer .bnt .buy {
   width: 100% !important;
   flex: 1 !important;
-  border-radius: 44rpx !important;
+  height: 82rpx !important;
+  border-radius: 12rpx !important;
   overflow: hidden !important;
-  box-shadow: 0 8rpx 24rpx rgba(201, 162, 39, 0.35) !important;
+  box-shadow: none !important;
 }
 
-/* 4. CTA 文案覆盖 + 金色渐变 */
+/* 4. CTA 文案覆盖 */
 .product-con .footer .bnt .buy button {
   color: transparent !important;
   position: relative !important;
   width: 100% !important;
-  height: 88rpx !important;
+  height: 82rpx !important;
+  min-height: 82rpx !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background: linear-gradient(135deg, #E8C547 0%, #C9A227 50%, #A8861E 100%) !important;
+  background: #111111 !important;
   border: none !important;
+  border-radius: 12rpx !important;
 }
 
 .product-con .footer .bnt .buy button::after {
-  content: "联系经理 · 到店体验" !important;
-  color: #1A1F36 !important;
+  content: "联系经理" !important;
+  color: #FFFFFF !important;
   position: absolute !important;
   left: 0 !important;
   right: 0 !important;
@@ -65,14 +82,19 @@
   align-items: center !important;
   justify-content: center !important;
   font-size: 30rpx !important;
+  line-height: 82rpx !important;
   font-weight: 700 !important;
-  letter-spacing: 1rpx !important;
+  letter-spacing: 0 !important;
+}
+
+.product-con .footer .bnt .buy button::before {
+  display: none !important;
 }
 
 .product-con .footer .bnt:active {
-  transform: scale(0.98) !important;
-  opacity: 0.92 !important;
-  transition: all 0.15s ease !important;
+  transform: scale(0.985) !important;
+  opacity: 0.95 !important;
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
 }
 
 /* 5. 购买弹窗 — 暗色头部 + 金色点缀 */
@@ -342,9 +364,10 @@
 
 .bm-btn {
   flex: 1;
+  min-width: 0;
   height: 84rpx;
   line-height: 84rpx;
-  border-radius: 42rpx;
+  border-radius: 12rpx;
   font-size: 26rpx;
   font-weight: 700;
   box-sizing: border-box;
@@ -374,9 +397,9 @@
 }
 
 .bm-btn.primary {
-  color: #1A1F36 !important;
-  background: linear-gradient(135deg, #E8C547 0%, #C9A227 50%, #A8861E 100%) !important;
-  box-shadow: 0 6rpx 20rpx rgba(201, 162, 39, 0.35) !important;
+  color: #FFFFFF !important;
+  background: #111111 !important;
+  box-shadow: none !important;
   border: none !important;
 }
 

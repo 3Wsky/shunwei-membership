@@ -1,7 +1,56 @@
 {
   "description": "项目配置文件。",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "pages/jingcheng/static/images"
+      },
+      {
+        "type": "folder",
+        "value": "static/css"
+      },
+      {
+        "type": "folder",
+        "value": "static/iconfont"
+      },
+      {
+        "type": "folder",
+        "value": "static/fonts"
+      },
+      {
+        "type": "file",
+        "value": "static/images/jc-share-coupon.jpg"
+      },
+      {
+        "type": "file",
+        "value": "static/images/group02.gif"
+      },
+      {
+        "type": "file",
+        "value": "static/images/spike-icon-002.gif"
+      },
+      {
+        "type": "file",
+        "value": "static/images/user01.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/user_vip.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/member.png"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": "project.private.config.json"
+      }
+    ],
     "include": []
   },
   "setting": {
