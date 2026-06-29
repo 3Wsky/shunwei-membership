@@ -37,15 +37,18 @@ Page({
     termsList: TERMS_LIST,
     qrText: '',
     payLoading: false,
-    payCountdown: 0
+    payCountdown: 0,
+    verifySuccess: false,
+    verifyAmount: 0,
+    verifyBalanceAfter: 0
   },
   onShow() {
     this.setData({ termsAgreed: !!wx.getStorageSync(VOUCHER_TERMS_KEY) })
     this.loadContent()
     this.load()
   },
-  onHide() { this.clearTermsTimer(); this.clearPayTimer() },
-  onUnload() { this.clearTermsTimer(); this.clearPayTimer() },
+  onHide() { this.clearTermsTimer(); this.clearPayTimer(); this.clearWatchTimer() },
+  onUnload() { this.clearTermsTimer(); this.clearPayTimer(); this.clearWatchTimer() },
   onPullDownRefresh() { this.load().finally(() => wx.stopPullDownRefresh()) },
 
   // 现金券使用须知文案：后台可在「内容管理」里改，拉取失败则用本地兜底
@@ -82,14 +85,57 @@ Page({
           .filter((item) => Number(item.direction) === 0)
           .map((item) => ({ ...item, createdText: formatTime(item.createdAt) }))
       })
+      this._lastBalance = balance
       if (balance > 0 && this.data.termsAgreed) {
         this.genToken()
+        this.startWatchTimer()
       } else {
         this.setData({ qrText: '' })
         this.clearPayTimer()
+        this.clearWatchTimer()
       }
     }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
       .finally(() => this.setData({ loading: false }))
+  },
+
+  // 出码期间静默轮询余额：商家核销成功后顾客端立即感知（每 3s 一次，只查钱包，不重复拉记录）
+  startWatchTimer() {
+    this.clearWatchTimer()
+    this._watchTimer = setInterval(() => {
+      if (this.data.balance <= 0 || !this.data.qrText) { this.clearWatchTimer(); return }
+      request('/api/cash-voucher/wallet').then((wallet) => {
+        const newBalance = Number(wallet.balance || 0)
+        const prev = Number(this._lastBalance != null ? this._lastBalance : this.data.balance)
+        if (newBalance + 0.001 < prev) {
+          // 余额下降 = 刚被核销，弹成功提示并刷新整页
+          const deducted = Math.round((prev - newBalance) * 100) / 100
+          this._lastBalance = newBalance
+          this.onVerified(deducted, newBalance)
+        } else {
+          this._lastBalance = newBalance
+        }
+      }).catch(() => { /* 轮询失败静默，不打扰顾客 */ })
+    }, 3000)
+  },
+  clearWatchTimer() {
+    if (this._watchTimer) { clearInterval(this._watchTimer); this._watchTimer = null }
+  },
+
+  // 检测到核销成功：展示成功卡片 + 刷新余额/记录，并停掉旧码（下次使用重新生成）
+  onVerified(amount, balanceAfter) {
+    this.clearPayTimer()
+    this.clearWatchTimer()
+    wx.vibrateShort && wx.vibrateShort({ type: 'medium' })
+    this.setData({
+      verifySuccess: true,
+      verifyAmount: amount,
+      verifyBalanceAfter: balanceAfter,
+      qrText: ''
+    })
+    this.load()
+  },
+  closeVerifySuccess() {
+    this.setData({ verifySuccess: false })
   },
 
   genToken() {
@@ -144,7 +190,7 @@ Page({
     try { wx.setStorageSync(VOUCHER_TERMS_KEY, '1') } catch (e) { /* ignore */ }
     this.setData({ termsAgreed: true, showTerms: false })
     this.clearTermsTimer()
-    if (this.data.balance > 0) this.genToken()
+    if (this.data.balance > 0) { this.genToken(); this.startWatchTimer() }
   },
   clearTermsTimer() {
     if (this._termsTimer) { clearInterval(this._termsTimer); this._termsTimer = null }

@@ -42,6 +42,18 @@
     <text class="pay-link" bindtap="goActivity">消费券活动说明</text>
   </view>
 
+  <view wx:if="{{verifySuccess}}" class="vs-mask" catchtouchmove="true" bindtap="closeVerifySuccess">
+    <view class="vs-card" catchtap="true">
+      <view class="vs-check">
+        <view class="vs-check-ring"><text class="vs-check-mark">✓</text></view>
+      </view>
+      <view class="vs-title">核销成功</view>
+      <view class="vs-amount">本次核销 <text class="vs-amount-num">￥{{verifyAmount}}</text></view>
+      <view class="vs-balance">现金券余额 ￥{{verifyBalanceAfter}}</view>
+      <view class="vs-btn" bindtap="closeVerifySuccess">我知道了</view>
+    </view>
+  </view>
+
   <view wx:if="{{showTerms}}" class="terms-mask" catchtouchmove="true">
     <view class="terms-sheet">
       <view class="terms-title">{{termsTitle}}</view>
