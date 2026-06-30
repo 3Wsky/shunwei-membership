@@ -109,11 +109,30 @@
             <text class="iconfont icon-s-bianji input-card-icon"></text>
           </view>
 
-          <view class="input-card">
+          <!-- 手机：仅 IMEI1（默认识别，去后台按 IMEI1 核对） -->
+          <view wx:if="{{product.type === '手机'}}" class="input-card {{product.verified ? 'verified' : ''}}">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
-              <view class="input-card-title">SN 序列号</view>
-              <input class="field-input-new mono" value="{{product.sn}}" data-pindex="{{pIndex}}" bindinput="onSn" placeholder="{{ocrEnabled ? '拍照识别或手动输入' : '请输入 SN 序列号'}}" placeholder-class="ph" maxlength="30"/>
+              <view class="input-card-title">
+                IMEI 码（IMEI1）
+                <text wx:if="{{product.verified}}" class="verify-badge ok">已核对</text>
+                <text wx:elif="{{product.checking}}" class="verify-badge checking">核对中…</text>
+              </view>
+              <input class="field-input-new mono" type="number" value="{{product.imei}}" data-pindex="{{pIndex}}" bindinput="onImei" bindblur="onCodeBlur" placeholder="{{ocrEnabled ? '拍照识别或手动输入' : '请输入 IMEI 码'}}" placeholder-class="ph" maxlength="17"/>
+            </view>
+            <text class="iconfont icon-hexiaoma input-card-icon"></text>
+          </view>
+
+          <!-- 非手机（平板/电脑/智能穿戴等）：SN 码为主标识 -->
+          <view wx:if="{{product.type !== '手机'}}" class="input-card {{product.verified ? 'verified' : ''}}">
+            <view class="input-card-left-line"></view>
+            <view class="input-card-content">
+              <view class="input-card-title">
+                SN 序列号
+                <text wx:if="{{product.verified}}" class="verify-badge ok">已核对</text>
+                <text wx:elif="{{product.checking}}" class="verify-badge checking">核对中…</text>
+              </view>
+              <input class="field-input-new mono" type="text" value="{{product.sn}}" data-pindex="{{pIndex}}" bindinput="onSn" bindblur="onCodeBlur" placeholder="{{ocrEnabled ? '拍照识别或手动输入 SN' : '请输入 SN 序列号'}}" placeholder-class="ph" maxlength="32"/>
             </view>
             <text class="iconfont icon-hexiaoma input-card-icon"></text>
           </view>

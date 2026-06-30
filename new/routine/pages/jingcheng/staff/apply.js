@@ -19,7 +19,9 @@ Page({
         model: '',
         sn: '',
         imei: '',
-        price: ''
+        price: '',
+        verified: false,
+        checking: false
       }
     ]
   },
@@ -45,7 +47,9 @@ Page({
           model: '',
           sn: '',
           imei: '',
-          price: ''
+          price: '',
+          verified: false,
+          checking: false
         }
       ]
     })
@@ -57,6 +61,7 @@ Page({
     const type = e.currentTarget.dataset.type
     const products = this.data.products
     products[pIdx].type = type
+    products[pIdx].verified = false
     this.setData({ products })
   },
   onModel(e) {
@@ -75,13 +80,26 @@ Page({
     const pIdx = Number(e.currentTarget.dataset.pindex)
     const products = this.data.products
     products[pIdx].sn = e.detail.value
+    products[pIdx].verified = false
     this.setData({ products })
   },
   onImei(e) {
     const pIdx = Number(e.currentTarget.dataset.pindex)
     const products = this.data.products
     products[pIdx].imei = e.detail.value
+    products[pIdx].verified = false
     this.setData({ products })
+  },
+  // 手动输入完 IMEI/SN 失焦时，自动对照产品库核对并回填型号
+  onCodeBlur(e) {
+    const pIdx = Number(e.currentTarget.dataset.pindex)
+    const product = this.data.products[pIdx]
+    if (!product) return
+    const imei = product.type === '手机' ? String(product.imei || '').trim() : ''
+    const sn = product.type !== '手机' ? String(product.sn || '').trim() : ''
+    if (!imei && !sn) return
+    if (product.verified) return
+    this.verifyCode(pIdx, { imei, sn, silent: true })
   },
   addProduct() {
     const products = this.data.products
@@ -94,7 +112,9 @@ Page({
       model: '',
       sn: '',
       imei: '',
-      price: ''
+      price: '',
+      verified: false,
+      checking: false
     })
     this.setData({ products })
   },
@@ -129,50 +149,104 @@ Page({
     wx.showLoading({ title: '识别中…', mask: true })
     recogniseSn(filePath, token).then(function (d) {
       var products = that.data.products
-      if (d.sn) products[pIdx].sn = d.sn
-      if (d.model) products[pIdx].model = d.model
+      // 先按品牌推断类型（手机品牌→手机），决定后续按 IMEI1 还是 SN 核对
       if (d.brand) {
-        var brandMap = { apple: '手机', samsung: '手机', huawei: '手机', xiaomi: '手机', oppo: '手机', vivo: '手机' }
+        var brandMap = { apple: '手机', samsung: '手机', huawei: '手机', xiaomi: '手机', oppo: '手机', vivo: '手机', honor: '手机', 'oneplus': '手机', realme: '手机' }
         var lower = String(d.brand).toLowerCase()
         for (var k in brandMap) {
           if (lower.indexOf(k) >= 0) { products[pIdx].type = brandMap[k]; break }
         }
       }
+      var isPhone = products[pIdx].type === '手机'
+      // 手机只认 IMEI1；非手机用 SN
+      if (isPhone) {
+        if (d.imei) products[pIdx].imei = d.imei
+      } else {
+        if (d.sn) products[pIdx].sn = d.sn
+      }
+      if (d.model && !products[pIdx].model) products[pIdx].model = d.model
+      products[pIdx].verified = false
       that.setData({ products: products })
 
-      // 识别到 SN 后查产品库：命中则用库里的型号/价格自动回填（库为准）
-      if (d.sn) {
-        that.lookupSn(d.sn, pIdx)
+      var imei = isPhone ? String(products[pIdx].imei || '').trim() : ''
+      var sn = isPhone ? '' : String(products[pIdx].sn || '').trim()
+
+      if (!imei && !sn) {
+        wx.hideLoading()
+        that.setData({ scanning: false })
+        wx.showToast({ title: isPhone ? '未识别到 IMEI，请手动输入' : '未识别到 SN，请手动输入', icon: 'none' })
         return
       }
-      wx.hideLoading()
-      that.setData({ scanning: false })
-      wx.showToast({ title: '未识别到SN，请手动输入', icon: 'none' })
+
+      // 识别到码 → 对照产品库核对（IMEI1 优先、SN 兜底）
+      that.verifyCode(pIdx, { imei: imei, sn: sn, fromScan: true })
     }).catch(function (err) {
       wx.hideLoading()
       that.setData({ scanning: false })
       wx.showToast({ title: err.message || '识别失败', icon: 'none' })
     })
   },
-  lookupSn(sn, pIdx) {
+  /**
+   * 对照后台产品库核对标识码：IMEI1 优先、SN 兜底。
+   * 命中 → 自动回填型号/价格、标记 verified；
+   * 未命中 → 提示「暂未找到该IMEI/SN码 请重新核对 或者手动输入」。
+   * opts: { imei, sn, fromScan, silent }
+   */
+  verifyCode(pIdx, opts) {
     var that = this
-    request('/api/staff/sn-lookup', { data: { sn: sn } }).then(function (r) {
+    opts = opts || {}
+    var imei = String(opts.imei || '').trim()
+    var sn = String(opts.sn || '').trim()
+    if (!imei && !sn) return
+
+    var products = that.data.products
+    products[pIdx].checking = true
+    that.setData({ products: products })
+    if (!opts.silent) wx.showLoading({ title: '核对中…', mask: true })
+
+    var query = {}
+    if (imei) query.imei = imei
+    if (sn) query.sn = sn
+
+    request('/api/staff/sn-lookup', { data: query }).then(function (r) {
       wx.hideLoading()
-      that.setData({ scanning: false })
-      var products = that.data.products
+      var list = that.data.products
+      list[pIdx].checking = false
+      // 防重复①：该码已被其它单用过 → 拦截，不允许用于本次申请
+      if (r && r.used) {
+        list[pIdx].verified = false
+        that.setData({ products: list, scanning: false })
+        wx.showModal({
+          title: '该码已被使用',
+          content: '该 IMEI/SN 已被使用过，不能重复申请权益，请核对设备。',
+          showCancel: false,
+          confirmText: '我知道了'
+        })
+        return
+      }
       if (r && r.found) {
-        if (r.model) products[pIdx].model = r.model
-        if (r.price > 0) products[pIdx].price = String(r.price)
-        that.setData({ products: products })
-        wx.showToast({ title: '已识别并匹配产品', icon: 'success' })
+        if (r.model) list[pIdx].model = r.model
+        if (r.price > 0) list[pIdx].price = String(r.price)
+        list[pIdx].verified = true
+        that.setData({ products: list, scanning: false })
+        wx.showToast({ title: '已核对并匹配产品', icon: 'success' })
       } else {
-        wx.showToast({ title: 'SN已识别，型号/价格请手动填', icon: 'none' })
+        list[pIdx].verified = false
+        that.setData({ products: list, scanning: false })
+        wx.showModal({
+          title: '未找到该码',
+          content: '暂未找到该 IMEI/SN 码，请重新核对或手动输入',
+          showCancel: false,
+          confirmText: '我知道了'
+        })
       }
     }).catch(function () {
-      // 查询失败不影响 SN 录入，型号价格手输即可
       wx.hideLoading()
-      that.setData({ scanning: false })
-      wx.showToast({ title: 'SN已识别，型号/价格请手动填', icon: 'none' })
+      var list = that.data.products
+      list[pIdx].checking = false
+      list[pIdx].verified = false
+      that.setData({ products: list, scanning: false })
+      if (!opts.silent) wx.showToast({ title: '核对失败，请重试', icon: 'none' })
     })
   },
   submit() {
@@ -181,6 +255,7 @@ Page({
     if (!rule) return
 
     const products = this.data.products
+    let unverifiedCount = 0
     for (let i = 0; i < products.length; i++) {
       const p = products[i]
       if (!p.model.trim()) {
@@ -191,14 +266,54 @@ Page({
         wx.showToast({ title: `请填写产品 #${i + 1} 的价格`, icon: 'none' })
         return
       }
+      const isPhone = p.type === '手机'
+      const code = isPhone ? String(p.imei || '').trim() : String(p.sn || '').trim()
+      if (!code) {
+        const tip = isPhone ? `请填写产品 #${i + 1} 的 IMEI 码` : `请填写产品 #${i + 1} 的 SN 码`
+        wx.showToast({ title: tip, icon: 'none' })
+        return
+      }
+      if (!p.verified) unverifiedCount++
     }
 
+    // 有未核对（产品库未命中）的码 → 提示，让店员选择重新核对或坚持提交
+    if (unverifiedCount > 0) {
+      this.confirmUnverifiedThenSubmit(products, rule)
+      return
+    }
+    this.doSubmit(products, rule)
+  },
+  confirmUnverifiedThenSubmit(products, rule) {
+    const that = this
+    wx.showModal({
+      title: '部分码未核对通过',
+      content: '有 ' + (function () {
+        var n = 0
+        products.forEach(function (p) { if (!p.verified) n++ })
+        return n
+      })() + ' 件产品的 IMEI/SN 未在产品库匹配到。建议重新核对；若坚持提交，将转为人工审核。',
+      cancelText: '返回核对',
+      confirmText: '坚持提交',
+      success(res) {
+        if (res.confirm) that.doSubmit(products, rule)
+      }
+    })
+  },
+  doSubmit(products, rule) {
     const parts = products.map((p, idx) => {
       const itemParts = []
       if (p.type) itemParts.push(p.type)
       if (p.model) itemParts.push(String(p.model).trim())
       if (p.price) itemParts.push('¥' + String(p.price).trim())
-      if (p.sn) itemParts.push('SN:' + String(p.sn).trim())
+      const isPhone = p.type === '手机'
+      const imei1 = String(p.imei || '').trim()
+      const sn = String(p.sn || '').trim()
+      // 手机只录 IMEI1；非手机录 SN（后台按 SN 录入）
+      if (isPhone && imei1) {
+        itemParts.push('IMEI:' + imei1)
+      } else if (!isPhone && sn) {
+        itemParts.push('SN:' + sn)
+      }
       return `[产品${idx + 1}] ` + itemParts.join('/')
     })
 
