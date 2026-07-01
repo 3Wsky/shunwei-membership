@@ -29,23 +29,102 @@
       <view class="ai-top">
         <text class="ai-id">#{{item.requestId}}</text>
         <text class="ai-tier">{{item.matchedTierCode}}</text>
+        <text wx:if="{{item.createdText}}" class="ai-time">{{item.createdText}}</text>
       </view>
+      <view wx:if="{{item.requestNo}}" class="ai-sub">单号 {{item.requestNo}}</view>
+
+      <!-- 客户信息 -->
+      <view class="ai-group-title">客户信息</view>
       <view class="ai-row">
         <text class="ai-label">会员</text>
-        <text>{{item.customerName || 'UID ' + item.customerUid}}</text>
+        <text>{{item.customerName || '未设置昵称'}}<text class="ai-uid">UID {{item.customerUid}}</text></text>
+      </view>
+      <view wx:if="{{item.customerPhone}}" class="ai-row">
+        <text class="ai-label">手机号</text>
+        <text class="mono">{{item.customerPhone}}</text>
+      </view>
+      <view wx:if="{{item.spreadName || item.spreadUid}}" class="ai-row">
+        <text class="ai-label">客户经理</text>
+        <text>{{item.spreadName || ('UID ' + item.spreadUid)}}</text>
+      </view>
+
+      <!-- 提交信息 -->
+      <view class="ai-group-title">提交信息</view>
+      <view class="ai-row">
+        <text class="ai-label">提交人</text>
+        <text>{{item.clerkName || '未知'}}<text class="ai-uid">UID {{item.clerkUid}}</text></text>
+      </view>
+      <view wx:if="{{item.storeName}}" class="ai-row">
+        <text class="ai-label">门店</text>
+        <text>{{item.storeName}}</text>
       </view>
       <view class="ai-row">
-        <text class="ai-label">申请人</text>
-        <text>{{item.clerkName || 'UID ' + item.clerkUid}}</text>
+        <text class="ai-label">提交时间</text>
+        <text>{{item.createdText || '-'}}</text>
+      </view>
+
+      <!-- 权益 / 消费 -->
+      <view class="ai-group-title">权益与消费</view>
+      <view class="ai-row">
+        <text class="ai-label">消费金额</text>
+        <text class="ai-amount">¥{{item.consumeAmount}}</text>
       </view>
       <view class="ai-row">
-        <text class="ai-label">权益</text>
-        <text>{{item.matchedIntegral}}积分 + ¥{{item.matchedVoucher}}券</text>
+        <text class="ai-label">档位</text>
+        <text>{{item.matchedTierCode || '-'}}</text>
       </view>
-      <view wx:if="{{item.receiptNo}}" class="ai-row">
+      <view class="ai-row">
+        <text class="ai-label">发放权益</text>
+        <text>{{item.matchedIntegral}} 积分 + ¥{{item.matchedVoucher}} 现金券</text>
+      </view>
+
+      <!-- 产品完整信息（结构化 + IMEI/SN 命中 & 已用徽章） -->
+      <view class="ai-group-title">产品信息（客户经理录入）</view>
+      <block wx:if="{{item.products.length}}">
+        <view wx:for="{{item.products}}" wx:for-item="prod" wx:for-index="pIdx" wx:key="index" class="prod-card">
+          <view class="prod-head">
+            <text class="prod-type">{{prod.type}}</text>
+            <text class="prod-price">{{prod.price || '未填价格'}}</text>
+          </view>
+          <view class="prod-body">
+            <view class="prod-line"><text class="prod-k">型号</text><text class="prod-v">{{prod.model || '未填型号'}}</text></view>
+            <view wx:if="{{prod.imei}}" class="prod-line"><text class="prod-k">IMEI1</text><text class="prod-v mono">{{prod.imei}}</text></view>
+            <view wx:if="{{prod.sn}}" class="prod-line"><text class="prod-k">SN 码</text><text class="prod-v mono">{{prod.sn}}</text></view>
+            <view wx:if="{{prod.code}}" class="prod-badges">
+              <text wx:if="{{prod.used}}" class="badge badge-danger">已被使用</text>
+              <block wx:else>
+                <text wx:if="{{prod.matched === true}}" class="badge badge-ok">已核对命中</text>
+                <text wx:elif="{{prod.matched === false}}" class="badge badge-warn">库中未匹配</text>
+              </block>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view wx:elif="{{item.receiptNo}}" class="ai-row">
         <text class="ai-label">产品</text>
         <text>{{item.receiptNo}}</text>
       </view>
+      <view wx:else class="ai-row"><text class="ai-label">产品</text><text class="muted">未填写产品信息</text></view>
+
+      <!-- 店长审批信息 -->
+      <block wx:if="{{item.managerStep}}">
+        <view class="ai-group-title">店长审批</view>
+        <view class="ai-row">
+          <text class="ai-label">店长</text>
+          <text>{{item.managerStep.operatorName || ('UID ' + item.managerStep.operatorUid)}}
+            <text class="badge {{item.managerStep.action === 'approve' ? 'badge-ok' : 'badge-danger'}}">{{item.managerStep.action === 'approve' ? '已通过' : '已驳回'}}</text>
+          </text>
+        </view>
+        <view wx:if="{{item.managerStep.atText}}" class="ai-row">
+          <text class="ai-label">审批时间</text>
+          <text>{{item.managerStep.atText}}</text>
+        </view>
+        <view wx:if="{{item.managerStep.comment}}" class="ai-row">
+          <text class="ai-label">备注</text>
+          <text>{{item.managerStep.comment}}</text>
+        </view>
+      </block>
+
       <view class="ai-actions">
         <view class="ai-btn reject" data-id="{{item.requestId}}" bindtap="reviewReject">驳回</view>
         <view class="ai-btn approve" data-id="{{item.requestId}}" bindtap="reviewApprove">通过</view>

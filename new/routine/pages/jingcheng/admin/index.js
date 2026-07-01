@@ -1,5 +1,15 @@
 const { request, getToken, openWechatReauth } = require('../../../services/jc-request')
 
+// 秒级时间戳 → 「MM-DD HH:mm」，0/无效返回空串
+function fmtTime(sec) {
+  var s = Number(sec || 0)
+  if (!s) return ''
+  var d = new Date(s * 1000)
+  if (isNaN(d.getTime())) return ''
+  var p = function (n) { return n < 10 ? '0' + n : '' + n }
+  return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes())
+}
+
 Page({
   data: {
     autoPass: { consumption: false, integralMall: true },
@@ -50,7 +60,16 @@ Page({
   loadPending: function () {
     var that = this
     return request('/api/superadmin/pending-approvals').then(function (list) {
-      that.setData({ pending: list || [] })
+      var pending = (list || []).map(function (it) {
+        var out = Object.assign({}, it)
+        out.createdText = fmtTime(it.createdAt)
+        out.products = it.products || []
+        if (it.managerStep) {
+          out.managerStep = Object.assign({}, it.managerStep, { atText: fmtTime(it.managerStep.at) })
+        }
+        return out
+      })
+      that.setData({ pending: pending })
     }).catch(function () {})
   },
   reviewApprove: function (e) {

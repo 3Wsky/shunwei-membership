@@ -158,13 +158,12 @@ Page({
         }
       }
       var isPhone = products[pIdx].type === '手机'
-      // 手机只认 IMEI1；非手机用 SN
+      // 拍照仅识别标识码：手机只认 IMEI1；非手机用 SN。型号价格一律店员手动填写，不再从识别结果回填。
       if (isPhone) {
         if (d.imei) products[pIdx].imei = d.imei
       } else {
         if (d.sn) products[pIdx].sn = d.sn
       }
-      if (d.model && !products[pIdx].model) products[pIdx].model = d.model
       products[pIdx].verified = false
       that.setData({ products: products })
 
@@ -188,7 +187,9 @@ Page({
   },
   /**
    * 对照后台产品库核对标识码：IMEI1 优先、SN 兜底。
-   * 命中 → 自动回填型号/价格、标记 verified；
+   * 作用仅为「防重复(一码一次) + 防别人家的码」，命中不再回填型号/价格（型号价格一律店员手动录入）。
+   * 命中 → 仅标记 verified（绿标"已核对"）；
+   * 已用过 → 拦截，提示不能重复申请；
    * 未命中 → 提示「暂未找到该IMEI/SN码 请重新核对 或者手动输入」。
    * opts: { imei, sn, fromScan, silent }
    */
@@ -225,11 +226,10 @@ Page({
         return
       }
       if (r && r.found) {
-        if (r.model) list[pIdx].model = r.model
-        if (r.price > 0) list[pIdx].price = String(r.price)
+        // 命中仅作核对（防别人家的码）：标记已核对，不回填型号/价格，型号价格由店员手动填写
         list[pIdx].verified = true
         that.setData({ products: list, scanning: false })
-        wx.showToast({ title: '已核对并匹配产品', icon: 'success' })
+        wx.showToast({ title: '已核对（请手动填写型号价格）', icon: 'none' })
       } else {
         list[pIdx].verified = false
         that.setData({ products: list, scanning: false })
