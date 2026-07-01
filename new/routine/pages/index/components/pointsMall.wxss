@@ -11,8 +11,8 @@
 .goods-wrapper .goods-list .image.data-v-588e3e4e{width:24rpx;height:24rpx;margin-right:4rpx;vertical-align:middle}
 .goods-wrapper .goods-list .num.data-v-588e3e4e{color:#C9A227!important}
 
-/* 商品图完整显示(aspectFit)：不裁切，空白处用浅底填充，保持网格整齐 */
-.goods-wrapper2 .img-fit,.goods-wrapper2 .img-fit .easy-loadimage{background:#F6F5F2!important;overflow:hidden}
+/* 商品图完整显示(aspectFit)：不裁切；白底(商品图多为白背景，留白隐形，图与标题间无色缝)，保持网格整齐 */
+.goods-wrapper2 .img-fit,.goods-wrapper2 .img-fit .easy-loadimage{background:#fff!important;overflow:hidden}
 
 /* 2-column grid layout */
 .goods-wrapper2.data-v-588e3e4e{padding:0 24rpx 8rpx}
