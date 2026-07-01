@@ -35,6 +35,8 @@ function parseProducts(receiptNo) {
         model = seg
       }
     })
+    // 隐藏品类：型号含大疆/DJI/无人机 → 类型显示「大疆」（前台不放大疆选项，按型号自动归类）
+    if (/大疆|DJI|无人机/i.test(model)) type = '大疆'
     items.push({ type: type, model: model || '未知型号', price: price || '未知价格', sn: sn })
   })
   return items.length > 0 ? items : null
