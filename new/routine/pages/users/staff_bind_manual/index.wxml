@@ -30,14 +30,18 @@
         <text class="iconfont icon-didiandingwei_o info-icon"></text>
         <text>{{card.storeAddress}}</text>
       </view>
-      <view wx:if="{{card.storePhone || card.contactPhone}}" class="info-row">
+      <view wx:if="{{card.contactPhone}}" class="info-row">
         <text class="iconfont icon-dianhua info-icon"></text>
-        <text>{{card.storePhone || card.contactPhone}}</text>
+        <text>经理手机：{{card.contactPhone}}</text>
+      </view>
+      <view wx:if="{{card.storePhone}}" class="info-row">
+        <text class="iconfont icon-dianhua info-icon"></text>
+        <text>门店电话：{{card.storePhone}}</text>
       </view>
     </view>
 
     <view class="manager-actions">
-      <button wx:if="{{card.storePhone}}" class="manager-action primary" hover-class="button-hover" bindtap="makePhoneCall">电话联系</button>
+      <button wx:if="{{card.contactPhone || card.storePhone}}" class="manager-action primary" hover-class="button-hover" bindtap="makePhoneCall">电话联系</button>
       <button wx:if="{{card.latitude && card.longitude}}" class="manager-action" hover-class="button-hover" bindtap="openLocation">导航到店</button>
     </view>
 

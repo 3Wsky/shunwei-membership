@@ -149,7 +149,9 @@ Page({
   },
 
   makePhoneCall: function () {
-    var phone = this.data.card.storePhone
+    // 优先拨打客户经理本人手机号，其次门店电话
+    var card = this.data.card || {}
+    var phone = card.contactPhone || card.storePhone
     if (!phone) {
       wx.showToast({ title: '暂无联系电话', icon: 'none' })
       return
