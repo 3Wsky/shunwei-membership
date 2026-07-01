@@ -12,6 +12,30 @@ page {
     linear-gradient(180deg, #F7FBFF 0%, #EEF5FF 100%);
 }
 
+.wb-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+  gap: 24rpx;
+}
+.wb-loading-dot {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  border: 6rpx solid rgba(77, 155, 255, 0.25);
+  border-top-color: #4D9BFF;
+  animation: wb-spin 0.8s linear infinite;
+}
+.wb-loading-txt {
+  font-size: 26rpx;
+  color: #8A93A6;
+}
+@keyframes wb-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Hero */
 .hero {
   position: relative;
