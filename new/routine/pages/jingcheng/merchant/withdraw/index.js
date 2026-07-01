@@ -1,4 +1,4 @@
-const { request, syncAuthFromApp, getToken, openWechatReauth } = require('../../../../services/jc-request')
+const { request, syncAuthFromApp, getToken, openWechatReauth, withMerchant } = require('../../../../services/jc-request')
 
 function dateText(ts) {
   if (!ts) return ''
@@ -35,7 +35,7 @@ Page({
       return Promise.resolve()
     }
     this.setData({ loading: true })
-    return request('/api/merchant/dashboard').then(function (data) {
+    return request('/api/merchant/dashboard', { data: withMerchant({}) }).then(function (data) {
       data = data || {}
       var isManager = !!(data.isManager || data.is_manager)
       if (!isManager) {
@@ -56,7 +56,7 @@ Page({
     }.bind(this))
   },
   loadWithdrawals: function () {
-    return request('/api/merchant/withdrawals').then(function (rows) {
+    return request('/api/merchant/withdrawals', { data: withMerchant({}) }).then(function (rows) {
       this.setData({
         withdrawals: (rows || []).map(function (item) {
           var isSettled = item.status === 'settled'
@@ -96,7 +96,7 @@ Page({
         if (!res.confirm) return
         request('/api/merchant/withdrawals', {
           method: 'POST',
-          data: { amount: amount, withdrawAll: withdrawAll, remark: res.content || '' }
+          data: withMerchant({ amount: amount, withdrawAll: withdrawAll, remark: res.content || '' })
         }).then(function (result) {
           wx.showModal({ title: '申请成功', content: '￥' + result.amount + ' 预计 T+3 到账', showCancel: false })
           this.setData({ customAmount: '', customReady: false })

@@ -1,4 +1,4 @@
-const { request, syncAuthFromApp, getToken, openWechatReauth } = require('../../../services/jc-request')
+const { request, syncAuthFromApp, getToken, openWechatReauth, withMerchant } = require('../../../services/jc-request')
 
 function pad(n) { return n < 10 ? '0' + n : '' + n }
 
@@ -106,7 +106,7 @@ Page({
       return Promise.resolve()
     }
     this.setData({ loading: true })
-    return request('/api/merchant/dashboard', { data: { scope: 'mine' } }).then(function (data) {
+    return request('/api/merchant/dashboard', { data: withMerchant({ scope: 'mine' }) }).then(function (data) {
       var start = todayStartTs()
       var records = (data.recentRecords || []).filter(function (r) {
         return Number(r.createdAt || 0) >= start
@@ -158,7 +158,7 @@ Page({
   },
   previewCashVoucher: function (token) {
     request('/api/merchant/preview-verify', {
-      method: 'POST', data: { verifyToken: token }
+      method: 'POST', data: withMerchant({ verifyToken: token })
     }).then(function (info) {
       this.setData({ scanning: false })
       this.askAmount(token, info)
@@ -311,7 +311,7 @@ Page({
     this._verifying = true
     wx.showLoading({ title: '核销中…', mask: true })
     request('/api/merchant/verify-voucher', {
-      method: 'POST', data: { verifyToken: token, amount: amount }
+      method: 'POST', data: withMerchant({ verifyToken: token, amount: amount })
     }).then(function (data) {
       wx.hideLoading()
       this._verifying = false
@@ -356,7 +356,7 @@ Page({
     wx.showLoading({ title: '正在确认结果…', mask: true })
     var attempt = function (left) {
       request('/api/merchant/verify-status', {
-        method: 'POST', data: { verifyToken: token }
+        method: 'POST', data: withMerchant({ verifyToken: token })
       }).then(function (status) {
         if (status && status.verified) {
           wx.hideLoading()

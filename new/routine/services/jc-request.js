@@ -123,6 +123,33 @@ function openWechatReauth() {
   wx.switchTab({ url: '/pages/user/index' })
 }
 
+// ===== 商家当前门店（一人多店切换）=====
+var CUR_MERCHANT_KEY = 'CUR_MERCHANT_ID'
+
+function getCurrentMerchantId() {
+  try {
+    return Number(wx.getStorageSync(CUR_MERCHANT_KEY) || 0)
+  } catch (e) {
+    return 0
+  }
+}
+
+function setCurrentMerchantId(id) {
+  try {
+    var n = Number(id || 0)
+    if (n > 0) wx.setStorageSync(CUR_MERCHANT_KEY, n)
+    else wx.removeStorageSync(CUR_MERCHANT_KEY)
+  } catch (e) { /* ignore */ }
+}
+
+// 把当前所选门店 merchantId 合并进请求 data（多店时用于指定操作门店）
+function withMerchant(data) {
+  var out = data || {}
+  var id = getCurrentMerchantId()
+  if (id > 0 && out.merchantId === undefined) out.merchantId = id
+  return out
+}
+
 module.exports = {
   request: request,
   publicRequest: publicRequest,
@@ -131,5 +158,8 @@ module.exports = {
   readUidFromStorage: readUidFromStorage,
   syncAuthFromApp: syncAuthFromApp,
   openWechatReauth: openWechatReauth,
+  getCurrentMerchantId: getCurrentMerchantId,
+  setCurrentMerchantId: setCurrentMerchantId,
+  withMerchant: withMerchant,
   BASE_URL: BASE_URL
 }

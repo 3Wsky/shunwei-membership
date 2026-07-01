@@ -420,3 +420,62 @@ page {
   color: rgba(255, 255, 255, 0.75);
   font-size: 21rpx;
 }
+
+/* 门店切换 */
+.hero-title-row { display: flex; align-items: center; gap: 16rpx; flex-wrap: wrap; }
+.store-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 18rpx;
+  border-radius: 30rpx;
+  background: rgba(255, 255, 255, 0.18);
+  color: #FCE9B8;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.store-switch .iconfont { font-size: 24rpx; }
+.store-count { color: rgba(255, 255, 255, 0.7); font-weight: 400; }
+
+.store-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end;
+}
+.store-sheet {
+  width: 100%;
+  max-height: 66vh;
+  background: #fff;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 24rpx 28rpx calc(24rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.store-sheet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #1A1A1A;
+  padding-bottom: 18rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.store-sheet-close { color: #bbb; font-size: 30rpx; padding: 0 8rpx; }
+.store-sheet-list { max-height: 50vh; margin-top: 8rpx; }
+.store-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 20rpx;
+  border-radius: 16rpx;
+  margin-top: 12rpx;
+  background: #FAF8F5;
+  border: 2rpx solid transparent;
+}
+.store-item.active { background: #FFF9ED; border-color: #E8C877; }
+.store-item-name { font-size: 28rpx; font-weight: 700; color: #1A1A1A; }
+.store-item-role { margin-top: 6rpx; font-size: 22rpx; color: #999; }
+.store-item-check { color: #C9A227; font-size: 32rpx; font-weight: 800; }

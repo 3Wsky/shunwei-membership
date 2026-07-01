@@ -1,4 +1,4 @@
-const { request, syncAuthFromApp, getToken, openWechatReauth } = require('../../../../services/jc-request')
+const { request, syncAuthFromApp, getToken, openWechatReauth, withMerchant } = require('../../../../services/jc-request')
 
 Page({
   data: {
@@ -19,7 +19,7 @@ Page({
       return Promise.resolve()
     }
     this.setData({ loading: true })
-    return request('/api/merchant/dashboard').then(function (data) {
+    return request('/api/merchant/dashboard', { data: withMerchant({}) }).then(function (data) {
       data = data || {}
       var isManager = !!(data.isManager || data.is_manager)
       if (!isManager) {
@@ -38,7 +38,7 @@ Page({
     }.bind(this))
   },
   loadStaffList: function () {
-    return request('/api/merchant/staff').then(function (list) {
+    return request('/api/merchant/staff', { data: withMerchant({}) }).then(function (list) {
       this.setData({
         staffList: (list || []).map(function (item) {
           var resumeText = ''
@@ -64,7 +64,7 @@ Page({
         if (!res.confirm) return
         request('/api/merchant/staff/' + uid + '/suspend', {
           method: 'PUT',
-          data: { action: 'suspend', resumeHour: 8 }
+          data: withMerchant({ action: 'suspend', resumeHour: 8 })
         }).then(function () {
           wx.showToast({ title: '已暂停', icon: 'success' })
           this.loadStaffList()
@@ -78,7 +78,7 @@ Page({
     var uid = e.currentTarget.dataset.uid
     request('/api/merchant/staff/' + uid + '/suspend', {
       method: 'PUT',
-      data: { action: 'resume' }
+      data: withMerchant({ action: 'resume' })
     }).then(function () {
       wx.showToast({ title: '已恢复', icon: 'success' })
       this.loadStaffList()

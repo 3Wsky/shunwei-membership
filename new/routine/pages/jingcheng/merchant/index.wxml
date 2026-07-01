@@ -14,9 +14,34 @@
     </view>
     <view class="hero-body">
       <view class="hero-kicker">商家工作台</view>
-      <view class="hero-title">{{merchantName || '锦程数码'}}</view>
-      <view class="hero-role">{{isManager ? '商家负责人' : '核销员'}}</view>
+      <view class="hero-title-row">
+        <view class="hero-title">{{merchantName || '锦程数码'}}</view>
+        <view wx:if="{{stores.length > 1}}" class="store-switch" bindtap="openStorePicker">
+          <text class="iconfont icon-jiantou_shangxiaqiehuan_o"></text>
+          <text>切换门店</text>
+        </view>
+      </view>
+      <view class="hero-role">{{isManager ? '商家负责人' : '核销员'}}<text wx:if="{{stores.length > 1}}" class="store-count"> · 共 {{stores.length}} 家门店</text></view>
       <view class="hero-desc">今日经营概览 · 快速核销 · 管理入口</view>
+    </view>
+  </view>
+
+  <!-- 门店切换选择器 -->
+  <view wx:if="{{showStorePicker}}" class="store-mask" catchtouchmove="noop" bindtap="closeStorePicker">
+    <view class="store-sheet" catchtap="noop">
+      <view class="store-sheet-head">
+        <text>选择门店</text>
+        <text class="store-sheet-close" bindtap="closeStorePicker">✕</text>
+      </view>
+      <scroll-view scroll-y="true" class="store-sheet-list">
+        <view wx:for="{{stores}}" wx:key="merchantId" class="store-item {{item.merchantId === currentMerchantId ? 'active' : ''}}" data-id="{{item.merchantId}}" bindtap="pickStore">
+          <view class="store-item-main">
+            <view class="store-item-name">{{item.merchantName}}</view>
+            <view class="store-item-role">{{item.isManager ? '负责人' : '核销员'}}{{item.canVerify ? '' : ' · 未开通核销'}}</view>
+          </view>
+          <text wx:if="{{item.merchantId === currentMerchantId}}" class="store-item-check">✓</text>
+        </view>
+      </scroll-view>
     </view>
   </view>
 

@@ -1,4 +1,4 @@
-const { request, syncAuthFromApp, getToken, openWechatReauth } = require('../../../../services/jc-request')
+const { request, syncAuthFromApp, getToken, openWechatReauth, withMerchant } = require('../../../../services/jc-request')
 
 function dateText(ts) {
   if (!ts) return ''
@@ -37,7 +37,7 @@ Page({
       return Promise.resolve()
     }
     this.setData({ loading: true })
-    return request('/api/merchant/dashboard').then(function (data) {
+    return request('/api/merchant/dashboard', { data: withMerchant({}) }).then(function (data) {
       data = data || {}
       var isManager = !!(data.isManager || data.is_manager)
       if (!isManager) {
