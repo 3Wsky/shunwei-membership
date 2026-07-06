@@ -572,9 +572,9 @@ page {
 }
 
 .vmodal-ic.gift {
-  color: #fff;
-  background: linear-gradient(135deg, #5B7BFF, #3B53C8);
-  box-shadow: 0 8rpx 18rpx rgba(59, 83, 200, 0.3);
+  color: #7A5B12;
+  background: linear-gradient(135deg, #F8DC8E, #E6B84E);
+  box-shadow: 0 8rpx 18rpx rgba(201, 162, 39, 0.3);
 }
 
 .vmodal-ic .iconfont {
@@ -714,41 +714,53 @@ page {
 
 /* Gift info card */
 .gift-card {
-  padding: 8rpx 24rpx;
+  padding: 28rpx 24rpx 24rpx;
   border-radius: 20rpx;
-  background: linear-gradient(135deg, #FBF8F5, #FFFDF9);
-  border: 1rpx solid rgba(201, 162, 39, 0.12);
+  background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%);
+  box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.06);
 }
 
-.gift-row {
+.gift-card-k {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.gift-card-v {
+  margin-top: 12rpx;
+  color: #FFFFFF;
+  font-size: 31rpx;
+  font-weight: 800;
+  line-height: 42rpx;
+  text-align: center;
+}
+
+.gift-card-meta {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid rgba(201, 162, 39, 0.1);
+  gap: 16rpx;
+  margin-top: 24rpx;
 }
 
-.gift-row:last-child {
-  border-bottom: 0;
-}
-
-.gift-k {
-  color: #8C7355;
-  font-size: 26rpx;
-}
-
-.gift-v {
+.gift-card-meta view {
   flex: 1;
-  margin-left: 24rpx;
-  text-align: right;
-  color: #1A1A1A;
-  font-size: 28rpx;
-  font-weight: 700;
+  min-width: 0;
+  padding: 18rpx 12rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.08);
+  text-align: center;
 }
 
-.gift-v.gold {
-  color: #C9A227;
-  font-size: 32rpx;
+.gift-card-meta text {
+  display: block;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 22rpx;
+}
+
+.gift-card-meta label {
+  display: block;
+  margin-top: 8rpx;
+  color: #F4D58D;
+  font-size: 31rpx;
   font-weight: 900;
 }
 

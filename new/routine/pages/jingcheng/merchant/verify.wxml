@@ -146,8 +146,12 @@
     </view>
 
     <view class="gift-card">
-      <view class="gift-row"><text class="gift-k">兑换礼品</text><text class="gift-v">{{integralInfo.productName}}</text></view>
-      <view class="gift-row"><text class="gift-k">消耗积分</text><text class="gift-v gold">{{integralInfo.integralCost}}</text></view>
+      <view class="gift-card-k">待核销积分礼品</view>
+      <view class="gift-card-v">{{integralInfo.productName}}</view>
+      <view class="gift-card-meta">
+        <view><text>核销码</text><label>{{integralInfo.verifyCode}}</label></view>
+        <view><text>消耗积分</text><label>{{integralInfo.integralCost}}</label></view>
+      </view>
     </view>
 
     <view class="amount-hint"><text class="iconfont icon-tishi"></text> 确认无误后点击核销，核销后不可撤销</view>

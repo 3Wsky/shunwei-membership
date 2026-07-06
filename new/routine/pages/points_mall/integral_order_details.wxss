@@ -38,6 +38,57 @@ page {
 }
 
 /* 2. 收货地址区：白色悬浮卡片 */
+.order-details .gift-status-card.data-v-4aac0955 {
+  display: flex !important;
+  align-items: center !important;
+  margin: 24rpx 32rpx !important;
+  padding: 30rpx 32rpx !important;
+  border-radius: 24rpx !important;
+  background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%) !important;
+  box-shadow: 0 14rpx 40rpx rgba(15, 35, 70, 0.10) !important;
+  box-sizing: border-box !important;
+}
+
+.order-details .gift-status-card.verified.data-v-4aac0955 {
+  background: linear-gradient(135deg, #123B2D 0%, #1F6B4C 100%) !important;
+}
+
+.order-details .gift-status-card .gift-status-icon.data-v-4aac0955 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 74rpx !important;
+  height: 74rpx !important;
+  flex: 0 0 74rpx !important;
+  border-radius: 22rpx !important;
+  background: linear-gradient(135deg, #F8DC8E, #E6B84E) !important;
+  color: #2A2207 !important;
+  box-shadow: 0 8rpx 18rpx rgba(201, 162, 39, 0.28) !important;
+}
+
+.order-details .gift-status-card .gift-status-icon .iconfont.data-v-4aac0955 {
+  font-size: 38rpx !important;
+}
+
+.order-details .gift-status-card .gift-status-main.data-v-4aac0955 {
+  flex: 1 !important;
+  min-width: 0 !important;
+  margin-left: 22rpx !important;
+}
+
+.order-details .gift-status-card .gift-status-title.data-v-4aac0955 {
+  color: #FFFFFF !important;
+  font-size: 34rpx !important;
+  font-weight: 800 !important;
+}
+
+.order-details .gift-status-card .gift-status-desc.data-v-4aac0955 {
+  margin-top: 8rpx !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 24rpx !important;
+  line-height: 34rpx !important;
+}
+
 .order-details .address.data-v-4aac0955 {
   margin: 24rpx 32rpx !important;
   padding: 32rpx !important;
@@ -176,6 +227,40 @@ page {
   width: 290rpx !important;
   height: 290rpx !important;
   margin: 0 auto !important;
+}
+
+.order-details .writeOff .grayBg .verified-state.data-v-4aac0955 {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 290rpx !important;
+  color: #1F6B4C !important;
+}
+
+.order-details .writeOff .grayBg .verified-state .iconfont.data-v-4aac0955 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100rpx !important;
+  height: 100rpx !important;
+  border-radius: 50% !important;
+  background: #E9F8F1 !important;
+  color: #1F9D65 !important;
+  font-size: 54rpx !important;
+}
+
+.order-details .writeOff .grayBg .verified-title.data-v-4aac0955 {
+  margin-top: 20rpx !important;
+  color: #0B1F3A !important;
+  font-size: 32rpx !important;
+  font-weight: 800 !important;
+}
+
+.order-details .writeOff .grayBg .verified-desc.data-v-4aac0955 {
+  margin-top: 8rpx !important;
+  color: #8A95A6 !important;
+  font-size: 24rpx !important;
 }
 
 /* 隐藏 CRMEB 原生齿轮装饰图（灰盒与金码已直接相连，齿轮多余且未对齐） */
@@ -322,6 +407,22 @@ page {
   color: #0B1F3A !important;
   font-weight: 700 !important;
   font-size: 26rpx !important;
+}
+
+.order-details .wrapper .item .conter.status-text.data-v-4aac0955 {
+  padding: 4rpx 14rpx !important;
+  border-radius: 999rpx !important;
+  font-size: 24rpx !important;
+}
+
+.order-details .wrapper .item .conter.status-text.pending.data-v-4aac0955 {
+  color: #8C6D16 !important;
+  background: #FBF6EA !important;
+}
+
+.order-details .wrapper .item .conter.status-text.verified.data-v-4aac0955 {
+  color: #16744B !important;
+  background: #E9F8F1 !important;
 }
 
 /* 一键复制按钮胶囊化 */
