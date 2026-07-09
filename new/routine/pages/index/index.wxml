@@ -52,17 +52,11 @@
           </view>
           <view class="member-phone">{{member.phone}}</view>
         </view>
-        <view class="member-link">会员中心 ></view>
-      </view>
-      <view class="member-metrics">
-        <view class="metric">
-          <view class="metric-value">{{member.couponCount}}</view>
-          <view class="metric-label">现金券余额</view>
-        </view>
         <view class="metric">
           <view class="metric-value">{{member.integral}}</view>
           <view class="metric-label">积分余额</view>
         </view>
+        <view class="metric-divider"></view>
         <view class="metric">
           <view class="metric-value">{{member.browseCount}}</view>
           <view class="metric-label">浏览记录</view>
@@ -71,6 +65,7 @@
       <view class="member-progress">
         <view class="progress-text">会员有效期：{{member.validUntil}}</view>
         <view class="progress-track"><view class="progress-fill"></view></view>
+        <view class="member-link">会员中心 ></view>
       </view>
     </view>
 
@@ -101,9 +96,10 @@
       </view>
       <view class="signin-days">
         <view wx:for="{{signDays}}" wx:key="day" class="day-card {{item.checked ? 'checked' : ''}} {{item.gift ? 'gift' : ''}}">
-          <view class="day-check">{{item.checked ? '✓' : (item.gift ? '礼' : '')}}</view>
-          <view class="day-name">{{item.day}}</view>
           <view class="day-reward">{{item.reward}}</view>
+          <view wx:if="{{item.gift}}" class="day-gift">礼</view>
+          <view wx:if="{{item.checked}}" class="day-check">✓</view>
+          <view class="day-name">{{item.day}}</view>
         </view>
       </view>
     </view>
@@ -119,8 +115,10 @@
             <view class="point-img-wrap">
               <image class="point-img" src="{{item.image}}" mode="aspectFit"></image>
             </view>
-            <view class="point-title">{{item.title}}</view>
-            <view class="point-price">{{item.points}}</view>
+            <view class="point-info">
+              <view class="point-title">{{item.title}}</view>
+              <view class="point-price">{{item.points}}</view>
+            </view>
           </view>
         </view>
       </scroll-view>
@@ -134,22 +132,24 @@
         </view>
         <view class="section-more" data-url="/pages/jingcheng/showcase/list" bindtap="goQuick">全部 ></view>
       </view>
-      <view class="product-grid">
-        <view wx:for="{{products}}" wx:key="id" class="product-card" data-id="{{item.id}}" bindtap="openProduct">
-          <view class="product-img-wrap">
-            <image class="product-img" src="{{item.image}}" mode="aspectFit"></image>
-          </view>
-          <view class="product-name">{{item.title}}</view>
-          <view class="product-spec">{{item.spec}}</view>
-          <view class="product-bottom">
-            <view>
-              <view class="product-price">¥{{item.price}}</view>
-              <view class="product-sales">已售{{item.sales}}</view>
+      <scroll-view class="product-scroll" scroll-x="true" show-scrollbar="false">
+        <view class="product-row">
+          <view wx:for="{{products}}" wx:key="id" class="product-card" data-id="{{item.id}}" bindtap="openProduct">
+            <view class="product-img-wrap">
+              <image class="product-img" src="{{item.image}}" mode="aspectFit"></image>
             </view>
-            <view class="cart-plus" data-id="{{item.id}}" catchtap="openProduct">+</view>
+            <view class="product-name">{{item.title}}</view>
+            <view class="product-spec">{{item.spec}}</view>
+            <view class="product-bottom">
+              <view>
+                <view class="product-price">¥{{item.price}}</view>
+                <view class="product-sales">已售{{item.sales}}</view>
+              </view>
+              <view class="cart-plus" data-id="{{item.id}}" catchtap="openProduct">+</view>
+            </view>
           </view>
         </view>
-      </view>
+      </scroll-view>
       <view wx:if="{{!products.length && !loading}}" class="empty-tip">暂无推荐商品</view>
     </view>
   </view>

@@ -93,7 +93,7 @@ Page({
       { day: '4天', reward: '+40', checked: false },
       { day: '5天', reward: '+50', checked: false },
       { day: '6天', reward: '+60', checked: false },
-      { day: '7天', reward: '礼包', checked: false, gift: true }
+      { day: '7天', reward: '+80', checked: false, gift: true }
     ],
     banners: [
       { title: '会员积分兑好礼', subtitle: '到店购物享权益 · 数码好物兑换' },
@@ -150,7 +150,7 @@ Page({
       self.setData({
         products: products,
         pointGoods: pointGoods,
-        bannerImages: products.slice(0, 3).map(function (item) { return item.image }).filter(Boolean),
+        bannerImages: pointGoods.concat(products).slice(0, 4).map(function (item) { return item.image }).filter(Boolean),
         member: {
           avatar: storedUser.avatar || storedUser.avatarUrl || DEFAULT_AVATAR,
           nickname: storedUser.nickname || storedUser.nickName || assets.nickname || '三万天',
