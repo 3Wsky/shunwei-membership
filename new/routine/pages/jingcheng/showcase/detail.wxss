@@ -7,6 +7,17 @@
 .desc{margin-top:12rpx;font-size:26rpx;color:#666;line-height:1.6}
 .section{margin:24rpx;padding:28rpx;background:#fff;border-radius:20rpx}
 .section-title{font-size:28rpx;font-weight:600;margin-bottom:16rpx}
+.color-scroll{white-space:nowrap}
+.color-row{display:flex;gap:16rpx}
+.color-card{width:150rpx;flex:0 0 150rpx;padding:12rpx;border:1rpx solid #f0eadf;border-radius:16rpx;background:#fffaf0;box-sizing:border-box}
+.color-img{width:126rpx;height:126rpx;display:block}
+.color-img.placeholder{display:flex;align-items:center;justify-content:center;background:#f2efe8;color:#999;font-size:24rpx}
+.color-name{margin-top:8rpx;font-size:22rpx;color:#333;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sku-row{display:flex;align-items:center;justify-content:space-between;gap:20rpx;padding:16rpx 0;border-bottom:1rpx solid #f1eee8}
+.sku-main{flex:1;min-width:0}
+.sku-version{font-size:26rpx;color:#222;line-height:1.4}
+.sku-sub{margin-top:4rpx;font-size:22rpx;color:#888;line-height:1.4}
+.sku-price{font-size:26rpx;font-weight:700;color:#b48b16;white-space:nowrap}
 .row{display:flex;padding:12rpx 0;border-bottom:1rpx solid #f1eee8;font-size:26rpx}
 .label{width:180rpx;color:#888}
 .value{flex:1;color:#333}

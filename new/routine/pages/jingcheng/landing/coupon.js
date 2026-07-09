@@ -16,11 +16,11 @@ function matchTab(product, tabs) {
     product.model || '',
     product.category || '',
     product.categoryName || ''
-  ].join(' ')
+  ].join(' ').toLowerCase()
   for (let i = 0; i < tabs.length; i += 1) {
     const tab = tabs[i]
     for (let j = 0; j < tab.keywords.length; j += 1) {
-      if (text.indexOf(tab.keywords[j]) >= 0) return tab.name
+      if (text.indexOf(String(tab.keywords[j]).toLowerCase()) >= 0) return tab.name
     }
   }
   return tabs[0].name
@@ -135,12 +135,14 @@ Page({
   loadData() {
     this.setData({ loading: true, errorText: '' })
     return Promise.all([
-      publicRequest('/api/products').catch(() => ({ list: [] })),
+      publicRequest('/api/products', { data: { page: 1, pageSize: 50, status: 'shown', source: 'vmall-official' } }).catch(() => ({ list: [] })),
       publicRequest('/api/integral-mall/products').catch(() => []),
       publicRequest('/api/merchants/public', { data: { limit: 30 } }).catch(() => [])
     ]).then((results) => {
       const productsData = results[0] || {}
-      const rawProducts = Array.isArray(productsData) ? productsData : (productsData.list || [])
+      const rawProducts = Array.isArray(productsData)
+        ? productsData
+        : (productsData.list || (productsData.data && productsData.data.list) || [])
       const products = rawProducts.map((item) => normalizeProduct(item, config.productTabs, config.rules))
       const pointsGoods = (results[1] || []).map(normalizePointGood).slice(0, 12)
       const merchants = (results[2] || []).map(normalizeMerchant)

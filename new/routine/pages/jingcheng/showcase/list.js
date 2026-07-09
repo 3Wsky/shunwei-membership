@@ -35,7 +35,7 @@ Page({
     if (this.data.loading && !reset) return
     const page = reset ? 1 : this.data.page
     this.setData({ loading: true })
-    return publicRequest('/api/products', { data: { page, pageSize: 20, status: 'shown' } })
+    return publicRequest('/api/products', { data: { page, pageSize: 20, status: 'shown', source: 'vmall-official' } })
       .then((data) => {
         const rows = (data.list || []).map((item) => ({
           ...item,

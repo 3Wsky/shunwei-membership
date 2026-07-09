@@ -9,6 +9,28 @@
     <view class="price">{{priceLabel}}</view>
     <view wx:if="{{subtitle}}" class="desc">{{subtitle}}</view>
   </view>
+  <view wx:if="{{colorItems.length}}" class="section">
+    <view class="section-title">颜色款式</view>
+    <scroll-view class="color-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="color-row">
+        <view wx:for="{{colorItems}}" wx:key="name" class="color-card">
+          <image wx:if="{{item.image}}" class="color-img" src="{{item.image}}" mode="aspectFit" />
+          <view wx:else class="color-img placeholder">颜色</view>
+          <view class="color-name">{{item.name}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  <view wx:if="{{skuRows.length}}" class="section">
+    <view class="section-title">配置价格</view>
+    <view wx:for="{{skuRows}}" wx:key="version" class="sku-row">
+      <view class="sku-main">
+        <view class="sku-version">{{item.version}}</view>
+        <view wx:if="{{item.config || item.color}}" class="sku-sub">{{item.config}}{{item.config && item.color ? ' · ' : ''}}{{item.color}}</view>
+      </view>
+      <view class="sku-price">{{item.price}}</view>
+    </view>
+  </view>
   <view wx:if="{{paramList.length}}" class="section">
     <view class="section-title">参数规格</view>
     <view wx:for="{{paramList}}" wx:key="name" class="row">

@@ -14,10 +14,10 @@ const landingConfig = {
   ],
   productTabs: [
     { name: '热门手机', keywords: ['手机', 'Mate', 'Pura', 'iPhone', '荣耀', 'vivo', 'OPPO', '小米', 'nova'] },
-    { name: '平板', keywords: ['平板', 'Pad', 'Tablet'] },
-    { name: '笔记本', keywords: ['笔记本', '电脑', 'Book', 'MateBook'] },
-    { name: '智能穿戴', keywords: ['手表', '手环', 'Watch', 'Band', '穿戴'] },
-    { name: '大疆产品', keywords: ['大疆', 'DJI', '无人机', 'Osmo', '云台'] }
+    { name: '热门平板', keywords: ['平板', 'Pad', 'MatePad', 'Tablet'] },
+    { name: '热门笔记本', keywords: ['笔记本', '电脑', 'Book', 'MateBook'] },
+    { name: '热门智能穿戴', keywords: ['手表', '手环', 'Watch', 'WATCH', 'Band', '穿戴'] },
+    { name: '热门大疆产品', keywords: ['大疆', 'DJI', '无人机', 'Osmo', '云台'] }
   ],
   merchantTabs: ['全部', '加油', '餐饮', '商超', '生活服务'],
   processSteps: [
