@@ -63,28 +63,31 @@
       </view>
       <view class="section-link" bindtap="goProducts">查看商品</view>
     </view>
-    <scroll-view class="tab-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-      <view class="tab-row">
-        <view wx:for="{{productTabs}}" wx:key="name" class="tab-pill {{activeProductTab == item.name ? 'active' : ''}}" bindtap="selectProductTab" data-tab="{{item.name}}">{{item.name}}</view>
-      </view>
-    </scroll-view>
-    <view wx:if="{{!visibleProducts.length && !loading}}" class="empty-block">更多热门商品正在上架中，可先咨询门店活动福利</view>
-    <view class="product-list">
-      <view wx:for="{{visibleProducts}}" wx:key="id" class="product-card">
-        <image wx:if="{{item.image}}" class="product-image" src="{{item.image}}" mode="aspectFill" />
-        <view wx:else class="image-placeholder">数码好物</view>
-        <view class="product-body">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-tag">{{item.benefitTag}}</view>
-          <view class="product-benefits">
-            <text>{{item.cashCouponText}}</text>
-            <text>{{item.pointsReward}}积分</text>
+    <view class="section-desc">按产品类型分成 5 个模块，左右滑动查看不同品类的购机福利。</view>
+    <scroll-view class="product-module-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="product-module-row">
+        <view wx:for="{{productSections}}" wx:for-item="section" wx:key="name" class="product-module">
+          <view class="module-head">
+            <view class="module-title">{{section.name}}</view>
+            <view class="module-count">{{section.countText}}</view>
           </view>
-          <view class="product-desc">{{item.suitableFor}}</view>
-          <button class="card-btn" bindtap="consultProduct" data-item="{{item}}">{{item.ctaText}}</button>
+          <view wx:if="{{!section.products.length}}" class="module-empty">更多{{section.name}}正在上架中</view>
+          <view wx:for="{{section.products}}" wx:for-item="product" wx:key="id" class="module-product-card">
+            <image wx:if="{{product.image}}" class="module-product-image" src="{{product.image}}" mode="aspectFill" />
+            <view wx:else class="module-image-placeholder">数码好物</view>
+            <view class="module-product-body">
+              <view class="module-product-name">{{product.name}}</view>
+              <view class="module-product-benefits">
+                <text>{{product.cashCouponText}}</text>
+                <text>{{product.pointsReward}}积分</text>
+              </view>
+              <view class="module-product-desc">{{product.suitableFor}}</view>
+              <button class="module-card-btn" bindtap="consultProduct" data-item="{{product}}">{{product.ctaText}}</button>
+            </view>
+          </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 
   <view id="points-goods" class="section">

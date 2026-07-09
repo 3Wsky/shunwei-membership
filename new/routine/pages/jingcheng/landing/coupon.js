@@ -67,6 +67,18 @@ function normalizePointGood(item) {
   }
 }
 
+function buildProductSections(products, tabs) {
+  return tabs.map((tab) => {
+    const list = products.filter((item) => item.category === tab.name).slice(0, 6)
+    return {
+      name: tab.name,
+      count: list.length,
+      countText: list.length ? list.length + '款' : '待上架',
+      products: list
+    }
+  })
+}
+
 function normalizeMerchant(item) {
   const rawCategory = item.category || '生活服务'
   let category = rawCategory
@@ -94,10 +106,9 @@ Page({
     loading: true,
     productTabs: config.productTabs,
     merchantTabs: config.merchantTabs,
-    activeProductTab: config.productTabs[0].name,
     activeMerchantTab: '全部',
     allProducts: [],
-    visibleProducts: [],
+    productSections: [],
     pointsGoods: [],
     allMerchants: [],
     visibleMerchants: [],
@@ -135,11 +146,11 @@ Page({
       const merchants = (results[2] || []).map(normalizeMerchant)
       this.setData({
         allProducts: products,
+        productSections: buildProductSections(products, config.productTabs),
         pointsGoods,
         allMerchants: merchants,
         loading: false
       })
-      this.refreshProducts()
       this.refreshMerchants()
     }).catch((err) => {
       this.setData({
@@ -149,24 +160,10 @@ Page({
     })
   },
 
-  refreshProducts() {
-    const active = this.data.activeProductTab
-    let list = this.data.allProducts.filter((item) => item.category === active)
-    if (!list.length) list = this.data.allProducts.slice(0, 8)
-    this.setData({ visibleProducts: list.slice(0, 8) })
-  },
-
   refreshMerchants() {
     const active = this.data.activeMerchantTab
     const list = this.data.allMerchants.filter((item) => active === '全部' || item.category === active)
     this.setData({ visibleMerchants: list.slice(0, 8) })
-  },
-
-  selectProductTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    this.setData({ activeProductTab: tab })
-    this.track('category_click', { category: tab })
-    this.refreshProducts()
   },
 
   selectMerchantTab(e) {

@@ -36,6 +36,21 @@
 .tab-pill { flex-shrink: 0; padding: 14rpx 24rpx; border-radius: 999rpx; background: #f1ede7; color: #65564f; font-size: 24rpx; font-weight: 700; }
 .tab-pill.active { background: #2b2638; color: #ffd98a; }
 .tab-pill.merchant.active { background: #275466; color: #e8f9ff; }
+.product-module-scroll { margin-top: 22rpx; white-space: nowrap; }
+.product-module-row { display: flex; gap: 18rpx; }
+.product-module { flex-shrink: 0; width: 620rpx; padding: 18rpx; border-radius: 16rpx; background: #fbfaf7; border: 1rpx solid #eee2d2; box-sizing: border-box; vertical-align: top; white-space: normal; }
+.module-head { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; padding-bottom: 14rpx; border-bottom: 1rpx solid #eee5da; }
+.module-title { font-size: 30rpx; font-weight: 900; color: #211a16; }
+.module-count { flex-shrink: 0; padding: 6rpx 14rpx; border-radius: 999rpx; background: #fff1dc; color: #a45d14; font-size: 21rpx; font-weight: 800; }
+.module-empty { height: 220rpx; display: flex; align-items: center; justify-content: center; color: #887368; font-size: 24rpx; }
+.module-product-card { margin-top: 16rpx; display: flex; gap: 16rpx; padding: 14rpx; border-radius: 14rpx; background: #fff; box-shadow: 0 4rpx 16rpx rgba(59,40,28,.04); }
+.module-product-image, .module-image-placeholder { width: 148rpx; height: 148rpx; border-radius: 12rpx; flex-shrink: 0; }
+.module-image-placeholder { background: linear-gradient(135deg,#e7eef1,#f6e2cc); color: #6c5d56; font-size: 22rpx; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.module-product-body { flex: 1; min-width: 0; }
+.module-product-name { color: #211a16; font-size: 27rpx; font-weight: 900; line-height: 1.32; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.module-product-benefits { margin-top: 8rpx; display: flex; flex-wrap: wrap; gap: 8rpx; color: #bd3c22; font-size: 22rpx; font-weight: 800; }
+.module-product-desc { margin-top: 6rpx; color: #746861; font-size: 21rpx; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.module-card-btn { margin: 10rpx 0 0; width: 190rpx; height: 50rpx; border-radius: 999rpx; background: #8f2b1d; color: #fff; font-size: 21rpx; font-weight: 800; display: flex; align-items: center; justify-content: center; }
 .product-list { margin-top: 22rpx; display: flex; flex-direction: column; gap: 18rpx; }
 .product-card { display: flex; gap: 18rpx; padding: 16rpx; border-radius: 14rpx; background: #fbfaf7; border: 1rpx solid #eee5da; }
 .product-image, .image-placeholder { width: 178rpx; height: 178rpx; border-radius: 12rpx; flex-shrink: 0; }
