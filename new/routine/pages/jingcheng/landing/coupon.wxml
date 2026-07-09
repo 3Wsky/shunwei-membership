@@ -1,0 +1,167 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero-topline">朋友圈广告专属福利页</view>
+    <view class="hero-title">{{config.hero.title}}</view>
+    <view class="hero-subtitle">{{config.hero.subtitle}}</view>
+    <view class="ticket-card">
+      <view class="ticket-main">
+        <text class="ticket-label">购数码产品</text>
+        <text class="ticket-value">最高800元现金券</text>
+        <text class="ticket-extra">+ 299000积分</text>
+      </view>
+      <view class="ticket-side">购买后核实发放</view>
+    </view>
+    <view class="benefit-row">
+      <view wx:for="{{config.hero.benefits}}" wx:key="*this" class="benefit-pill">{{item}}</view>
+    </view>
+    <view class="hero-actions">
+      <button class="primary-btn" bindtap="scrollTo" data-target="{{config.sections.products}}">查看我买什么送多少</button>
+      <button class="ghost-btn" bindtap="scrollTo" data-target="{{config.sections.merchants}}">查看可核销商家</button>
+    </view>
+    <view class="hero-note">{{config.hero.note}}</view>
+  </view>
+
+  <view class="anchor-bar">
+    <view class="anchor-item" bindtap="scrollTo" data-target="{{config.sections.rules}}">活动规则</view>
+    <view class="anchor-item" bindtap="scrollTo" data-target="{{config.sections.products}}">热门商品</view>
+    <view class="anchor-item" bindtap="scrollTo" data-target="{{config.sections.points}}">积分商城</view>
+    <view class="anchor-item" bindtap="scrollTo" data-target="{{config.sections.merchants}}">可用商家</view>
+  </view>
+
+  <view wx:if="{{errorText}}" class="state-card">
+    <text>{{errorText}}</text>
+    <button class="small-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <view id="activity-rules" class="section">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">RULES</view>
+        <view class="section-title">买多少，送多少</view>
+      </view>
+      <view class="section-tag">购买后核实发放</view>
+    </view>
+    <view class="rule-grid">
+      <view wx:for="{{config.rules}}" wx:key="range" class="rule-card">
+        <view class="rule-range">{{item.range}}</view>
+        <view class="rule-main">{{item.coupon}}元现金券</view>
+        <view class="rule-sub">{{item.member}} · {{item.points}}积分</view>
+      </view>
+    </view>
+    <view class="notice-card">
+      <view>用户到店购买指定数码产品，经门店核实后，按实际消费金额发放对应积分与现金券。</view>
+      <view>现金券可在米东区联盟可核销商家使用；积分可在积分商城兑换指定商品。</view>
+      <view>现金券不可提现、不找零、不可转让；如订单退货退款，对应权益同步取消或作废。</view>
+    </view>
+  </view>
+
+  <view id="hot-products" class="section">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">PRODUCTS</view>
+        <view class="section-title">热门商品福利</view>
+      </view>
+      <view class="section-link" bindtap="goProducts">查看商品</view>
+    </view>
+    <scroll-view class="tab-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="tab-row">
+        <view wx:for="{{productTabs}}" wx:key="name" class="tab-pill {{activeProductTab == item.name ? 'active' : ''}}" bindtap="selectProductTab" data-tab="{{item.name}}">{{item.name}}</view>
+      </view>
+    </scroll-view>
+    <view wx:if="{{!visibleProducts.length && !loading}}" class="empty-block">更多热门商品正在上架中，可先咨询门店活动福利</view>
+    <view class="product-list">
+      <view wx:for="{{visibleProducts}}" wx:key="id" class="product-card">
+        <image wx:if="{{item.image}}" class="product-image" src="{{item.image}}" mode="aspectFill" />
+        <view wx:else class="image-placeholder">数码好物</view>
+        <view class="product-body">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-tag">{{item.benefitTag}}</view>
+          <view class="product-benefits">
+            <text>{{item.cashCouponText}}</text>
+            <text>{{item.pointsReward}}积分</text>
+          </view>
+          <view class="product-desc">{{item.suitableFor}}</view>
+          <button class="card-btn" bindtap="consultProduct" data-item="{{item}}">{{item.ctaText}}</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view id="points-goods" class="section">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">POINTS</view>
+        <view class="section-title">积分还能兑换这些好物</view>
+      </view>
+      <view class="section-link" bindtap="goIntegralMall">去积分商城</view>
+    </view>
+    <view class="section-desc">购机送积分，配件生活好物都能换。积分越多，可兑换商品越多。</view>
+    <scroll-view wx:if="{{pointsGoods.length}}" class="points-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="points-row">
+        <view wx:for="{{pointsGoods}}" wx:key="id" class="point-card" bindtap="openPointGood" data-item="{{item}}">
+          <image wx:if="{{item.image}}" class="point-image" src="{{item.image}}" mode="aspectFill" />
+          <view wx:else class="point-placeholder">积分商品</view>
+          <view class="point-title">{{item.title}}</view>
+          <view class="point-price">{{item.price}}积分</view>
+          <view class="point-stock">{{item.stockText}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view wx:else class="empty-block">更多积分商品正在上架中</view>
+  </view>
+
+  <view id="verify-merchants" class="section">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">MERCHANTS</view>
+        <view class="section-title">现金券能在哪用？</view>
+      </view>
+      <view class="section-tag">联盟商家</view>
+    </view>
+    <view class="section-desc">加油、餐饮、商超等联盟商家陆续加入中，具体可核销商家以本页面展示为准。</view>
+    <scroll-view class="tab-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="tab-row">
+        <view wx:for="{{merchantTabs}}" wx:key="*this" class="tab-pill merchant {{activeMerchantTab == item ? 'active' : ''}}" bindtap="selectMerchantTab" data-tab="{{item}}">{{item}}</view>
+      </view>
+    </scroll-view>
+    <view wx:if="{{!visibleMerchants.length && !loading}}" class="empty-block">更多联盟商家正在加入中，敬请期待</view>
+    <view class="merchant-list">
+      <view wx:for="{{visibleMerchants}}" wx:key="id" class="merchant-card">
+        <image wx:if="{{item.cover}}" class="merchant-cover" src="{{item.cover}}" mode="aspectFill" />
+        <view wx:else class="merchant-cover placeholder">商家门店</view>
+        <view class="merchant-info">
+          <view class="merchant-name">{{item.merchantName}}</view>
+          <view class="merchant-meta">{{item.category}} · {{item.supportText}}</view>
+          <view class="merchant-address">{{item.storeAddress}}</view>
+          <button class="nav-btn" bindtap="navigateMerchant" data-item="{{item}}">导航到店</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">PROCESS</view>
+        <view class="section-title">四步参与</view>
+      </view>
+    </view>
+    <view class="step-list">
+      <view wx:for="{{config.processSteps}}" wx:key="title" class="step-item">
+        <view class="step-no">{{index + 1}}</view>
+        <view class="step-text">
+          <view class="step-title">{{item.title}}</view>
+          <view class="step-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-mask">加载活动数据中...</view>
+  <view class="bottom-spacer"></view>
+  <view class="bottom-bar">
+    <button class="bottom-btn secondary" bindtap="contact">活动咨询</button>
+    <button class="bottom-btn secondary" bindtap="goProducts">查看商品</button>
+    <button class="bottom-btn primary" bindtap="storeVisit">到店领取福利</button>
+  </view>
+</view>
