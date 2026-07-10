@@ -1,12 +1,12 @@
 <view class="home-page">
-  <view class="top-shell" style="padding-top: {{statusBarHeight}}px; padding-right: {{capsuleSpace}}px;">
+  <view class="top-shell" style="padding-top: calc({{statusBarHeight}}px + 18rpx); padding-right: {{capsuleSpace}}px;">
     <view class="brand-block">
       <view class="brand-name">锦程祥瑞数码</view>
       <view class="brand-subtitle">您的专属手机管家</view>
     </view>
     <view class="search-pill" bindtap="goSearch">
-      <view class="search-mark"></view>
-      <text>搜索手机/配件/服务</text>
+      <text class="iconfont icon-ic_search search-icon"></text>
+      <text class="search-placeholder">搜索手机/配件/服务</text>
     </view>
   </view>
 
@@ -19,10 +19,16 @@
               <view class="banner-kicker">MEMBER BENEFITS</view>
               <view class="banner-title">{{item.title}}</view>
               <view class="banner-subtitle">{{item.subtitle}}</view>
-              <view class="banner-button" bindtap="goPointsMall">查看积分商城</view>
+              <view class="banner-button" bindtap="goPointsMall">
+                <text>查看积分商城</text>
+                <text class="iconfont icon-ic_rightarrow banner-button-arrow"></text>
+              </view>
             </view>
             <view class="gift-stage">
               <view class="gift-halo"></view>
+              <view class="gift-base"></view>
+              <view class="gift-spark spark-one"></view>
+              <view class="gift-spark spark-two"></view>
               <block wx:if="{{bannerImages.length}}">
                 <image wx:for="{{bannerImages}}" wx:for-item="img" wx:for-index="imgIndex" wx:key="imgIndex" class="gift-img gift-img-{{imgIndex}}" src="{{img}}" mode="aspectFit"></image>
               </block>
@@ -53,7 +59,7 @@
           <view class="member-phone">{{member.phone}}</view>
         </view>
         <view class="metric">
-          <view class="metric-value">{{member.integral}}</view>
+          <view class="metric-value {{member.integralClass}}">{{member.integral}}</view>
           <view class="metric-label">积分余额</view>
         </view>
         <view class="metric-divider"></view>
@@ -65,28 +71,29 @@
       <view class="member-progress">
         <view class="progress-text">会员有效期：{{member.validUntil}}</view>
         <view class="progress-track"><view class="progress-fill"></view></view>
-        <view class="member-link">会员中心 ></view>
+        <view class="member-link">会员中心 <text class="iconfont icon-ic_rightarrow"></text></view>
       </view>
     </view>
 
     <view class="quick-card card">
       <view wx:for="{{quickEntries}}" wx:key="title" class="quick-item" data-url="{{item.url}}" bindtap="goQuick">
-        <view class="quick-icon {{item.className}}">{{item.icon}}</view>
+        <view class="quick-icon {{item.className}}"><text class="iconfont {{item.icon}}"></text></view>
         <view class="quick-title">{{item.title}}</view>
       </view>
     </view>
 
     <view class="notice-card">
-      <view class="notice-icon">告</view>
+      <view class="notice-icon"><text class="iconfont icon-laba"></text></view>
+      <view class="notice-label">公告</view>
       <view class="notice-text">2026米东联盟消费券，火热发放中，先到先得！</view>
-      <view class="notice-arrow">></view>
+      <text class="iconfont icon-ic_rightarrow notice-arrow"></text>
     </view>
 
     <view class="signin-card card">
       <view class="signin-top">
         <view class="signin-illustration">
-          <view class="box-lid"></view>
-          <view class="box-body"></view>
+          <view class="signin-glow"></view>
+          <image class="signin-gift-img" src="/static/images/sign-icon-04.png" mode="aspectFit"></image>
         </view>
         <view class="signin-copy">
           <view class="section-title compact">每日签到领积分 <text class="score-badge">+10</text></view>
@@ -107,7 +114,7 @@
     <view class="points-section card">
       <view class="section-head">
         <view class="section-title">积分兑好礼</view>
-        <view class="section-more" bindtap="goPointsMall">更多好礼 ></view>
+        <view class="section-more" bindtap="goPointsMall">更多好礼 <text class="iconfont icon-ic_rightarrow"></text></view>
       </view>
       <scroll-view class="points-scroll" scroll-x="true" show-scrollbar="false">
         <view class="points-row">
@@ -130,7 +137,7 @@
           <view class="section-title">精品推荐</view>
           <view class="recommend-sub">正品保障｜售后无忧｜分期免息</view>
         </view>
-        <view class="section-more" data-url="/pages/jingcheng/showcase/list" bindtap="goQuick">全部 ></view>
+        <view class="section-more" data-url="/pages/jingcheng/showcase/list" bindtap="goQuick">全部 <text class="iconfont icon-ic_rightarrow"></text></view>
       </view>
       <scroll-view class="product-scroll" scroll-x="true" show-scrollbar="false">
         <view class="product-row">
@@ -145,7 +152,7 @@
                 <view class="product-price">¥{{item.price}}</view>
                 <view class="product-sales">已售{{item.sales}}</view>
               </view>
-              <view class="cart-plus" data-id="{{item.id}}" catchtap="openProduct">+</view>
+              <view class="cart-plus" data-id="{{item.id}}" catchtap="openProduct"><text class="iconfont icon-ic_increase"></text></view>
             </view>
           </view>
         </view>
@@ -156,19 +163,19 @@
 
   <view class="home-tabbar">
     <view class="tab-item active">
-      <view class="tab-icon">首</view>
+      <view class="tab-icon"><text class="iconfont icon-shouye"></text></view>
       <view class="tab-text">首页</view>
     </view>
     <view class="tab-item" bindtap="goCategory">
-      <view class="tab-icon">类</view>
+      <view class="tab-icon"><text class="iconfont icon-fenlei"></text></view>
       <view class="tab-text">分类</view>
     </view>
     <view class="tab-item" bindtap="goPointsMall">
-      <view class="tab-icon">积</view>
+      <view class="tab-icon"><text class="iconfont icon-jifenshangcheng"></text></view>
       <view class="tab-text">积分商城</view>
     </view>
     <view class="tab-item" bindtap="goMine">
-      <view class="tab-icon">我</view>
+      <view class="tab-icon"><text class="iconfont icon-geren"></text></view>
       <view class="tab-text">我的</view>
     </view>
   </view>

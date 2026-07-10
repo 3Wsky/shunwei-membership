@@ -14,7 +14,7 @@ page {
   display: flex;
   align-items: center;
   padding-left: 34rpx;
-  padding-bottom: 26rpx;
+  padding-bottom: 24rpx;
   box-sizing: border-box;
 }
 
@@ -23,55 +23,48 @@ page {
 }
 
 .brand-name {
-  font-size: 36rpx;
+  font-size: 35rpx;
   line-height: 44rpx;
-  font-weight: 700;
+  font-weight: 800;
   color: #222222;
+  letter-spacing: 1rpx;
 }
 
 .brand-subtitle {
   margin-top: 4rpx;
-  font-size: 21rpx;
+  font-size: 20rpx;
   color: #6E6257;
-  letter-spacing: 7rpx;
+  letter-spacing: 6rpx;
 }
 
 .search-pill {
   min-width: 0;
   flex: 1;
-  height: 64rpx;
+  height: 66rpx;
   border-radius: 999rpx;
   background: rgba(255, 255, 255, 0.88);
   border: 1rpx solid rgba(169, 143, 116, 0.24);
   display: flex;
   align-items: center;
-  margin-left: 28rpx;
-  padding: 0 24rpx;
+  margin-left: 24rpx;
+  padding: 0 22rpx;
   color: #9A948D;
-  font-size: 24rpx;
+  font-size: 23rpx;
   box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.66), 0 8rpx 24rpx rgba(120, 80, 40, 0.04);
 }
 
-.search-mark {
-  width: 20rpx;
-  height: 20rpx;
-  border: 3rpx solid #C98A45;
-  border-radius: 50%;
-  margin-right: 14rpx;
-  position: relative;
+.search-icon {
   flex: 0 0 auto;
+  margin-right: 12rpx;
+  color: #B58A61;
+  font-size: 29rpx;
 }
 
-.search-mark::after {
-  content: "";
-  position: absolute;
-  width: 10rpx;
-  height: 3rpx;
-  right: -8rpx;
-  bottom: -4rpx;
-  background: #C98A45;
-  transform: rotate(45deg);
-  border-radius: 10rpx;
+.search-placeholder {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .home-content {
@@ -95,6 +88,7 @@ page {
   position: relative;
   display: flex;
   box-shadow: 0 12rpx 34rpx rgba(173, 112, 44, 0.12);
+  border: 1rpx solid rgba(255, 255, 255, 0.72);
 }
 
 .banner-card::before {
@@ -155,13 +149,18 @@ page {
   justify-content: center;
   margin-top: 26rpx;
   height: 54rpx;
-  padding: 0 22rpx;
+  padding: 0 18rpx 0 22rpx;
   border-radius: 999rpx;
   color: #684018;
   font-size: 24rpx;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.68);
   border: 1rpx solid rgba(153, 92, 39, 0.32);
+}
+
+.banner-button-arrow {
+  margin-left: 8rpx;
+  font-size: 22rpx;
 }
 
 .gift-stage {
@@ -180,37 +179,70 @@ page {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
 }
 
+.gift-base {
+  position: absolute;
+  right: 12rpx;
+  bottom: 32rpx;
+  width: 278rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(205, 143, 75, 0.2));
+  box-shadow: 0 16rpx 26rpx rgba(122, 79, 36, 0.13);
+}
+
+.gift-spark {
+  position: absolute;
+  z-index: 3;
+  width: 10rpx;
+  height: 10rpx;
+  background: #E6B86F;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12rpx rgba(224, 163, 79, 0.45);
+}
+
+.spark-one {
+  right: 214rpx;
+  top: 56rpx;
+}
+
+.spark-two {
+  right: 36rpx;
+  top: 44rpx;
+  width: 7rpx;
+  height: 7rpx;
+}
+
 .gift-img {
   position: absolute;
   width: 128rpx;
   height: 128rpx;
-  border-radius: 24rpx;
-  background: rgba(255, 255, 255, 0.42);
+  border-radius: 18rpx;
+  background: transparent;
   filter: drop-shadow(0 10rpx 18rpx rgba(101, 64, 29, 0.16));
 }
 
 .gift-img-0 {
   right: 154rpx;
-  top: 90rpx;
+  top: 88rpx;
   width: 138rpx;
   height: 138rpx;
 }
 
 .gift-img-1 {
   right: 92rpx;
-  top: 80rpx;
+  top: 76rpx;
 }
 
 .gift-img-2 {
   right: 16rpx;
-  top: 78rpx;
+  top: 76rpx;
   width: 150rpx;
   height: 150rpx;
 }
 
 .gift-img-3 {
   right: 84rpx;
-  top: 158rpx;
+  top: 154rpx;
   width: 112rpx;
   height: 112rpx;
 }
@@ -274,7 +306,8 @@ page {
   color: #2A241F;
   position: relative;
   overflow: hidden;
-  border: 1rpx solid rgba(255, 255, 255, 0.78);
+  border: 1rpx solid rgba(255, 255, 255, 0.86);
+  box-shadow: 0 14rpx 36rpx rgba(133, 86, 42, 0.1);
 }
 
 .member-watermark {
@@ -341,7 +374,7 @@ page {
   border-radius: 999rpx;
   background: linear-gradient(90deg, #FFF2C8, #FFE1A5);
   color: #9A6728;
-  font-size: 20rpx;
+  font-size: 19rpx;
   font-weight: 700;
   border: 1rpx solid rgba(185, 126, 54, 0.18);
 }
@@ -356,6 +389,11 @@ page {
   margin-left: 20rpx;
   font-size: 24rpx;
   color: #9E6D34;
+  white-space: nowrap;
+}
+
+.member-link .iconfont {
+  font-size: 21rpx;
 }
 
 .metric {
@@ -368,6 +406,10 @@ page {
   line-height: 44rpx;
   font-weight: 800;
   color: #2A241F;
+}
+
+.metric-value.compact {
+  font-size: 30rpx;
 }
 
 .metric-label {
@@ -426,7 +468,8 @@ page {
   justify-content: space-around;
   position: relative;
   z-index: 4;
-  border: 1rpx solid rgba(255, 255, 255, 0.86);
+  border: 1rpx solid rgba(236, 224, 211, 0.64);
+  box-shadow: 0 14rpx 34rpx rgba(104, 70, 38, 0.09);
 }
 
 .quick-item {
@@ -443,8 +486,21 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26rpx;
+  font-size: 36rpx;
   font-weight: 700;
+  position: relative;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.64);
+}
+
+.quick-icon::after {
+  content: "";
+  position: absolute;
+  top: 10rpx;
+  left: 16rpx;
+  width: 20rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .quick-icon.mint {
@@ -485,17 +541,24 @@ page {
 }
 
 .notice-icon {
-  width: 46rpx;
+  width: 36rpx;
   height: 46rpx;
-  border-radius: 50%;
-  background: #FFF0E8;
   color: #FF6A2A;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22rpx;
+  font-size: 30rpx;
+  margin-right: 5rpx;
+}
+
+.notice-label {
+  flex: 0 0 auto;
+  padding-right: 18rpx;
+  margin-right: 18rpx;
+  border-right: 1rpx solid #EEE3D8;
+  color: #FF6A2A;
+  font-size: 24rpx;
   font-weight: 700;
-  margin-right: 16rpx;
 }
 
 .notice-text {
@@ -510,14 +573,15 @@ page {
 
 .notice-arrow {
   color: #B8A28C;
-  font-size: 28rpx;
+  font-size: 24rpx;
   margin-left: 12rpx;
 }
 
 .signin-card {
   margin-top: 16rpx;
   padding: 22rpx 24rpx 20rpx;
-  background: #FFFFFF;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFFCF8 100%);
+  border: 1rpx solid rgba(240, 228, 215, 0.72);
 }
 
 .signin-top {
@@ -536,29 +600,27 @@ page {
   position: relative;
   flex: 0 0 auto;
   border-radius: 24rpx;
-  background: linear-gradient(135deg, #FFF5E7, #FFE2B8);
+  background: linear-gradient(135deg, #FFF9F0, #FFE8C8);
+  overflow: hidden;
 }
 
-.box-lid {
+.signin-glow {
   position: absolute;
-  left: 34rpx;
-  top: 18rpx;
-  width: 64rpx;
-  height: 24rpx;
-  border-radius: 12rpx 12rpx 4rpx 4rpx;
-  background: linear-gradient(90deg, #F3C177, #D89438);
-  transform: rotate(-8deg);
+  width: 104rpx;
+  height: 104rpx;
+  left: 14rpx;
+  top: 12rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
 }
 
-.box-body {
+.signin-gift-img {
   position: absolute;
-  left: 38rpx;
-  top: 42rpx;
-  width: 58rpx;
-  height: 54rpx;
-  border-radius: 10rpx 10rpx 16rpx 16rpx;
-  background: linear-gradient(180deg, #FFFFFF, #F5C984);
-  box-shadow: 0 10rpx 18rpx rgba(174, 110, 39, 0.16);
+  left: 16rpx;
+  top: 5rpx;
+  width: 100rpx;
+  height: 100rpx;
+  filter: drop-shadow(0 8rpx 12rpx rgba(178, 110, 35, 0.18));
 }
 
 .signin-copy {
@@ -608,6 +670,7 @@ page {
   color: #FFFFFF;
   font-size: 24rpx;
   font-weight: 700;
+  box-shadow: 0 8rpx 18rpx rgba(255, 106, 42, 0.2);
 }
 
 .signin-days {
@@ -620,7 +683,7 @@ page {
   position: relative;
   flex: 1;
   min-width: 0;
-  height: 78rpx;
+  height: 84rpx;
   margin-right: 10rpx;
   border: 1rpx solid #E9D9C8;
   border-radius: 16rpx;
@@ -644,6 +707,7 @@ page {
 
 .day-card.gift {
   background: linear-gradient(180deg, #FFF8EF, #FFE7D7);
+  border-color: rgba(255, 141, 72, 0.32);
 }
 
 .day-check {
@@ -663,21 +727,21 @@ page {
 }
 
 .day-gift {
-  margin-top: 2rpx;
-  font-size: 24rpx;
+  margin-top: -2rpx;
+  font-size: 22rpx;
   font-weight: 800;
   color: #FF6A2A;
 }
 
 .day-name {
-  margin-top: 4rpx;
-  font-size: 20rpx;
+  margin-top: 2rpx;
+  font-size: 19rpx;
   line-height: 24rpx;
 }
 
 .day-reward {
   margin-top: 0;
-  font-size: 21rpx;
+  font-size: 20rpx;
   font-weight: 700;
 }
 
@@ -698,6 +762,14 @@ page {
 .section-more {
   font-size: 24rpx;
   color: #C98A45;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.section-more .iconfont {
+  margin-left: 4rpx;
+  font-size: 21rpx;
 }
 
 .points-scroll {
@@ -711,7 +783,7 @@ page {
 }
 
 .point-good {
-  width: 198rpx;
+  width: 206rpx;
   height: 136rpx;
   margin-right: 14rpx;
   border-radius: 18rpx;
@@ -733,7 +805,7 @@ page {
 }
 
 .point-img {
-  width: 198rpx;
+  width: 206rpx;
   height: 136rpx;
 }
 
@@ -742,14 +814,15 @@ page {
   left: 0;
   right: 0;
   bottom: 0;
-  min-height: 46rpx;
-  padding: 8rpx 10rpx;
+  min-height: 56rpx;
+  padding: 12rpx 10rpx 8rpx;
   box-sizing: border-box;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 250, 245, 0.96));
 }
 
 .point-title {
   margin-top: 0;
+  width: 100rpx;
   height: 28rpx;
   font-size: 20rpx;
   line-height: 28rpx;
@@ -768,11 +841,11 @@ page {
   bottom: 8rpx;
   margin-top: 0;
   max-width: 100%;
-  padding: 7rpx 12rpx;
+  padding: 6rpx 10rpx;
   border-radius: 999rpx;
   background: #FFF0D8;
   color: #B77B2D;
-  font-size: 21rpx;
+  font-size: 19rpx;
   font-weight: 700;
 }
 
@@ -798,18 +871,19 @@ page {
 }
 
 .product-card {
-  width: 146rpx;
+  width: 150rpx;
   min-width: 0;
   border-radius: 16rpx;
   background: #FFFFFF;
   box-shadow: inset 0 0 0 1rpx rgba(224, 211, 197, 0.72);
   overflow: hidden;
   padding-bottom: 12rpx;
-  margin-right: 14rpx;
+  margin-right: 12rpx;
+  flex: 0 0 auto;
 }
 
 .product-img-wrap {
-  height: 150rpx;
+  height: 154rpx;
   background: linear-gradient(180deg, #FFFFFF, #F7F5F1);
   display: flex;
   align-items: center;
@@ -817,8 +891,8 @@ page {
 }
 
 .product-img {
-  width: 132rpx;
-  height: 132rpx;
+  width: 136rpx;
+  height: 136rpx;
 }
 
 .product-name {
@@ -872,9 +946,11 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26rpx;
-  line-height: 32rpx;
   box-shadow: 0 8rpx 18rpx rgba(255, 106, 42, 0.26);
+}
+
+.cart-plus .iconfont {
+  font-size: 24rpx;
 }
 
 .empty-tip {
@@ -894,7 +970,7 @@ page {
   padding: 14rpx 0 calc(14rpx + env(safe-area-inset-bottom));
   border-radius: 28rpx;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 -8rpx 28rpx rgba(82, 55, 28, 0.09);
+  box-shadow: 0 -8rpx 28rpx rgba(82, 55, 28, 0.08), 0 10rpx 30rpx rgba(82, 55, 28, 0.06);
   display: flex;
   z-index: 20;
   border: 1rpx solid rgba(236, 226, 214, 0.7);
@@ -916,9 +992,13 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 21rpx;
+  font-size: 34rpx;
   font-weight: 700;
   background: transparent;
+}
+
+.tab-icon .iconfont {
+  font-size: 34rpx;
 }
 
 .tab-text {
@@ -930,6 +1010,6 @@ page {
 }
 
 .tab-item.active .tab-icon {
-  color: #FFFFFF;
-  background: #FF6A2A;
+  color: #FF6A2A;
+  background: transparent;
 }

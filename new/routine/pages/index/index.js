@@ -17,6 +17,23 @@ function formatMoney(value) {
   return n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
 }
 
+function formatDate(value, fallback) {
+  if (!value) return fallback
+  var text = String(value)
+  var match = text.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/)
+  if (!match) return text
+  return match[1] + '.' + ('0' + match[2]).slice(-2) + '.' + ('0' + match[3]).slice(-2)
+}
+
+function uniqueImages(items) {
+  var seen = {}
+  return items.map(function (item) { return item.image }).filter(function (image) {
+    if (!image || seen[image]) return false
+    seen[image] = true
+    return true
+  })
+}
+
 function maskPhone(phone) {
   var text = String(phone || '')
   if (/^1\d{10}$/.test(text)) return text.slice(0, 3) + '****' + text.slice(7)
@@ -77,14 +94,15 @@ Page({
       level: 'VIP 金卡会员',
       couponCount: '0',
       integral: '0',
+      integralClass: '',
       browseCount: '6',
       validUntil: '2026.12.31'
     },
     quickEntries: [
-      { title: '手机专区', icon: '机', className: 'mint', url: '/pages/jingcheng/showcase/list' },
-      { title: '数码好物', icon: '数', className: 'blue', url: '/pages/jingcheng/showcase/list' },
-      { title: '以旧换新', icon: '换', className: 'gold', url: '/pages/jingcheng/activity/index' },
-      { title: '积分商城', icon: '积', className: 'orange', url: '/pages/jingcheng/integral/mall' }
+      { title: '手机专区', icon: 'icon-shouji', className: 'mint', url: '/pages/jingcheng/showcase/list' },
+      { title: '数码好物', icon: 'icon-shangpin', className: 'blue', url: '/pages/jingcheng/showcase/list' },
+      { title: '以旧换新', icon: 'icon-gengxinshijian', className: 'gold', url: '/pages/jingcheng/activity/index' },
+      { title: '积分商城', icon: 'icon-jifenshangcheng', className: 'orange', url: '/pages/jingcheng/integral/mall' }
     ],
     signDays: [
       { day: '1天', reward: '+10', checked: true },
@@ -147,19 +165,21 @@ Page({
       var pointGoods = (results[1] || []).map(normalizePointGood).slice(0, 3)
       var assets = results[2] || {}
       var storedUser = readStoredUser()
+      var integral = formatNumber(assets.integral || assets.points || 0)
       self.setData({
         products: products,
         pointGoods: pointGoods,
-        bannerImages: pointGoods.concat(products).slice(0, 4).map(function (item) { return item.image }).filter(Boolean),
+        bannerImages: uniqueImages(pointGoods.concat(products)).slice(0, 4),
         member: {
           avatar: storedUser.avatar || storedUser.avatarUrl || DEFAULT_AVATAR,
           nickname: storedUser.nickname || storedUser.nickName || assets.nickname || '三万天',
           phone: maskPhone(storedUser.phone || assets.phone),
           level: assets.levelName || assets.memberLevel || 'VIP 金卡会员',
           couponCount: formatNumber(assets.couponCount || assets.couponBalance || assets.coupons || 0),
-          integral: formatNumber(assets.integral || assets.points || 0),
+          integral: integral,
+          integralClass: integral.length > 7 ? 'compact' : '',
           browseCount: formatNumber(assets.browseCount || 6),
-          validUntil: assets.validUntil || assets.memberExpireAt || '2026.12.31'
+          validUntil: formatDate(assets.validUntil || assets.memberExpireAt, '2026.12.31')
         },
         loading: false
       })
@@ -212,5 +232,21 @@ Page({
 
   goMine: function () {
     wx.switchTab({ url: '/pages/user/index' })
+  },
+
+  onShareAppMessage: function () {
+    return {
+      title: '锦程祥瑞数码｜会员积分兑好礼',
+      path: '/pages/index/index',
+      imageUrl: this.data.bannerImages[0] || '/static/images/sign-icon-04.png'
+    }
+  },
+
+  onShareTimeline: function () {
+    return {
+      title: '锦程祥瑞数码｜会员积分兑好礼',
+      query: '',
+      imageUrl: this.data.bannerImages[0] || '/static/images/sign-icon-04.png'
+    }
   }
 })
