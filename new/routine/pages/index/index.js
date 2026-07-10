@@ -25,6 +25,11 @@ function formatDate(value, fallback) {
   return match[1] + '.' + ('0' + match[2]).slice(-2) + '.' + ('0' + match[3]).slice(-2)
 }
 
+function formatMemberLevel(value) {
+  var text = String(value || '').replace(/^VIP\s*/i, '').trim()
+  return text || '金卡会员'
+}
+
 function uniqueImages(items) {
   var seen = {}
   return items.map(function (item) { return item.image }).filter(function (image) {
@@ -40,6 +45,15 @@ function maskPhone(phone) {
   return '178****6520'
 }
 
+function normalizeAvatar(value) {
+  var text = String(value || '').trim()
+  if (!text) return DEFAULT_AVATAR
+  if (/^\/\//.test(text)) return 'https:' + text
+  if (/^http:\/\//i.test(text)) return text.replace(/^http:\/\//i, 'https://')
+  if (/^\//.test(text)) return 'https://ok.xjshunwei.cn' + text
+  return text
+}
+
 function readStoredUser() {
   var keys = ['USER_INFO', 'userInfo', 'USERINFO', 'LOGIN_USER_INFO']
   for (var i = 0; i < keys.length; i++) {
@@ -47,6 +61,8 @@ function readStoredUser() {
       var raw = wx.getStorageSync(keys[i])
       if (!raw) continue
       if (typeof raw === 'string') raw = JSON.parse(raw)
+      if (raw && raw.userInfo && typeof raw.userInfo === 'object') raw = raw.userInfo
+      if (raw && raw.data && typeof raw.data === 'object') raw = raw.data
       if (raw && typeof raw === 'object') return raw
     } catch (e) {}
   }
@@ -89,13 +105,13 @@ Page({
     bannerIndex: 0,
     member: {
       avatar: DEFAULT_AVATAR,
-      nickname: '三万天',
+      nickname: '微信会员',
       phone: '178****6520',
-      level: 'VIP 金卡会员',
-      couponCount: '0',
+      level: '金卡会员',
       integral: '0',
       integralClass: '',
-      browseCount: '6',
+      cashVoucher: '0',
+      cashVoucherClass: '',
       validUntil: '2026.12.31'
     },
     quickEntries: [
@@ -157,28 +173,31 @@ Page({
     return Promise.all([
       publicRequest('/api/products', { data: { page: 1, pageSize: 20, status: 'shown', source: 'vmall-official' } }).catch(function () { return { list: [] } }),
       publicRequest('/api/integral-mall/products').catch(function () { return [] }),
-      request('/api/member/assets').catch(function () { return {} })
+      request('/api/member/assets').catch(function () { return {} }),
+      request('/api/user/profile-extra').catch(function () { return {} })
     ]).then(function (results) {
       var productResult = results[0] || {}
       var productList = Array.isArray(productResult) ? productResult : (productResult.list || [])
       var products = productList.map(normalizeProduct)
-      var pointGoods = (results[1] || []).map(normalizePointGood).slice(0, 3)
+      var pointGoods = (results[1] || []).map(normalizePointGood).slice(0, 8)
       var assets = results[2] || {}
+      var profile = results[3] || {}
       var storedUser = readStoredUser()
       var integral = formatNumber(assets.integral || assets.points || 0)
+      var cashVoucher = formatMoney(assets.cashVoucher || 0)
       self.setData({
         products: products,
         pointGoods: pointGoods,
         bannerImages: uniqueImages(pointGoods.concat(products)).slice(0, 4),
         member: {
-          avatar: storedUser.avatar || storedUser.avatarUrl || DEFAULT_AVATAR,
-          nickname: storedUser.nickname || storedUser.nickName || assets.nickname || '三万天',
-          phone: maskPhone(storedUser.phone || assets.phone),
-          level: assets.levelName || assets.memberLevel || 'VIP 金卡会员',
-          couponCount: formatNumber(assets.couponCount || assets.couponBalance || assets.coupons || 0),
+          avatar: normalizeAvatar(profile.avatar || storedUser.avatar || storedUser.avatarUrl),
+          nickname: profile.nickname || storedUser.nickname || storedUser.nickName || '微信会员',
+          phone: maskPhone(profile.phone || storedUser.phone),
+          level: formatMemberLevel(assets.levelName || assets.memberLevel),
           integral: integral,
           integralClass: integral.length > 7 ? 'compact' : '',
-          browseCount: formatNumber(assets.browseCount || 6),
+          cashVoucher: cashVoucher,
+          cashVoucherClass: cashVoucher.length > 7 ? 'compact' : '',
           validUntil: formatDate(assets.validUntil || assets.memberExpireAt, '2026.12.31')
         },
         loading: false
@@ -190,6 +209,12 @@ Page({
 
   bannerChange: function (event) {
     this.setData({ bannerIndex: event.detail.current || 0 })
+  },
+
+  avatarError: function () {
+    if (this.data.member.avatar !== DEFAULT_AVATAR) {
+      this.setData({ 'member.avatar': DEFAULT_AVATAR })
+    }
   },
 
   goSearch: function () {

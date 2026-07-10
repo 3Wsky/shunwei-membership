@@ -50,22 +50,29 @@
       <view class="member-watermark one"></view>
       <view class="member-watermark two"></view>
       <view class="member-main">
-        <image class="member-avatar" src="{{member.avatar}}" mode="aspectFill"></image>
-        <view class="member-info">
-          <view class="member-name-row">
-            <text class="member-name">{{member.nickname}}</text>
-            <text class="member-level">{{member.level}}</text>
+        <view class="member-identity">
+          <image class="member-avatar" src="{{member.avatar}}" mode="aspectFill" binderror="avatarError"></image>
+          <view class="member-info">
+            <view class="member-name-row">
+              <text class="member-name">{{member.nickname}}</text>
+              <view class="member-level">
+                <text class="member-level-vip">VIP</text>
+                <text>{{member.level}}</text>
+              </view>
+            </view>
+            <view class="member-phone">{{member.phone}}</view>
           </view>
-          <view class="member-phone">{{member.phone}}</view>
         </view>
-        <view class="metric">
-          <view class="metric-value {{member.integralClass}}">{{member.integral}}</view>
-          <view class="metric-label">积分余额</view>
-        </view>
-        <view class="metric-divider"></view>
-        <view class="metric">
-          <view class="metric-value">{{member.browseCount}}</view>
-          <view class="metric-label">浏览记录</view>
+        <view class="member-metrics">
+          <view class="metric integral-metric">
+            <view class="metric-value {{member.integralClass}}">{{member.integral}}</view>
+            <view class="metric-label">积分余额</view>
+          </view>
+          <view class="metric-divider"></view>
+          <view class="metric voucher-metric">
+            <view class="metric-value {{member.cashVoucherClass}}"><text class="metric-currency">¥</text>{{member.cashVoucher}}</view>
+            <view class="metric-label">现金券余额</view>
+          </view>
         </view>
       </view>
       <view class="member-progress">
@@ -116,24 +123,24 @@
         <view class="section-title">积分兑好礼</view>
         <view class="section-more" bindtap="goPointsMall">更多好礼 <text class="iconfont icon-ic_rightarrow"></text></view>
       </view>
-      <scroll-view class="points-scroll" scroll-x="true" show-scrollbar="false">
-        <view class="points-row">
-          <view wx:for="{{pointGoods}}" wx:key="id" class="point-good" data-id="{{item.id}}" bindtap="openPointGood">
+      <swiper class="points-swiper" autoplay="{{pointGoods.length > 2}}" circular="{{pointGoods.length > 2}}" interval="3600" duration="520" display-multiple-items="2" easing-function="easeInOutCubic">
+        <swiper-item wx:for="{{pointGoods}}" wx:key="id" class="point-slide">
+          <view class="point-good" data-id="{{item.id}}" bindtap="openPointGood">
             <view class="point-img-wrap">
-              <image class="point-img" src="{{item.image}}" mode="aspectFit"></image>
+              <image class="point-img" src="{{item.image}}" mode="aspectFit" lazy-load="true"></image>
             </view>
             <view class="point-info">
               <view class="point-title">{{item.title}}</view>
               <view class="point-price">{{item.points}}</view>
             </view>
           </view>
-        </view>
-      </scroll-view>
+        </swiper-item>
+      </swiper>
     </view>
 
     <view class="recommend-section">
       <view class="recommend-head">
-        <view>
+        <view class="recommend-title-group">
           <view class="section-title">精品推荐</view>
           <view class="recommend-sub">正品保障｜售后无忧｜分期免息</view>
         </view>
@@ -143,7 +150,7 @@
         <view class="product-row">
           <view wx:for="{{products}}" wx:key="id" class="product-card" data-id="{{item.id}}" bindtap="openProduct">
             <view class="product-img-wrap">
-              <image class="product-img" src="{{item.image}}" mode="aspectFit"></image>
+              <image class="product-img" src="{{item.image}}" mode="aspectFit" lazy-load="true"></image>
             </view>
             <view class="product-name">{{item.title}}</view>
             <view class="product-spec">{{item.spec}}</view>
@@ -162,19 +169,20 @@
   </view>
 
   <view class="home-tabbar">
-    <view class="tab-item active">
+    <view class="tab-item active" hover-class="tab-pressed" hover-stay-time="120">
       <view class="tab-icon"><text class="iconfont icon-shouye"></text></view>
       <view class="tab-text">首页</view>
+      <view class="tab-active-dot"></view>
     </view>
-    <view class="tab-item" bindtap="goCategory">
+    <view class="tab-item" bindtap="goCategory" hover-class="tab-pressed" hover-stay-time="120">
       <view class="tab-icon"><text class="iconfont icon-fenlei"></text></view>
       <view class="tab-text">分类</view>
     </view>
-    <view class="tab-item" bindtap="goPointsMall">
+    <view class="tab-item" bindtap="goPointsMall" hover-class="tab-pressed" hover-stay-time="120">
       <view class="tab-icon"><text class="iconfont icon-jifenshangcheng"></text></view>
       <view class="tab-text">积分商城</view>
     </view>
-    <view class="tab-item" bindtap="goMine">
+    <view class="tab-item" bindtap="goMine" hover-class="tab-pressed" hover-stay-time="120">
       <view class="tab-icon"><text class="iconfont icon-geren"></text></view>
       <view class="tab-text">我的</view>
     </view>
