@@ -1,1 +1,50 @@
-page{background:#fff}.wrapper{position:relative;height:100vh}.wrapper .bag{position:absolute;top:0;left:0;width:100%;opacity:.8;z-index:-1}.wrapper .bag ._img{width:100%;height:838rpx}.wrapper .merchant-msg{padding-top:252rpx;display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:2}.wrapper .merchant-msg ._img{width:152rpx;height:152rpx;border-radius:50%}.wrapper .merchant-msg .name{font-size:40rpx;font-weight:500;color:#333;line-height:56rpx;margin-top:32rpx}.wechat_login{margin-top:96rpx}.wechat_login .img image{width:100%}.wechat_login .btn-wrapper{padding:0 66rpx}.wechat_login .btn-wrapper button{width:100%;height:86rpx;line-height:86rpx;margin-bottom:40rpx;border-radius:120rpx;font-size:30rpx}.wechat_login .btn-wrapper button.btn1{color:#fff}.wechat_login .btn-wrapper button.btn2{color:#666;border:1px solid #e4e4e4;margin-bottom:30rpx}.wechat_login .btn-wrapper .cancel-login{color:#999;font-size:28rpx;text-align:center}.title-bar{position:relative;display:flex;align-items:center;justify-content:center;font-size:34rpx;font-weight:500;color:#333;line-height:48rpx}.icon{position:absolute;left:30rpx;top:0;display:flex;align-items:center;justify-content:center;width:80rpx;height:80rpx}.icon image{width:50rpx;height:50rpx}.protocol{position:fixed;bottom:52rpx;left:0;width:100%;margin:0 auto;color:#999;font-size:24rpx;line-height:22rpx;text-align:center;bottom:calc(52rpx + constant(safe-area-inset-bottom));bottom:calc(52rpx + env(safe-area-inset-bottom))}.protocol .main-color{color:var(--view-theme)}.protocol .trembling{-webkit-animation:shake .6s;animation:shake .6s}.protocol uni-checkbox .uni-checkbox-input{width:28rpx;height:28rpx}.protocol uni-checkbox .uni-checkbox-input.uni-checkbox-input-checked::before{font-size:24rpx}.protocol uni-checkbox .uni-checkbox-wrapper{margin-bottom:1px}.protocol checkbox .wx-checkbox-input{width:28rpx;height:28rpx}.protocol checkbox .wx-checkbox-input.wx-checkbox-input-checked{background:#fff}.protocol checkbox .wx-checkbox-input.wx-checkbox-input-checked::before{width:28rpx;height:28rpx;line-height:28rpx;text-align:center;font-size:22rpx;background:transparent;transform:translate(-50%,-50%) scale(1);-webkit-transform:translate(-50%,-50%) scale(1)}
+page { background: #FAF7F2; }
+
+.wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  color: #2D2722;
+  background: linear-gradient(180deg, #FFFDF9 0%, #FAF6F0 55%, #F7F1EA 100%);
+}
+
+.page-backdrop { position: absolute; top: 0; right: 0; left: 0; height: 440rpx; overflow: hidden; pointer-events: none; }
+.backdrop-line { position: absolute; height: 1rpx; background: linear-gradient(90deg, transparent, rgba(201, 145, 75, 0.28), transparent); transform: rotate(-17deg); }
+.line-one { top: 160rpx; right: -90rpx; left: -80rpx; }
+.line-two { top: 260rpx; right: -130rpx; left: 40rpx; }
+
+.system-height { position: relative; z-index: 2; }
+.title-bar { position: relative; z-index: 3; height: 86rpx; display: flex; align-items: center; justify-content: center; color: #38302A; font-size: 30rpx; font-weight: 700; }
+.nav-button { position: absolute; top: 8rpx; left: 20rpx; width: 70rpx; height: 70rpx; display: flex; align-items: center; justify-content: center; border: 1rpx solid #EEE5DB; border-radius: 24rpx; background: rgba(255, 255, 255, 0.82); }
+.nav-button image { width: 34rpx; height: 34rpx; }
+
+.login-content { position: relative; z-index: 2; padding: 28rpx 28rpx calc(30rpx + env(safe-area-inset-bottom)); }
+.brand-area { display: flex; flex-direction: column; align-items: center; padding: 22rpx 0 34rpx; }
+.brand-emblem { width: 118rpx; height: 118rpx; padding: 7rpx; overflow: hidden; box-sizing: border-box; border: 1rpx solid #E7C999; border-radius: 36rpx; background: #FFF9EE; box-shadow: 0 13rpx 30rpx rgba(142, 92, 38, 0.12); }
+.brand-logo { width: 100%; height: 100%; border-radius: 29rpx; background: #FFFFFF; transform: scale(1.38); }
+.brand-name { margin-top: 22rpx; color: #2E2823; font-size: 40rpx; font-weight: 800; line-height: 52rpx; }
+.brand-subtitle { margin-top: 5rpx; color: #8D8177; font-size: 23rpx; letter-spacing: 3rpx; }
+.brand-divider { width: 350rpx; margin-top: 20rpx; display: flex; align-items: center; justify-content: center; color: #B79A78; font-size: 16rpx; font-weight: 700; letter-spacing: 2rpx; }
+.brand-divider view { width: 62rpx; height: 1rpx; margin: 0 14rpx; background: #DECDBA; }
+
+.login-card { padding: 34rpx 30rpx 30rpx; border: 1rpx solid #EEE5DB; border-radius: 28rpx; background: rgba(255, 255, 255, 0.96); box-shadow: 0 16rpx 42rpx rgba(92, 65, 40, 0.09); }
+.card-kicker { color: #B17A38; font-size: 17rpx; font-weight: 800; letter-spacing: 2rpx; }
+.card-title { margin-top: 8rpx; color: #2D2722; font-size: 34rpx; font-weight: 800; line-height: 44rpx; }
+.card-desc { margin-top: 8rpx; color: #978B80; font-size: 22rpx; line-height: 34rpx; }
+.wechat_login { margin-top: 30rpx; }
+.wechat_login .btn-wrapper { padding: 0; }
+.wechat_login .btn-wrapper button { margin: 0; padding: 0; }
+.wechat-btn { width: 100%; height: 84rpx; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 20rpx; color: #FFFFFF; background: linear-gradient(135deg, #FF8350, #FF602C); box-shadow: 0 11rpx 24rpx rgba(255, 105, 45, 0.22); font-size: 28rpx; font-weight: 700; line-height: 84rpx; }
+.wechat-btn::after { border: 0; }
+.wechat-btn image { width: 36rpx; height: 36rpx; margin-right: 13rpx; }
+.secure-tip { margin-top: 18rpx; display: flex; align-items: center; justify-content: center; color: #9A8F85; font-size: 20rpx; }
+.secure-mark { width: 28rpx; height: 28rpx; margin-right: 7rpx; border-radius: 50%; color: #4F9B76; background: #E4F3EB; font-size: 17rpx; line-height: 28rpx; text-align: center; }
+.cancel-login { margin-top: 22rpx; color: #94887E; font-size: 24rpx; text-align: center; }
+
+.protocol { margin-top: 24rpx; color: #9A8F85; font-size: 21rpx; line-height: 34rpx; text-align: center; }
+.protocol .main-color { color: #B37834; }
+.protocol .trembling { animation: shake .6s; }
+.protocol checkbox .wx-checkbox-input { width: 28rpx; height: 28rpx; margin-right: 7rpx; border-color: #D8C8B7; border-radius: 8rpx; }
+.protocol checkbox .wx-checkbox-input.wx-checkbox-input-checked { border-color: #C18A48; background: #C18A48; }
+.protocol checkbox .wx-checkbox-input.wx-checkbox-input-checked::before { width: 28rpx; height: 28rpx; color: #FFFFFF; background: transparent; font-size: 22rpx; line-height: 28rpx; text-align: center; transform: translate(-50%, -50%) scale(1); }
+.page-foot { margin-top: 28rpx; color: #B1A69D; font-size: 19rpx; letter-spacing: 2rpx; text-align: center; }
