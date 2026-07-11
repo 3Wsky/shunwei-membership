@@ -15,7 +15,8 @@ Page({
     stockHint: '',
     balance: 0,
     loading: true,
-    submitting: false
+    submitting: false,
+    exchangeDialog: false
   },
   onLoad(options) {
     this.setData({ id: Number((options && options.id) || 0) })
@@ -54,18 +55,24 @@ Page({
     if (this.data.submitting) return
     if (!this.data.canExchange) return wx.showToast({ title: this.data.stockHint || '暂不可兑换', icon: 'none' })
     if (this.data.balance < this.data.price) return wx.showToast({ title: '积分不足', icon: 'none' })
-    wx.showModal({
-      title: '确认兑换',
-      content: '使用 ' + this.data.price + ' 积分兑换「' + this.data.title + '」？',
-      confirmText: '确认兑换',
-      success: (res) => { if (res.confirm) this.doExchange() }
-    })
+    this.setData({ exchangeDialog: true })
+  },
+  cancelExchange() {
+    if (!this.data.submitting) this.setData({ exchangeDialog: false })
+  },
+  confirmExchange() {
+    if (this.data.submitting) return
+    this.setData({ exchangeDialog: false })
+    this.doExchange()
+  },
+  noop() {
+    // Stops taps inside the dialog from closing it.
   },
   doExchange() {
     this.setData({ submitting: true })
     request('/api/integral-mall/exchange', { method: 'POST', data: { productId: this.data.id } })
       .then(() => {
-        wx.showModal({ title: '兑换成功', content: '已使用 ' + this.data.price + ' 积分兑换「' + this.data.title + '」', showCancel: false })
+        wx.showToast({ title: '兑换成功', icon: 'success' })
         this.load()
       })
       .catch((err) => wx.showToast({ title: err.message, icon: 'none' }))

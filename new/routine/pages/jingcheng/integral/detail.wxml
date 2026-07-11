@@ -57,4 +57,39 @@
       {{submitting ? '兑换中…' : (canExchange ? '立即兑换' : (stockHint || '暂不可兑'))}}
     </view>
   </view>
+
+  <view wx:if="{{exchangeDialog}}" class="exchange-mask" bindtap="cancelExchange">
+    <view class="exchange-dialog" catchtap="noop">
+      <view class="exchange-close" bindtap="cancelExchange">×</view>
+      <view class="exchange-badge"><text class="iconfont icon-jifenshangcheng"></text></view>
+      <view class="exchange-heading">确认兑换</view>
+      <view class="exchange-subheading">请确认本次积分兑换权益</view>
+
+      <view class="exchange-product">
+        <image wx:if="{{image}}" class="exchange-product-img" src="{{image}}" mode="aspectFit"></image>
+        <view wx:else class="exchange-product-img exchange-product-fallback">兑</view>
+        <view class="exchange-product-main">
+          <view class="exchange-product-name">{{title}}</view>
+          <view class="exchange-product-stock">库存 {{stock}} 件</view>
+        </view>
+      </view>
+
+      <view class="exchange-points-row">
+        <view>
+          <view class="exchange-points-label">本次消耗</view>
+          <view class="exchange-points"><text>{{price}}</text> 积分</view>
+        </view>
+        <view class="exchange-balance">
+          <view class="exchange-points-label">可用积分</view>
+          <view>{{balance}}</view>
+        </view>
+      </view>
+
+      <view class="exchange-note">兑换成功后请按门店指引领取，积分将立即扣除。</view>
+      <view class="exchange-actions">
+        <view class="exchange-button cancel" bindtap="cancelExchange" hover-class="exchange-button-pressed" hover-stay-time="120">再想想</view>
+        <view class="exchange-button confirm {{submitting ? 'disabled' : ''}}" bindtap="confirmExchange" hover-class="exchange-button-pressed" hover-stay-time="120">{{submitting ? '兑换中…' : '确认兑换'}}</view>
+      </view>
+    </view>
+  </view>
 </view>

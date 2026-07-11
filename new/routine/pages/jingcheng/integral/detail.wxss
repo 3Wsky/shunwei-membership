@@ -218,6 +218,216 @@ page {
   line-height: 1.6;
 }
 
+/* Exchange dialog */
+.exchange-mask {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  box-sizing: border-box;
+  background: rgba(24, 20, 16, 0.48);
+}
+
+.exchange-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 640rpx;
+  padding: 40rpx 34rpx 30rpx;
+  border-radius: 28rpx;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #FFFDF9 0%, #FFFFFF 42%);
+  box-shadow: 0 28rpx 70rpx rgba(17, 13, 9, 0.24);
+  animation: exchange-dialog-pop 240ms cubic-bezier(0.2, 0.85, 0.3, 1) both;
+}
+
+.exchange-close {
+  position: absolute;
+  right: 22rpx;
+  top: 20rpx;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  color: #9B8F84;
+  background: #F6F1EA;
+  font-size: 34rpx;
+  line-height: 44rpx;
+  text-align: center;
+}
+
+.exchange-badge {
+  width: 66rpx;
+  height: 66rpx;
+  margin: 0 auto 16rpx;
+  border-radius: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A56E28;
+  background: linear-gradient(135deg, #FFF2D6, #F9D89A);
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
+}
+
+.exchange-badge .iconfont {
+  font-size: 36rpx;
+}
+
+.exchange-heading {
+  color: #241D17;
+  font-size: 36rpx;
+  font-weight: 800;
+  line-height: 46rpx;
+  text-align: center;
+}
+
+.exchange-subheading {
+  margin-top: 6rpx;
+  color: #95887C;
+  font-size: 23rpx;
+  line-height: 32rpx;
+  text-align: center;
+}
+
+.exchange-product {
+  display: flex;
+  align-items: center;
+  margin-top: 30rpx;
+  padding: 16rpx;
+  border-radius: 18rpx;
+  background: #FAF7F2;
+}
+
+.exchange-product-img {
+  width: 104rpx;
+  height: 104rpx;
+  flex: 0 0 104rpx;
+  border-radius: 14rpx;
+  background: #FFFFFF;
+}
+
+.exchange-product-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C9A227;
+  font-size: 42rpx;
+  font-weight: 800;
+}
+
+.exchange-product-main {
+  min-width: 0;
+  flex: 1;
+  margin-left: 18rpx;
+}
+
+.exchange-product-name {
+  overflow: hidden;
+  color: #30271F;
+  font-size: 27rpx;
+  line-height: 36rpx;
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.exchange-product-stock {
+  margin-top: 8rpx;
+  color: #9D8F80;
+  font-size: 21rpx;
+}
+
+.exchange-points-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 26rpx;
+}
+
+.exchange-points-label {
+  color: #9A8E83;
+  font-size: 21rpx;
+  line-height: 30rpx;
+}
+
+.exchange-points {
+  margin-top: 2rpx;
+  color: #AF762C;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.exchange-points text {
+  margin-right: 4rpx;
+  font-size: 46rpx;
+  line-height: 54rpx;
+  font-weight: 900;
+}
+
+.exchange-balance {
+  padding-bottom: 4rpx;
+  color: #4B4037;
+  font-size: 27rpx;
+  line-height: 36rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
+.exchange-note {
+  margin-top: 24rpx;
+  padding: 14rpx 16rpx;
+  border-radius: 12rpx;
+  color: #8B7864;
+  background: #FFF7E8;
+  font-size: 21rpx;
+  line-height: 31rpx;
+}
+
+.exchange-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 28rpx;
+}
+
+.exchange-button {
+  flex: 1;
+  height: 82rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 27rpx;
+  font-weight: 800;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.exchange-button.cancel {
+  color: #766A5F;
+  background: #F5F1EB;
+}
+
+.exchange-button.confirm {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #E8B84E, #C99432);
+  box-shadow: 0 10rpx 22rpx rgba(194, 135, 49, 0.25);
+}
+
+.exchange-button.disabled {
+  opacity: 0.6;
+}
+
+.exchange-button-pressed {
+  opacity: 0.76;
+  transform: scale(0.97);
+}
+
+@keyframes exchange-dialog-pop {
+  from { transform: translateY(26rpx) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
 /* Bottom bar */
 .bottom-spacer {
   height: 140rpx;
