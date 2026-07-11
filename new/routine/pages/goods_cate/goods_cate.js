@@ -30,8 +30,6 @@ function productView(product) {
   if (product.isNew) badges.push('新品')
   if (product.isHot) badges.push('热卖')
   if (product.isBest) badges.push('精选')
-  if (!badges.length && product.brand) badges.push(product.brand)
-
   return {
     ...product,
     displayName: product.storeName || product.model || '数码商品',
@@ -42,7 +40,7 @@ function productView(product) {
     meta: [
       configs.length ? configs.length + '种配置' : '',
       colors.length ? colors.length + '款颜色' : ''
-    ].filter(Boolean).join(' · ') || cleanText(product.storeInfo || '官方正品')
+    ].filter(Boolean).join(' · ')
   }
 }
 

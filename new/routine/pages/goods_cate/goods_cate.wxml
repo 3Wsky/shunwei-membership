@@ -26,23 +26,17 @@
           hover-class="entry-pressed"
           hover-stay-time="100"
         >
-          <view class="category-icon tone-{{item.tone}}">{{item.shortName}}</view>
           <view class="category-name">{{item.name}}</view>
-          <view wx:if="{{item.productCount}}" class="category-count">{{item.productCount}}</view>
         </view>
       </view>
     </scroll-view>
   </view>
 
   <view class="catalog-head">
-    <view>
-      <view class="catalog-title">{{activeCategoryName}}</view>
-      <view class="catalog-subtitle">来自 fzlsaas 商品库 · {{products.length}} 件商品</view>
-    </view>
-    <view class="quality-mark">
-      <text class="quality-dot"></text>
-      正品保障
-    </view>
+      <view>
+        <view class="catalog-title">{{activeCategoryName}}</view>
+      </view>
+    <view class="catalog-count">{{products.length}} 件</view>
   </view>
 
   <view wx:if="{{products.length}}" class="product-grid">
@@ -64,7 +58,7 @@
       </view>
       <view class="product-content">
         <view class="product-name">{{item.displayName}}</view>
-        <view class="product-meta">{{item.meta}}</view>
+        <view wx:if="{{item.meta}}" class="product-meta">{{item.meta}}</view>
         <view class="product-footer">
           <view class="product-price {{item.priceAvailable ? '' : 'consult'}}">
             <text wx:if="{{item.priceAvailable}}" class="currency">¥</text>{{item.displayPrice}}
