@@ -1,11 +1,11 @@
 <view class="page">
-  <swiper wx:if="{{images.length > 1}}" class="hero" indicator-dots="{{true}}" autoplay="{{true}}" circular="{{true}}" interval="4000">
-    <swiper-item wx:for="{{images}}" wx:key="*this">
-      <image class="hero-img" src="{{item}}" mode="aspectFill"/>
+  <swiper wx:if="{{images.length > 1}}" class="hero" indicator-dots="{{true}}" indicator-color="rgba(34,34,34,.18)" indicator-active-color="#8a8178" autoplay="{{true}}" circular="{{true}}" interval="4000">
+    <swiper-item wx:for="{{images}}" wx:key="*this" class="hero-item">
+      <image class="hero-img" src="{{item}}" mode="aspectFit" lazy-load="true"/>
     </swiper-item>
   </swiper>
-  <view wx:elif="{{image}}" class="hero">
-    <image class="hero-img" src="{{image}}" mode="aspectFill"/>
+  <view wx:elif="{{image}}" class="hero hero-single">
+    <image class="hero-img" src="{{image}}" mode="aspectFit" lazy-load="true"/>
   </view>
   <view wx:else class="hero placeholder"><text>兑</text></view>
 
