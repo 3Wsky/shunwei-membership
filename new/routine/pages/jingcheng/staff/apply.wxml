@@ -140,8 +140,9 @@
           <view class="input-card">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
-              <view class="input-card-title">产品价格</view>
-              <input class="field-input-new" type="digit" value="{{product.price}}" data-pindex="{{pIndex}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph"/>
+              <view class="input-card-title">产品价格 <text wx:if="{{product.catalogPrice > 0}}" class="verify-badge ok">已按产品库锁定</text></view>
+              <input class="field-input-new" type="digit" value="{{product.price}}" data-pindex="{{pIndex}}" bindinput="onPrice" placeholder="请输入产品价格" placeholder-class="ph" disabled="{{product.catalogPrice > 0}}"/>
+              <view wx:if="{{product.catalogPrice > 0}}" class="catalog-price-tip">已核实产品库价格 ¥{{product.catalogPrice}}，权益将按该价格匹配</view>
             </view>
             <text class="iconfont icon-qiandai input-card-icon"></text>
           </view>

@@ -2,6 +2,16 @@ const { request, getToken, BASE_URL } = require('../../../services/jc-request')
 const { recogniseSn } = require('../../../services/sn-recognise')
 const { OCR_SN_SCAN_ENABLED } = require('../../../services/feature-flags')
 
+function toPrice(value) {
+  const amount = Number(String(value || '').replace(/[^\d.]/g, ''))
+  return Number.isFinite(amount) && amount > 0 ? amount : 0
+}
+
+function tierRangeText(rule) {
+  if (!rule) return ''
+  return rule.maxAmount ? rule.minAmount + '-' + rule.maxAmount + '元档' : rule.minAmount + '元以上档'
+}
+
 Page({
   data: {
     ocrEnabled: OCR_SN_SCAN_ENABLED,
@@ -20,6 +30,7 @@ Page({
         sn: '',
         imei: '',
         price: '',
+        catalogPrice: 0,
         verified: false,
         checking: false
       }
@@ -48,6 +59,7 @@ Page({
           sn: '',
           imei: '',
           price: '',
+          catalogPrice: 0,
           verified: false,
           checking: false
         }
@@ -62,6 +74,7 @@ Page({
     const products = this.data.products
     products[pIdx].type = type
     products[pIdx].verified = false
+    products[pIdx].catalogPrice = 0
     this.setData({ products })
   },
   onModel(e) {
@@ -74,6 +87,7 @@ Page({
     const pIdx = Number(e.currentTarget.dataset.pindex)
     const products = this.data.products
     products[pIdx].price = e.detail.value
+    products[pIdx].catalogPrice = 0
     this.setData({ products })
   },
   onSn(e) {
@@ -81,6 +95,7 @@ Page({
     const products = this.data.products
     products[pIdx].sn = e.detail.value
     products[pIdx].verified = false
+    products[pIdx].catalogPrice = 0
     this.setData({ products })
   },
   onImei(e) {
@@ -88,6 +103,7 @@ Page({
     const products = this.data.products
     products[pIdx].imei = e.detail.value
     products[pIdx].verified = false
+    products[pIdx].catalogPrice = 0
     this.setData({ products })
   },
   // 手动输入完 IMEI/SN 失焦时，自动对照产品库核对并回填型号
@@ -113,6 +129,7 @@ Page({
       sn: '',
       imei: '',
       price: '',
+      catalogPrice: 0,
       verified: false,
       checking: false
     })
@@ -228,7 +245,13 @@ Page({
       if (r && r.found) {
         // 命中仅作核对（防别人家的码）：标记已核对，不回填型号/价格，型号价格由店员手动填写
         list[pIdx].verified = true
+        const catalogPrice = toPrice(r.price)
+        if (catalogPrice > 0) {
+          list[pIdx].catalogPrice = catalogPrice
+          list[pIdx].price = String(catalogPrice)
+        }
         that.setData({ products: list, scanning: false })
+        if (catalogPrice > 0) return wx.showToast({ title: '已核对，已锁定产品库价格', icon: 'none' })
         wx.showToast({ title: '已核对（请手动填写型号价格）', icon: 'none' })
       } else {
         list[pIdx].verified = false
@@ -281,7 +304,7 @@ Page({
       this.confirmUnverifiedThenSubmit(products, rule)
       return
     }
-    this.doSubmit(products, rule)
+    this.confirmTierThenSubmit(products, rule)
   },
   confirmUnverifiedThenSubmit(products, rule) {
     const that = this
@@ -295,16 +318,54 @@ Page({
       cancelText: '返回核对',
       confirmText: '坚持提交',
       success(res) {
-        if (res.confirm) that.doSubmit(products, rule)
+        if (res.confirm) that.confirmTierThenSubmit(products, rule)
       }
     })
   },
-  doSubmit(products, rule) {
+  matchTierRule(amount) {
+    const value = Number(amount || 0)
+    return (this.data.rules || []).find((item) => {
+      const min = Number(item.minAmount || 0)
+      const max = Number(item.maxAmount || 0)
+      return value >= min && (!max || value <= max)
+    }) || null
+  },
+  confirmTierThenSubmit(products, selectedRule) {
+    const consumeAmount = products.reduce((sum, product) => {
+      return sum + (toPrice(product.catalogPrice) || toPrice(product.price))
+    }, 0)
+    const matchedRule = this.matchTierRule(consumeAmount)
+    if (!matchedRule) {
+      wx.showModal({
+        title: '未匹配到权益档位',
+        content: '核实后的产品总价为 ¥' + consumeAmount + '，不在当前任何权益档位范围内，请联系管理员检查档位配置。',
+        showCancel: false,
+        confirmText: '返回修改'
+      })
+      return
+    }
+    if (Number(matchedRule.id) !== Number(selectedRule.id)) {
+      const lockedCount = products.filter((product) => toPrice(product.catalogPrice) > 0).length
+      wx.showModal({
+        title: '权益档位已修正',
+        content: '产品核实总价 ¥' + consumeAmount + '，应使用“' + tierRangeText(matchedRule) + '”。现金券将由 ¥' + selectedRule.voucherAmount + ' 调整为 ¥' + matchedRule.voucherAmount + '，积分同步按正确档位发放。' + (lockedCount ? '\n已核对产品已按产品库价格计算。' : ''),
+        cancelText: '返回修改',
+        confirmText: '按正确档位提交',
+        success: (res) => {
+          if (res.confirm) this.doSubmit(products, matchedRule, consumeAmount)
+        }
+      })
+      return
+    }
+    this.doSubmit(products, matchedRule, consumeAmount)
+  },
+  doSubmit(products, rule, consumeAmount) {
     const parts = products.map((p, idx) => {
       const itemParts = []
       if (p.type) itemParts.push(p.type)
       if (p.model) itemParts.push(String(p.model).trim())
-      if (p.price) itemParts.push('¥' + String(p.price).trim())
+      const actualPrice = toPrice(p.catalogPrice) || toPrice(p.price)
+      if (actualPrice) itemParts.push('¥' + actualPrice)
       const isPhone = p.type === '手机'
       const imei1 = String(p.imei || '').trim()
       const sn = String(p.sn || '').trim()
@@ -320,19 +381,27 @@ Page({
     let receiptNo = parts.join('; ')
     if (receiptNo.length > 240) receiptNo = receiptNo.slice(0, 240)
 
-    const consumeAmount = products.reduce((sum, p) => {
-      const v = parseFloat(String(p.price).replace(/[^\d.]/g, ''))
-      return sum + (isNaN(v) ? 0 : v)
-    }, 0)
-
     this.setData({ submitting: true })
     request('/api/approval/submit', {
       method: 'POST',
       data: { customerUid: this.data.member.uid, tierRuleId: rule.id, consumeAmount, receiptNo }
-    }).then(() => {
+    }).then((result) => {
       this.setData({ showProduct: false })
-      wx.showToast({ title: '已提交店长审批', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1200)
+      const done = () => {
+        wx.showToast({ title: '已提交店长审批', icon: 'success' })
+        setTimeout(() => wx.navigateBack(), 1200)
+      }
+      if (result && result.corrected) {
+        wx.showModal({
+          title: '已按核实价格修正',
+          content: '后端已按产品库核实总价 ¥' + result.effectiveAmount + ' 重新匹配权益档位，最终发放金额以正确档位为准。',
+          showCancel: false,
+          confirmText: '我知道了',
+          success: done
+        })
+      } else {
+        done()
+      }
     }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
       .finally(() => this.setData({ submitting: false }))
   }

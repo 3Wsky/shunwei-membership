@@ -745,3 +745,10 @@ page {
   color: #1F6BFF;
   font-size: 26rpx;
 }
+
+.catalog-price-tip {
+  margin-top: 8rpx;
+  color: #2D8A62;
+  font-size: 21rpx;
+  line-height: 30rpx;
+}
