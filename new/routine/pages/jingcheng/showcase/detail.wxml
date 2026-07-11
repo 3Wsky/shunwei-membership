@@ -1,7 +1,7 @@
 <view wx:if="{{product}}" class="page">
-  <swiper wx:if="{{gallery.length}}" class="banner" circular indicator-dots>
-    <swiper-item wx:for="{{gallery}}" wx:key="*this">
-      <image class="banner-img" src="{{item}}" mode="aspectFill" />
+  <swiper wx:if="{{gallery.length}}" class="banner" circular indicator-dots indicator-color="rgba(34,34,34,.18)" indicator-active-color="#8a8178">
+    <swiper-item wx:for="{{gallery}}" wx:key="*this" class="banner-item">
+      <image class="banner-img" src="{{item}}" mode="aspectFit" lazy-load="true" />
     </swiper-item>
   </swiper>
   <view class="info">

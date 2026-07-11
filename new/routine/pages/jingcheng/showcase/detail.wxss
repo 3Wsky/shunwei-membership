@@ -1,6 +1,7 @@
 .page{padding-bottom:40rpx;background:#f7f6f2}
-.banner{height:560rpx}
-.banner-img{width:100%;height:560rpx}
+.banner{height:640rpx;background:linear-gradient(180deg,#fff 0%,#f8f7f5 100%)}
+.banner-item{padding:12rpx 20rpx 22rpx;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+.banner-img{display:block;width:100%;height:606rpx;background:#fff;border-radius:12rpx}
 .info{margin:24rpx;padding:28rpx;background:#fff;border-radius:20rpx}
 .name{font-size:34rpx;font-weight:600;color:#1a1f36}
 .price{margin-top:12rpx;font-size:36rpx;color:#b48b16;font-weight:700}
