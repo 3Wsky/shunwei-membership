@@ -1,1 +1,110 @@
-<view style="{{(colorStyle)}}" class="data-v-5d0cdfa2"><block wx:if="{{category==1}}"><goods-cate1 vue-id="1c492980-1" isNew="{{isNew}}" data-ref="classOne" class="data-v-5d0cdfa2 vue-ref" bind:__l="__l"></goods-cate1></block><block wx:if="{{category==2}}"><goods-cate2 vue-id="1c492980-2" isNew="{{isNew}}" data-ref="classTwo" data-event-opts="{{[['^jumpIndex',[['jumpIndex']]]]}}" bind:jumpIndex="__e" class="data-v-5d0cdfa2 vue-ref" bind:__l="__l"></goods-cate2></block><block wx:if="{{category==3}}"><goods-cate3 vue-id="1c492980-3" isNew="{{isNew}}" data-ref="classThree" data-event-opts="{{[['^jumpIndex',[['jumpIndex']]]]}}" bind:jumpIndex="__e" class="data-v-5d0cdfa2 vue-ref" bind:__l="__l"></goods-cate3></block><block wx:if="{{category==1}}"><page-footer data-custom-hidden="{{!(showBar)}}" bind:newDataStatus="__e" vue-id="1c492980-4" data-event-opts="{{[['^newDataStatus',[['newDataStatus']]]]}}" class="data-v-5d0cdfa2" bind:__l="__l"></page-footer></block></view>
+<view class="category-page">
+  <view class="top-shell">
+    <view class="search-box">
+      <text class="iconfont icon-sousuo5 search-icon"></text>
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜索手机、平板、电脑或型号"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="submitSearch"
+      />
+      <view wx:if="{{keyword}}" class="search-clear" bindtap="clearSearch">×</view>
+      <view class="search-submit" bindtap="submitSearch">搜索</view>
+    </view>
+
+    <scroll-view class="category-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="category-track">
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="category-entry {{activeCategoryId === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          data-name="{{item.name === '全部' ? '全部商品' : item.name}}"
+          bindtap="selectCategory"
+          hover-class="entry-pressed"
+          hover-stay-time="100"
+        >
+          <view class="category-icon tone-{{item.tone}}">{{item.shortName}}</view>
+          <view class="category-name">{{item.name}}</view>
+          <view wx:if="{{item.productCount}}" class="category-count">{{item.productCount}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="catalog-head">
+    <view>
+      <view class="catalog-title">{{activeCategoryName}}</view>
+      <view class="catalog-subtitle">来自 fzlsaas 商品库 · {{products.length}} 件商品</view>
+    </view>
+    <view class="quality-mark">
+      <text class="quality-dot"></text>
+      正品保障
+    </view>
+  </view>
+
+  <view wx:if="{{products.length}}" class="product-grid">
+    <view
+      wx:for="{{products}}"
+      wx:key="id"
+      class="product-card"
+      data-id="{{item.id}}"
+      bindtap="openProduct"
+      hover-class="product-pressed"
+      hover-stay-time="100"
+    >
+      <view class="product-visual">
+        <image wx:if="{{item.displayImage}}" class="product-image" src="{{item.displayImage}}" mode="aspectFit" lazy-load></image>
+        <view wx:else class="product-placeholder">数码好物</view>
+        <view wx:if="{{item.badges.length}}" class="badge-row">
+          <view wx:for="{{item.badges}}" wx:for-item="badge" wx:key="*this" class="product-badge">{{badge}}</view>
+        </view>
+      </view>
+      <view class="product-content">
+        <view class="product-name">{{item.displayName}}</view>
+        <view class="product-meta">{{item.meta}}</view>
+        <view class="product-footer">
+          <view class="product-price {{item.priceAvailable ? '' : 'consult'}}">
+            <text wx:if="{{item.priceAvailable}}" class="currency">¥</text>{{item.displayPrice}}
+          </view>
+          <view class="detail-arrow"><text class="iconfont icon-ic_rightarrow"></text></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{loading}}" class="state-block">
+    <view class="state-loader"></view>
+    <view>正在同步商品分类</view>
+  </view>
+
+  <view wx:else class="state-block empty-state">
+    <view class="empty-symbol">品</view>
+    <view class="empty-title">{{errorText || '该分类暂无上架商品'}}</view>
+    <view class="empty-subtitle">可以切换其他分类继续浏览</view>
+  </view>
+
+  <view class="page-spacer"></view>
+
+  <view class="category-tabbar">
+    <view class="tab-item" bindtap="goHome" hover-class="tab-pressed" hover-stay-time="100">
+      <view class="tab-icon"><text class="iconfont icon-shouye"></text></view>
+      <view class="tab-text">首页</view>
+    </view>
+    <view class="tab-item active">
+      <view class="tab-icon"><text class="iconfont icon-fenlei"></text></view>
+      <view class="tab-text">分类</view>
+      <view class="tab-active-dot"></view>
+    </view>
+    <view class="tab-item" bindtap="goPointsMall" hover-class="tab-pressed" hover-stay-time="100">
+      <view class="tab-icon"><text class="iconfont icon-jifenshangcheng"></text></view>
+      <view class="tab-text">积分商城</view>
+    </view>
+    <view class="tab-item" bindtap="goMine" hover-class="tab-pressed" hover-stay-time="100">
+      <view class="tab-icon"><text class="iconfont icon-geren"></text></view>
+      <view class="tab-text">我的</view>
+    </view>
+  </view>
+</view>

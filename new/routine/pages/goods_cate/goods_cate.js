@@ -1,1 +1,169 @@
-(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["pages/goods_cate/goods_cate"],{"0525":function(e,t,n){},1882:function(e,t,n){"use strict";(function(e){var o=n("47a9");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var a=o(n("0cf0")),i=n("d369"),c=n("8f59"),s=n("2e42"),r={computed:(0,c.mapGetters)(["isLogin","uid"]),components:{goodsCate1:function(){Promise.all([n.e("common/vendor"),n.e("pages/goods_cate/goods_cate1")]).then(function(){return resolve(n("7abf"))}.bind(null,n)).catch(n.oe)},goodsCate2:function(){Promise.all([n.e("common/vendor"),n.e("pages/goods_cate/goods_cate2")]).then(function(){return resolve(n("9747"))}.bind(null,n)).catch(n.oe)},goodsCate3:function(){Promise.all([n.e("common/vendor"),n.e("pages/goods_cate/goods_cate3")]).then(function(){return resolve(n("40b8"))}.bind(null,n)).catch(n.oe)},pageFooter:function(){Promise.all([n.e("common/vendor"),n.e("components/pageFooter/index")]).then(function(){return resolve(n("6175"))}.bind(null,n)).catch(n.oe)}},mixins:[a.default],data:function(){return{category:"",is_diy:e.getStorageSync("is_diy"),status:0,version:"",isNew:!1,isFooter:!1,showBar:!1}},onLoad:function(){},onReady:function(){},onShow:function(){this.getCategoryVersion()},methods:{newDataStatus:function(e,t){this.isFooter=!!e,this.showBar=!!e,this.pdHeight=t},getCategoryVersion:function(){var t=this;e.$emit("uploadFooter"),(0,s.getCategoryVersion)().then((function(n){e.getStorageSync("CAT_VERSION")&&n.data.version==e.getStorageSync("CAT_VERSION")||(e.setStorageSync("CAT_VERSION",n.data.version),e.$emit("uploadCatData")),t.classStyle()}))},jumpIndex:function(){e.reLaunch({url:"/pages/index/index"})},classStyle:function(){var t=this;(0,i.colorChange)("category").then((function(n){var o=n.data.status;t.category=o,e.setStorageSync("is_diy",n.data.is_diy),t.$nextTick((function(a){2==o||3==o?e.hideTabBar():(t.$refs.classOne.is_diy=n.data.is_diy,t.is_diy?t.$refs.classOne.getNav():e.hideTabBar())}))}))}},onReachBottom:function(){2==this.category&&this.$refs.classTwo.productslist(),3==this.category&&this.$refs.classThree.productslist()}};t.default=r}).call(this,n("df3c")["default"])},"2da9":function(e,t,n){"use strict";n.r(t);var o=n("ab8d"),a=n("cc8b");for(var i in a)["default"].indexOf(i)<0&&function(e){n.d(t,e,(function(){return a[e]}))}(i);n("9f0a");var c=n("828b"),s=Object(c["a"])(a["default"],o["b"],o["c"],!1,null,"5d0cdfa2",null,!1,o["a"],void 0);t["default"]=s.exports},"9f0a":function(e,t,n){"use strict";var o=n("0525"),a=n.n(o);a.a},a34e:function(e,t,n){"use strict";(function(e,t){var o=n("47a9");n("2ea2");o(n("3240"));var a=o(n("2da9"));e.__webpack_require_UNI_MP_PLUGIN__=n,t(a.default)}).call(this,n("3223")["default"],n("df3c")["createPage"])},ab8d:function(e,t,n){"use strict";n.d(t,"b",(function(){return o})),n.d(t,"c",(function(){return a})),n.d(t,"a",(function(){}));var o=function(){var e=this.$createElement;this._self._c},a=[]},cc8b:function(e,t,n){"use strict";n.r(t);var o=n("1882"),a=n.n(o);for(var i in o)["default"].indexOf(i)<0&&function(e){n.d(t,e,(function(){return o[e]}))}(i);t["default"]=a.a}},[["a34e","common/runtime","common/vendor"]]]);
+const { publicRequest } = require('../../services/jc-request')
+
+function cleanText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim()
+}
+
+function cover(product) {
+  return product.recommendImage || product.image || (product.sliderImages && product.sliderImages[0]) || ''
+}
+
+function formatPrice(product) {
+  if (product.priceText) return String(product.priceText).replace(/^¥/, '')
+  const price = Number(product.price || 0)
+  if (!price) return '到店咨询'
+  return price.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
+}
+
+function productView(product) {
+  const skuList = Array.isArray(product.skuPrices) ? product.skuPrices : []
+  const configs = []
+  const seen = {}
+  skuList.forEach((sku) => {
+    const value = cleanText(sku.config || sku.version)
+    if (!value || seen[value]) return
+    seen[value] = true
+    configs.push(value)
+  })
+  const colors = Array.isArray(product.colors) ? product.colors.filter(Boolean) : []
+  const badges = []
+  if (product.isNew) badges.push('新品')
+  if (product.isHot) badges.push('热卖')
+  if (product.isBest) badges.push('精选')
+  if (!badges.length && product.brand) badges.push(product.brand)
+
+  return {
+    ...product,
+    displayName: product.storeName || product.model || '数码商品',
+    displayImage: cover(product),
+    displayPrice: formatPrice(product),
+    priceAvailable: Number(product.price || 0) > 0,
+    badges: badges.slice(0, 2),
+    meta: [
+      configs.length ? configs.length + '种配置' : '',
+      colors.length ? colors.length + '款颜色' : ''
+    ].filter(Boolean).join(' · ') || cleanText(product.storeInfo || '官方正品')
+  }
+}
+
+Page({
+  data: {
+    categories: [],
+    activeCategoryId: '',
+    activeCategoryName: '全部商品',
+    keyword: '',
+    totalProductCount: 0,
+    products: [],
+    loading: true,
+    errorText: ''
+  },
+
+  onLoad() {
+    wx.hideTabBar({ fail: function () {} })
+    this.loadCategories()
+    this.loadProducts()
+  },
+
+  onShow() {
+    wx.hideTabBar({ fail: function () {} })
+  },
+
+  onPullDownRefresh() {
+    Promise.all([this.loadCategories(), this.loadProducts()])
+      .finally(() => wx.stopPullDownRefresh())
+  },
+
+  loadCategories() {
+    return publicRequest('/api/product-categories')
+      .then((rows) => {
+        const remote = Array.isArray(rows) ? rows : []
+        const tones = ['coral', 'mint', 'blue', 'gold', 'rose', 'lilac']
+        const categories = [{ id: '', name: '全部', productCount: this.data.totalProductCount, shortName: '全', tone: 'coral' }]
+          .concat(remote.map((item, index) => ({
+            ...item,
+            shortName: cleanText(item.name).slice(0, 1) || '品',
+            tone: tones[(index + 1) % tones.length]
+          })))
+        this.setData({ categories })
+      })
+      .catch(() => {
+        this.setData({ categories: [{ id: '', name: '全部', productCount: 0, shortName: '全', tone: 'coral' }] })
+      })
+  },
+
+  loadProducts() {
+    const requestId = Date.now() + Math.random()
+    this._productRequestId = requestId
+    const data = { status: 'shown' }
+    if (this.data.activeCategoryId) data.categoryId = this.data.activeCategoryId
+    if (cleanText(this.data.keyword)) data.keyword = cleanText(this.data.keyword)
+
+    this.setData({ loading: true, errorText: '' })
+    return publicRequest('/api/products', { data })
+      .then((result) => {
+        if (this._productRequestId !== requestId) return
+        const products = ((result && result.list) || []).map(productView)
+        const isFullCatalog = !this.data.activeCategoryId && !cleanText(this.data.keyword)
+        const categories = this.data.categories.map((item, index) => (
+          index === 0 && isFullCatalog
+            ? { ...item, productCount: products.length }
+            : item
+        ))
+        this.setData({
+          products,
+          categories,
+          totalProductCount: isFullCatalog ? products.length : this.data.totalProductCount
+        })
+      })
+      .catch((error) => {
+        if (this._productRequestId !== requestId) return
+        this.setData({ products: [], errorText: error.message || '商品加载失败' })
+      })
+      .finally(() => {
+        if (this._productRequestId === requestId) this.setData({ loading: false })
+      })
+  },
+
+  selectCategory(event) {
+    const dataset = event.currentTarget.dataset || {}
+    const id = dataset.id || ''
+    if (id === this.data.activeCategoryId) return
+    this.setData({
+      activeCategoryId: id,
+      activeCategoryName: dataset.name || '全部商品'
+    })
+    this.loadProducts()
+  },
+
+  onSearchInput(event) {
+    this.setData({ keyword: event.detail.value })
+  },
+
+  submitSearch() {
+    this.loadProducts()
+  },
+
+  clearSearch() {
+    if (!this.data.keyword) return
+    this.setData({ keyword: '' })
+    this.loadProducts()
+  },
+
+  openProduct(event) {
+    const id = event.currentTarget.dataset.id
+    if (!id) return
+    wx.navigateTo({ url: '/pages/jingcheng/showcase/detail?id=' + encodeURIComponent(String(id)) })
+  },
+
+  goHome() {
+    wx.switchTab({ url: '/pages/index/index' })
+  },
+
+  goPointsMall() {
+    wx.navigateTo({ url: '/pages/jingcheng/integral/mall' })
+  },
+
+  goMine() {
+    wx.switchTab({ url: '/pages/user/index' })
+  }
+})
