@@ -1,1 +1,50 @@
-.goodsList{padding:0 30rpx}.goodsList .item{width:100%;box-sizing:border-box;margin-bottom:63rpx}.goodsList .item .pictrue{border-radius:16rpx;position:relative;padding-top:40%}.goodsList .item .pictrue image{border-radius:10rpx;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}.goodsList .item .text{font-size:30rpx;font-family:PingFang SC;font-weight:700;color:#282828;margin:20rpx 0}.goodsList .item .bottom .sales{font-size:22rpx;color:#8e8e8e}.goodsList .item .bottom .sales .money{font-size:42rpx;font-weight:700;margin-right:18rpx}.goodsList .item .bottom .sales .money text{font-size:28rpx}.goodsList .item .bottom .cart{height:56rpx}.goodsList .item .bottom .cart .pictrue{color:var(--view-theme);font-size:46rpx;width:50rpx;height:50rpx;text-align:center;line-height:50rpx}.goodsList .item .bottom .cart .num{font-size:30rpx;color:#282828;font-weight:700;width:80rpx;text-align:center}.goodsList .item .bottom .bnt{padding:0 30rpx;height:56rpx;line-height:56rpx;background:var(--view-theme);border-radius:42rpx;font-size:26rpx;color:#fff;position:relative}.goodsList .item .bottom .bnt.end{background:#cbcbcb}.goodsList .item .bottom .bnt .num{background-color:var(--view-priceColor);min-width:12rpx;color:#fff;border-radius:15px;position:absolute;right:-14rpx;top:-15rpx;font-size:22rpx;padding:0 10rpx;height:34rpx;line-height:34rpx}
+.goodsList { padding: 0 2rpx; }
+
+.goodsList .item {
+  width: 100%;
+  min-height: 194rpx;
+  margin-bottom: 18rpx;
+  padding: 18rpx;
+  box-sizing: border-box;
+  border: 1rpx solid #F3ECE4;
+  border-radius: 20rpx;
+  background: #FFFFFF;
+  box-shadow: 0 8rpx 22rpx rgba(112, 77, 42, 0.055);
+}
+
+.goodsList .item .pictrue {
+  position: relative;
+  height: 158rpx;
+  padding-top: 0;
+  border-radius: 15rpx;
+  overflow: hidden;
+  background: #F8F6F3;
+}
+
+.goodsList .item .pictrue image {
+  position: static;
+  width: 100%;
+  height: 100%;
+  border-radius: 15rpx;
+  object-fit: contain;
+}
+
+.goodsList .item .text {
+  min-height: 68rpx;
+  margin: 14rpx 2rpx 12rpx;
+  color: #302821;
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 35rpx;
+}
+
+.goodsList .item .bottom { min-height: 50rpx; }
+.goodsList .item .bottom .sales { color: #A69A90; font-size: 21rpx; }
+.goodsList .item .bottom .sales .money { margin-right: 12rpx; color: #EF5A2B; font-size: 38rpx; font-weight: 800; }
+.goodsList .item .bottom .sales .money text { font-size: 23rpx; }
+.goodsList .item .bottom .cart { height: 54rpx; }
+.goodsList .item .bottom .cart .iconfont { width: 50rpx; height: 50rpx; color: #FF6A2A; font-size: 42rpx; line-height: 50rpx; text-align: center; }
+.goodsList .item .bottom .cart .num { width: 58rpx; color: #3E342C; font-size: 27rpx; font-weight: 700; text-align: center; }
+.goodsList .item .bottom .bnt { position: relative; min-width: 74rpx; height: 50rpx; padding: 0 16rpx; border-radius: 27rpx; color: #FFFFFF; background: #FF6A2A; font-size: 22rpx; line-height: 50rpx; text-align: center; }
+.goodsList .item .bottom .bnt.end { color: #A9A19A; background: #ECE8E3; }
+.goodsList .item .bottom .bnt .num { position: absolute; top: -11rpx; right: -12rpx; min-width: 28rpx; height: 28rpx; padding: 0 6rpx; border: 2rpx solid #FFFFFF; border-radius: 18rpx; box-sizing: border-box; color: #FFFFFF; background: #FF6A2A; font-size: 17rpx; line-height: 24rpx; }
