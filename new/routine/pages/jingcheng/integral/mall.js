@@ -6,7 +6,11 @@ Page({
     products: [],
     loading: true
   },
+  onLoad() {
+    wx.hideTabBar({ fail: function () {} })
+  },
   onShow() {
+    wx.hideTabBar({ fail: function () {} })
     this.load()
   },
   onPullDownRefresh() {
@@ -32,5 +36,14 @@ Page({
     const id = e.currentTarget.dataset.id
     if (!id) return
     wx.navigateTo({ url: '/pages/jingcheng/integral/detail?id=' + id })
+  },
+  goHome() {
+    wx.switchTab({ url: '/pages/index/index' })
+  },
+  goCategory() {
+    wx.switchTab({ url: '/pages/goods_cate/goods_cate' })
+  },
+  goMine() {
+    wx.switchTab({ url: '/pages/user/index' })
   }
 })
