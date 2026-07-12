@@ -4,9 +4,9 @@
       <view class="brand-name">锦程祥瑞数码</view>
       <view class="brand-subtitle">您的专属手机管家</view>
     </view>
-    <view class="search-pill" bindtap="goSearch">
+    <view class="search-pill" bindtap="goSearch" hover-class="tap-feedback" hover-stay-time="120">
       <text class="iconfont icon-ic_search search-icon"></text>
-      <text class="search-placeholder">搜索手机/配件/服务</text>
+      <text class="search-placeholder">搜索手机、配件</text>
     </view>
   </view>
 
@@ -14,17 +14,19 @@
     <swiper class="banner-swiper" autoplay="true" circular="true" interval="4200" duration="500" bindchange="bannerChange">
       <block wx:for="{{banners}}" wx:key="index">
         <swiper-item>
-          <view class="banner-card">
+          <view class="banner-card {{item.image ? 'has-image' : ''}}" data-index="{{index}}" bindtap="openBanner" hover-class="tap-feedback" hover-stay-time="120">
+            <image wx:if="{{item.image}}" class="banner-background" src="{{item.image}}" mode="aspectFill"></image>
+            <view wx:if="{{item.image}}" class="banner-image-shade"></view>
             <view class="banner-copy">
               <view class="banner-kicker">MEMBER BENEFITS</view>
               <view class="banner-title">{{item.title}}</view>
               <view class="banner-subtitle">{{item.subtitle}}</view>
-              <view class="banner-button" bindtap="goPointsMall">
-                <text>查看积分商城</text>
+              <view wx:if="{{item.buttonText}}" class="banner-button">
+                <text>{{item.buttonText}}</text>
                 <text class="iconfont icon-ic_rightarrow banner-button-arrow"></text>
               </view>
             </view>
-            <view class="gift-stage">
+            <view wx:if="{{!item.image}}" class="gift-stage">
               <view class="gift-halo"></view>
               <view class="gift-base"></view>
               <view class="gift-spark spark-one"></view>
@@ -46,7 +48,7 @@
       <view wx:for="{{banners}}" wx:key="index" class="dot {{bannerIndex === index ? 'active' : ''}}"></view>
     </view>
 
-    <view class="member-card card" bindtap="goMember">
+    <view class="member-card card" bindtap="goMember" hover-class="tap-feedback" hover-stay-time="120">
       <view class="member-watermark one"></view>
       <view class="member-watermark two"></view>
       <view class="member-main">
@@ -70,7 +72,7 @@
           </view>
           <view class="metric-divider"></view>
           <view class="metric voucher-metric">
-            <view class="metric-value {{member.cashVoucherClass}}"><text class="metric-currency">¥</text>{{member.cashVoucher}}</view>
+            <view class="metric-value {{member.cashVoucherClass}}"><text class="metric-currency">¥</text><text>{{member.cashVoucher || '0'}}</text></view>
             <view class="metric-label">现金券余额</view>
           </view>
         </view>
@@ -83,13 +85,13 @@
     </view>
 
     <view class="quick-card card">
-      <view wx:for="{{quickEntries}}" wx:key="title" class="quick-item" data-url="{{item.url}}" bindtap="goQuick">
+      <view wx:for="{{quickEntries}}" wx:key="title" class="quick-item" data-url="{{item.url}}" bindtap="goQuick" hover-class="quick-item-pressed" hover-stay-time="120">
         <view class="quick-icon {{item.className}}"><text class="iconfont {{item.icon}}"></text></view>
         <view class="quick-title">{{item.title}}</view>
       </view>
     </view>
 
-    <view class="notice-card">
+    <view class="notice-card" bindtap="goCoupon" hover-class="tap-feedback" hover-stay-time="120">
       <view class="notice-icon"><text class="iconfont icon-laba"></text></view>
       <view class="notice-label">公告</view>
       <view class="notice-text">2026米东联盟消费券，火热发放中，先到先得！</view>
@@ -100,16 +102,16 @@
       <view class="signin-top">
         <view class="signin-illustration">
           <view class="signin-glow"></view>
-          <image class="signin-gift-img" src="/static/images/sign-icon-04.png" mode="aspectFit"></image>
+          <image class="signin-gift-img" src="/static/images/home/signin-gift-v2.png" mode="aspectFit"></image>
         </view>
         <view class="signin-copy">
           <view class="section-title compact">每日签到领积分 <text class="score-badge">+10</text></view>
           <view class="section-subtitle">连续签到得更多积分</view>
         </view>
-        <view class="signin-button" bindtap="goSignIn">立即签到</view>
+        <view class="signin-button" bindtap="goSignIn" hover-class="signin-button-pressed" hover-stay-time="120">立即签到</view>
       </view>
       <view class="signin-days">
-        <view wx:for="{{signDays}}" wx:key="day" class="day-card {{item.checked ? 'checked' : ''}} {{item.gift ? 'gift' : ''}}">
+        <view wx:for="{{signDays}}" wx:key="day" class="day-card {{item.checked ? 'checked' : ''}} {{item.current ? 'current' : ''}} {{item.gift ? 'gift' : ''}}">
           <view class="day-reward">{{item.reward}}</view>
           <view wx:if="{{item.gift}}" class="day-gift">礼</view>
           <view wx:if="{{item.checked}}" class="day-check">✓</view>
@@ -121,17 +123,19 @@
     <view class="points-section card">
       <view class="section-head">
         <view class="section-title">积分兑好礼</view>
-        <view class="section-more" bindtap="goPointsMall">更多好礼 <text class="iconfont icon-ic_rightarrow"></text></view>
+        <view class="section-more" bindtap="goPointsMall" hover-class="link-pressed" hover-stay-time="120">更多好礼 <text class="iconfont icon-ic_rightarrow"></text></view>
       </view>
-      <swiper class="points-swiper" autoplay="{{pointGoods.length > 2}}" circular="{{pointGoods.length > 2}}" interval="3600" duration="520" display-multiple-items="2" easing-function="easeInOutCubic">
-        <swiper-item wx:for="{{pointGoods}}" wx:key="id" class="point-slide">
-          <view class="point-good" data-id="{{item.id}}" bindtap="openPointGood">
-            <view class="point-img-wrap">
-              <image class="point-img" src="{{item.image}}" mode="aspectFit" lazy-load="true"></image>
-            </view>
-            <view class="point-info">
-              <view class="point-title">{{item.title}}</view>
-              <view class="point-price">{{item.points}}</view>
+      <swiper class="points-swiper" autoplay="{{pointPages.length > 1}}" circular="{{pointPages.length > 1}}" interval="3800" duration="520" easing-function="easeInOutCubic">
+        <swiper-item wx:for="{{pointPages}}" wx:key="id" class="point-slide">
+          <view class="points-pair">
+            <view wx:for="{{item.items}}" wx:for-item="good" wx:key="id" class="point-good" data-id="{{good.id}}" bindtap="openPointGood" hover-class="point-good-pressed" hover-stay-time="120">
+              <view class="point-img-wrap">
+                <image class="point-img" src="{{good.coverImage}}" mode="aspectFit" lazy-load="true"></image>
+              </view>
+              <view class="point-info">
+                <view class="point-title">{{good.title}}</view>
+                <view class="point-price">{{good.points}}</view>
+              </view>
             </view>
           </view>
         </swiper-item>
@@ -144,26 +148,26 @@
           <view class="section-title">精品推荐</view>
           <view class="recommend-sub">正品保障｜售后无忧｜分期免息</view>
         </view>
-        <view class="section-more" data-url="/pages/jingcheng/showcase/list" bindtap="goQuick">全部 <text class="iconfont icon-ic_rightarrow"></text></view>
+        <view class="section-more" data-url="/pages/jingcheng/showcase/list" bindtap="goQuick" hover-class="link-pressed" hover-stay-time="120">全部 <text class="iconfont icon-ic_rightarrow"></text></view>
       </view>
-      <scroll-view class="product-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="product-grid">
         <view class="product-row">
           <view wx:for="{{products}}" wx:key="id" class="product-card" data-id="{{item.id}}" bindtap="openProduct">
             <view class="product-img-wrap">
               <image class="product-img" src="{{item.image}}" mode="aspectFit" lazy-load="true"></image>
             </view>
             <view class="product-name">{{item.title}}</view>
-            <view class="product-spec">{{item.spec}}</view>
+            <view class="product-desc">{{item.subtitle}}</view>
+            <view wx:if="{{item.tags.length}}" class="product-tags">
+              <view wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="product-tag">{{tag}}</view>
+            </view>
             <view class="product-bottom">
-              <view>
-                <view class="product-price">¥{{item.price}}</view>
-                <view class="product-sales">已售{{item.sales}}</view>
-              </view>
-              <view class="cart-plus" data-id="{{item.id}}" catchtap="openProduct"><text class="iconfont icon-ic_increase"></text></view>
+              <view class="product-price">¥{{item.price}}</view>
+              <view wx:if="{{item.skuText}}" class="product-sku">{{item.skuText}}</view>
             </view>
           </view>
         </view>
-      </scroll-view>
+      </view>
       <view wx:if="{{!products.length && !loading}}" class="empty-tip">暂无推荐商品</view>
     </view>
   </view>
