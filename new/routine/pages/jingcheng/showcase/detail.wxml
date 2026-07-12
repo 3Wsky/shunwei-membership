@@ -5,30 +5,42 @@
     </swiper-item>
   </swiper>
   <view class="info">
+    <view wx:if="{{product.brand}}" class="brand-line">{{product.brand}} 官方展示</view>
     <view class="name">{{title}}</view>
     <view class="price">{{priceLabel}}</view>
     <view wx:if="{{subtitle}}" class="desc">{{subtitle}}</view>
+    <view wx:if="{{skuSummary.length}}" class="summary-row">
+      <view wx:for="{{skuSummary}}" wx:key="*this" class="summary-tag">{{item}}</view>
+    </view>
   </view>
-  <view wx:if="{{colorItems.length}}" class="section">
-    <view class="section-title">颜色款式</view>
-    <scroll-view class="color-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-      <view class="color-row">
-        <view wx:for="{{colorItems}}" wx:key="name" class="color-card">
-          <image wx:if="{{item.image}}" class="color-img" src="{{item.image}}" mode="aspectFit" />
-          <view wx:else class="color-img placeholder">颜色</view>
-          <view class="color-name">{{item.name}}</view>
+  <view wx:if="{{highlights.length}}" class="section">
+    <view class="section-title">商品亮点</view>
+    <view class="highlight-cloud">
+      <view wx:for="{{highlights}}" wx:key="text" class="highlight-chip {{item.className}}">{{item.text}}</view>
+    </view>
+  </view>
+  <view wx:if="{{colorOptions.length || configOptions.length}}" class="section sku-picker">
+    <view class="section-title">颜色 / 配置</view>
+    <view wx:if="{{colorOptions.length}}" class="option-block">
+      <view class="option-title">颜色</view>
+      <view class="option-grid">
+        <view wx:for="{{colorOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectColor" class="option-cell color-option {{activeColor === item.name ? 'active' : ''}}">
+          <image wx:if="{{item.image}}" class="option-img" src="{{item.image}}" mode="aspectFit" />
+          <text>{{item.name}}</text>
         </view>
       </view>
-    </scroll-view>
-  </view>
-  <view wx:if="{{skuRows.length}}" class="section">
-    <view class="section-title">配置价格</view>
-    <view wx:for="{{skuRows}}" wx:key="version" class="sku-row">
-      <view class="sku-main">
-        <view class="sku-version">{{item.version}}</view>
-        <view wx:if="{{item.config || item.color}}" class="sku-sub">{{item.config}}{{item.config && item.color ? ' · ' : ''}}{{item.color}}</view>
+    </view>
+    <view wx:if="{{configOptions.length}}" class="option-block">
+      <view class="option-title">版本</view>
+      <view class="option-grid">
+        <view wx:for="{{configOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectConfig" class="option-cell version-option {{activeConfig === item.name ? 'active' : ''}}">
+          <text>{{item.name}}</text>
+        </view>
       </view>
-      <view class="sku-price">{{item.price}}</view>
+    </view>
+    <view wx:if="{{selectedSku}}" class="selected-sku">
+      <text>已选 {{selectedSku.color}} · {{selectedSku.config || selectedSku.version}}</text>
+      <text class="selected-price">{{selectedSku.price}}</text>
     </view>
   </view>
   <view wx:if="{{paramList.length}}" class="section">
@@ -47,8 +59,92 @@
   </view>
   <view wx:if="{{product.description}}" class="section">
     <view class="section-title">商品详情</view>
-    <rich-text nodes="{{product.description}}" />
+    <rich-text class="detail-text" nodes="{{product.description}}" />
   </view>
-  <view class="footer">展示商品 · 到店咨询 · 不支持线上下单</view>
+  <view wx:if="{{detailImages.length}}" class="section detail-section">
+    <view class="section-title">详情图片</view>
+    <image wx:for="{{detailImages}}" wx:key="*this" class="detail-img" src="{{item}}" mode="widthFix" lazy-load="true" />
+  </view>
+  <view class="safe-bottom"></view>
+  <view class="action-bar">
+    <view class="fav-btn {{favorite ? 'active' : ''}}" bindtap="toggleFavorite">
+      <text class="fav-icon">{{favorite ? '★' : '☆'}}</text>
+      <text>收藏</text>
+    </view>
+    <view class="buy-btn" bindtap="openSkuDrawer">
+      <text class="buy-main">购买</text>
+    </view>
+  </view>
+  <view wx:if="{{skuDrawerOpen}}" class="drawer-mask" bindtap="closeSkuDrawer"></view>
+  <view class="sku-drawer {{skuDrawerOpen ? 'show' : ''}}">
+    <view class="drawer-head">
+      <image class="drawer-img" src="{{(selectedSku && selectedSku.image) || product.image}}" mode="aspectFit" />
+      <view class="drawer-info">
+        <view class="drawer-price">{{(selectedSku && selectedSku.price) || priceLabel}}</view>
+        <view class="drawer-title">{{title}}</view>
+        <view wx:if="{{selectedSku}}" class="drawer-selected">已选 {{selectedSku.color}} · {{selectedSku.config || selectedSku.version}}</view>
+      </view>
+      <view class="drawer-close" bindtap="closeSkuDrawer">×</view>
+    </view>
+    <scroll-view class="drawer-scroll" scroll-y="true">
+      <view wx:if="{{colorOptions.length}}" class="option-block drawer-option-block">
+        <view class="option-title">颜色</view>
+        <view class="option-grid">
+          <view wx:for="{{colorOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectColor" class="option-cell color-option {{activeColor === item.name ? 'active' : ''}}">
+            <image wx:if="{{item.image}}" class="option-img" src="{{item.image}}" mode="aspectFit" />
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{configOptions.length}}" class="option-block drawer-option-block">
+        <view class="option-title">版本</view>
+        <view class="option-grid">
+          <view wx:for="{{configOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectConfig" class="option-cell version-option {{activeConfig === item.name ? 'active' : ''}}">
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="drawer-buy" bindtap="confirmBuy">确认</view>
+  </view>
+  <view wx:if="{{advisorPopupOpen}}" class="advisor-mask" bindtap="closeAdvisorPopup"></view>
+  <view class="advisor-popup {{advisorPopupOpen ? 'show' : ''}}">
+    <view class="advisor-card">
+      <view class="advisor-top">
+        <image wx:if="{{advisorCard.avatar}}" class="advisor-avatar" src="{{advisorCard.avatar}}" mode="aspectFill" />
+        <view wx:else class="advisor-avatar fallback">{{advisorCard.initial || '锦'}}</view>
+        <view class="advisor-main">
+          <view class="advisor-kicker">{{advisorCard.bound ? '专属客户经理' : '门店顾问'}}</view>
+          <view class="advisor-name">{{advisorCard.displayName}}</view>
+          <view class="advisor-role">{{advisorCard.jobTitle || '锦程祥瑞数码顾问'}}</view>
+        </view>
+        <view class="advisor-close" bindtap="closeAdvisorPopup">×</view>
+      </view>
+      <view class="advisor-tip">请到店体验真机后购买</view>
+      <view wx:if="{{advisorCard.selectedText}}" class="advisor-selected">已选 {{advisorCard.selectedText}}</view>
+      <view class="advisor-info">
+        <view class="advisor-row">
+          <text class="advisor-label">门店</text>
+          <text class="advisor-value">{{advisorCard.storeName}}</text>
+        </view>
+        <view class="advisor-row">
+          <text class="advisor-label">地址</text>
+          <text class="advisor-value">{{advisorCard.storeAddress}}</text>
+        </view>
+        <view wx:if="{{advisorCard.storePhone}}" class="advisor-row">
+          <text class="advisor-label">电话</text>
+          <text class="advisor-value">{{advisorCard.storePhone}}</text>
+        </view>
+        <view wx:if="{{advisorCard.businessHours}}" class="advisor-row">
+          <text class="advisor-label">营业</text>
+          <text class="advisor-value">{{advisorCard.businessHours}}</text>
+        </view>
+      </view>
+      <view class="advisor-actions">
+        <view class="advisor-action secondary" bindtap="copyStoreAddress">复制地址</view>
+        <view class="advisor-action primary" bindtap="callAdvisor">联系门店</view>
+      </view>
+    </view>
+  </view>
 </view>
 <view wx:else class="empty">{{loading ? '加载中…' : '商品不存在'}}</view>

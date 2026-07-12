@@ -19,5 +19,28 @@
     "bigPackageSizeSupport": true
   },
   "libVersion": "3.15.2",
-  "condition": {}
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/jingcheng/landing/coupon",
+          "pathName": "pages/jingcheng/landing/coupon",
+          "query": "",
+          "scene": null,
+          "launchMode": "default",
+          "partialCompile": {
+            "enabled": true,
+            "pages": []
+          }
+        },
+        {
+          "name": "pages/jingcheng/landing/coupon",
+          "pathName": "pages/jingcheng/landing/coupon",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        }
+      ]
+    }
+  }
 }

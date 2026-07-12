@@ -1,6 +1,7 @@
 Component({
   properties: {
-    block: { type: Object, value: {} }
+    block: { type: Object, value: {} },
+    active: { type: Boolean, value: false }
   },
   methods: {
     selectProduct(event) {

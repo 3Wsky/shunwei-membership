@@ -23,6 +23,33 @@ function formatNumber(value) {
   return String(Math.round(Number(value || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+function normalizeSubsidy(value) {
+  const subsidy = Number(value || 0)
+  return Number.isFinite(subsidy) && subsidy > 0 ? subsidy : 0
+}
+
+function calculateSubsidy(item, officialPrice, categoryKey) {
+  const eligibleForSubsidy = officialPrice > 0 && officialPrice <= 6000
+  const governmentSubsidy = eligibleForSubsidy
+    ? Math.min(Math.floor(officialPrice * 0.15), 500)
+    : 0
+  const configuredStoreSubsidy = normalizeSubsidy(
+    item.storeSubsidy || item.shopSubsidy || item.storeDiscount || item.storeSubsidyAmount
+  )
+  // 6000 元以上不享国补，统一展示 500 元店补，避免后台配置把该档位叠加为其它金额。
+  const storeSubsidy = officialPrice > 6000 ? 500 : configuredStoreSubsidy
+  const subsidyTotal = governmentSubsidy + storeSubsidy
+  const subsidyPrice = officialPrice > 0 ? Math.max(0, officialPrice - subsidyTotal) : 0
+  return { governmentSubsidy, storeSubsidy, subsidyTotal, subsidyPrice }
+}
+
+function formatSubsidyPrice(subsidyPrice, officialPrice, categoryKey) {
+  if (officialPrice > 6000) {
+    return '¥' + Math.floor(subsidyPrice / 1000) + '?99起'
+  }
+  return '¥' + formatNumber(subsidyPrice) + '起'
+}
+
 function benefitByPrice(value) {
   const price = Number(value || 0)
   let matched = null
@@ -53,8 +80,10 @@ function detectCategory(item, categoryNameById) {
 }
 
 function normalizeProduct(item, categoryNameById) {
-  const priceValue = Number(item.price || item.priceValue || 0)
+  const priceValue = Number(item.officialPrice || item.listPrice || item.marketPrice || item.price || item.priceValue || 0)
   const benefit = benefitByPrice(priceValue)
+  const categoryKey = detectCategory(item, categoryNameById)
+  const subsidy = calculateSubsidy(item, priceValue, categoryKey)
   const tags = Array.isArray(item.tags) ? item.tags : []
   return {
     id: item.id || item.productId,
@@ -62,9 +91,14 @@ function normalizeProduct(item, categoryNameById) {
     image: item.image || item.cover || item.productImage || '',
     brand: cleanText(item.brand),
     tag: cleanText(tags[0] || item.brand || '热销'),
-    categoryKey: detectCategory(item, categoryNameById),
+    categoryKey,
     priceValue,
-    priceText: priceValue > 0 ? '¥' + formatNumber(priceValue) + '起' : '到店咨询',
+    officialPriceText: priceValue > 0 ? '¥' + formatNumber(priceValue) + '起' : '到店咨询',
+    subsidyPriceText: priceValue > 0 ? formatSubsidyPrice(subsidy.subsidyPrice, priceValue, categoryKey) : '到店咨询',
+    subsidyLabel: priceValue > 6000 ? '店补后' : '国补/店补后',
+    governmentSubsidy: subsidy.governmentSubsidy,
+    storeSubsidy: subsidy.storeSubsidy,
+    subsidyTotal: subsidy.subsidyTotal,
     coupon: benefit.coupon,
     points: benefit.points,
     couponText: benefit.couponText,
@@ -73,13 +107,25 @@ function normalizeProduct(item, categoryNameById) {
   }
 }
 
+function buildProductPages(products) {
+  const pages = []
+  for (let index = 0; index < products.length; index += 4) {
+    pages.push({ pageKey: 'page-' + (index / 4), items: products.slice(index, index + 4) })
+  }
+  return pages
+}
+
 function buildCategoryBlocks(products) {
-  return config.categories.map((category) => ({
-    key: category.key,
-    name: category.name,
-    subtitle: category.subtitle,
-    products: products.filter((item) => item.categoryKey === category.key).slice(0, 4)
-  }))
+  return config.categories.map((category) => {
+    const categoryProducts = products.filter((item) => item.categoryKey === category.key)
+    return {
+      key: category.key,
+      name: category.name,
+      subtitle: category.subtitle,
+      products: categoryProducts,
+      productPages: buildProductPages(categoryProducts)
+    }
+  })
 }
 
 function normalizePointGood(item) {
@@ -138,6 +184,72 @@ function buildAdvisorCard(raw) {
   }
 }
 
+function relativeTimeText(value, fallback) {
+  const timestamp = Number(value || 0)
+  if (!timestamp) return fallback || '刚刚'
+  const seconds = Math.max(0, Math.floor(Date.now() / 1000) - timestamp)
+  if (seconds < 60) return '刚刚'
+  if (seconds < 3600) return Math.ceil(seconds / 60) + '分钟前'
+  if (seconds < 86400) return Math.ceil(seconds / 3600) + '小时前'
+  return '刚刚'
+}
+
+function parseVirtualBenefits(content) {
+  const text = String(content || '')
+  const voucher = text.match(/(\d+)\s*元现金券/)
+  const points = text.match(/(\d+)\s*积分/)
+  return {
+    voucherAmount: voucher ? Number(voucher[1]) : 0,
+    points: points ? Number(points[1]) : 0
+  }
+}
+
+function normalizeVirtualFeed(item, index) {
+  const benefits = parseVirtualBenefits(item.content)
+  return {
+    feedId: 'virtual-' + (item.id || index),
+    userName: cleanText(item.userMasked) || '会员',
+    event: cleanText(item.content) || '正在领取活动权益',
+    voucherAmount: benefits.voucherAmount,
+    pointsText: benefits.points ? formatNumber(benefits.points) : '',
+    pointsPrefix: '+',
+    timeText: cleanText(item.timeText) || '刚刚'
+  }
+}
+
+function normalizeRealFeed(item, index) {
+  const isApproval = item.type === 'approval'
+  const points = Number(item.points || 0)
+  return {
+    feedId: cleanText(item.id) || 'real-' + index,
+    userName: cleanText(item.customerNickname) || '微信用户',
+    event: isApproval
+      ? '购买 ' + (cleanText(item.productModel) || '购机产品')
+      : '兑换 ' + (cleanText(item.productName) || '积分好礼'),
+    voucherAmount: Number(item.voucherAmount || 0),
+    pointsText: points ? formatNumber(points) : '',
+    pointsPrefix: isApproval ? '+' : '-',
+    timeText: relativeTimeText(item.occurredAt)
+  }
+}
+
+function buildLiveFeed(realItems) {
+  const realFeed = (Array.isArray(realItems) ? realItems : []).map(normalizeRealFeed)
+  const virtualFeed = (config.liveFeed || []).map(normalizeVirtualFeed)
+  const feed = []
+  const count = Math.max(realFeed.length, virtualFeed.length)
+  for (let index = 0; index < count; index += 1) {
+    if (realFeed[index]) feed.push(realFeed[index])
+    if (virtualFeed[index]) feed.push(virtualFeed[index])
+  }
+  return feed.slice(0, 24)
+}
+
+function buildLiveFeedLoop(feed) {
+  const source = Array.isArray(feed) ? feed : []
+  return source.concat(source.slice(0, 2)).map((item, index) => ({ ...item, loopKey: item.feedId + '-' + index }))
+}
+
 Page({
   data: {
     config,
@@ -157,7 +269,11 @@ Page({
     finalCtaVisible: false,
     faqOpen: -1,
     visibleSectionMap: { intro: true, products: false, points: false, merchants: false },
-    animatedStats: { exchanged: 0, claimed: 0 }
+    animatedStats: { exchanged: 0, claimed: 0 },
+    liveFeed: [],
+    liveFeedLoop: [],
+    liveFeedOffset: 0,
+    liveFeedTransition: false
   },
 
   onLoad() {
@@ -177,6 +293,7 @@ Page({
     ;(this.sectionObservers || []).forEach((observer) => observer.disconnect())
     if (this.statsTimer) clearInterval(this.statsTimer)
     if (this.claimTimer) clearTimeout(this.claimTimer)
+    this.stopLiveFeed()
     if (this.successAudio && this.successAudio.destroy) this.successAudio.destroy()
   },
 
@@ -192,11 +309,12 @@ Page({
   loadData() {
     this.setData({ loading: true })
     return Promise.all([
-      publicRequest('/api/products', { data: { page: 1, pageSize: 100, status: 'shown', source: 'vmall-official' } }).catch(() => ({ list: [] })),
+      publicRequest('/api/products', { data: { status: 'shown' } }).catch(() => ({ list: [] })),
       publicRequest('/api/product-categories').catch(() => []),
       publicRequest('/api/merchants/public', { data: { limit: 12 } }).catch(() => []),
       publicRequest('/api/integral-mall/products').catch(() => []),
-      publicRequest('/api/landing/coupon/manager-card').catch(() => ({ card: DEFAULT_CARD }))
+      publicRequest('/api/landing/coupon/manager-card').catch(() => ({ card: DEFAULT_CARD })),
+      publicRequest('/api/landing/coupon/live-feed', { data: { limit: 10 } }).catch(() => ({ list: [] }))
     ]).then((results) => {
       const productData = results[0] || {}
       const rawProducts = Array.isArray(productData) ? productData : (productData.list || [])
@@ -209,6 +327,8 @@ Page({
       const pointData = results[3] || []
       const pointsGoods = (Array.isArray(pointData) ? pointData : (pointData.list || [])).map(normalizePointGood).slice(0, 8)
       const advisorCard = buildAdvisorCard(results[4])
+      const feedData = results[5] || {}
+      const liveFeed = buildLiveFeed(feedData.list)
       this.setData({
         categoryBlocks: buildCategoryBlocks(products),
         pointsGoods,
@@ -217,9 +337,44 @@ Page({
         otherMerchants: merchants.slice(1),
         advisorCard,
         advisorAssigned: Boolean(results[4] && results[4].card),
+        liveFeed,
+        liveFeedLoop: buildLiveFeedLoop(liveFeed),
+        liveFeedOffset: 0,
+        liveFeedTransition: false,
         loading: false
-      })
+      }, () => this.startLiveFeed())
     }).catch(() => this.setData({ loading: false }))
+  },
+
+  startLiveFeed() {
+    this.stopLiveFeed()
+    if (this.data.liveFeed.length < 2) return
+    this.liveFeedIndex = 0
+    this.liveFeedTimer = setInterval(() => this.advanceLiveFeed(), 2600)
+    this.liveFeedEnableTimer = setTimeout(() => this.setData({ liveFeedTransition: true }), 30)
+  },
+
+  stopLiveFeed() {
+    if (this.liveFeedTimer) clearInterval(this.liveFeedTimer)
+    if (this.liveFeedResetTimer) clearTimeout(this.liveFeedResetTimer)
+    if (this.liveFeedEnableTimer) clearTimeout(this.liveFeedEnableTimer)
+    this.liveFeedTimer = null
+    this.liveFeedResetTimer = null
+    this.liveFeedEnableTimer = null
+  },
+
+  advanceLiveFeed() {
+    const length = this.data.liveFeed.length
+    if (length < 2) return
+    const next = (this.liveFeedIndex || 0) + 1
+    this.liveFeedIndex = next
+    this.setData({ liveFeedTransition: true, liveFeedOffset: next * 88 })
+    if (next !== length) return
+    this.liveFeedResetTimer = setTimeout(() => {
+      this.liveFeedIndex = 0
+      this.setData({ liveFeedTransition: false, liveFeedOffset: 0 })
+      this.liveFeedEnableTimer = setTimeout(() => this.setData({ liveFeedTransition: true }), 30)
+    }, 480)
   },
 
   setupObservers() {
@@ -287,14 +442,26 @@ Page({
 
   closeAdvisorPopup() { this.setData({ advisorPopupOpen: false }) },
 
-  openProduct(event) {
-    const id = event.detail && event.detail.id ? event.detail.id : event.currentTarget.dataset.id
-    if (id) wx.navigateTo({ url: '/pages/jingcheng/showcase/detail?id=' + encodeURIComponent(id) })
+  openAdvisorCard() {
+    const show = (card) => {
+      this.setData({
+        advisorCard: buildAdvisorCard(card),
+        advisorPopupOpen: true,
+        advisorAssigned: true
+      })
+    }
+    if (this.data.advisorAssigned) return show(this.data.advisorCard)
+    publicRequest('/api/landing/coupon/manager-card')
+      .then(show)
+      .catch(() => show(DEFAULT_CARD))
   },
 
-  openPointGood(event) {
-    const id = event.currentTarget.dataset.id
-    if (id) wx.navigateTo({ url: '/pages/jingcheng/integral/detail?id=' + encodeURIComponent(id) })
+  openProduct() {
+    this.openAdvisorCard()
+  },
+
+  openPointGood() {
+    this.openAdvisorCard()
   },
 
   openMerchant(event) {

@@ -4,6 +4,29 @@ function title(item) {
   return item.storeName || item.model || item.title || '商品'
 }
 
+function cleanText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim()
+}
+
+function uniqueText(list) {
+  const seen = {}
+  const result = []
+  ;(list || []).forEach((value) => {
+    const text = cleanText(value)
+    if (!text || seen[text]) return
+    seen[text] = true
+    result.push(text)
+  })
+  return result
+}
+
+function splitHighlights(value) {
+  return cleanText(value)
+    .split(/[|｜/、,，;；]+/)
+    .map(cleanText)
+    .filter(Boolean)
+}
+
 function cover(item) {
   return item.image || (item.sliderImages && item.sliderImages[0]) || ''
 }
@@ -12,6 +35,23 @@ function priceLabel(item) {
   if (item.priceText) return item.priceText
   const price = Number(item.price || 0)
   return price > 0 ? `¥${price}` : '到店咨询'
+}
+
+function productMeta(item) {
+  const skuList = Array.isArray(item.skuPrices) ? item.skuPrices : []
+  const configs = uniqueText(skuList.map((row) => row.config))
+  const colors = uniqueText(item.colors || skuList.map((row) => row.color))
+  return {
+    subtitle: splitHighlights(item.storeInfo || item.description).slice(0, 2).join(' · ') || '到店咨询，支持门店选购',
+    skuSummary: [
+      configs.length ? `${configs.length}种配置` : '',
+      colors.length ? `${colors.length}款颜色` : ''
+    ].filter(Boolean).join(' · '),
+    tags: ['官方正品']
+      .concat(configs.length ? [configs.slice(0, 2).join(' / ')] : [])
+      .concat(colors.length ? [`${colors.length}色可选`] : [])
+      .slice(0, 3)
+  }
 }
 
 Page({
@@ -39,6 +79,7 @@ Page({
       .then((data) => {
         const rows = (data.list || []).map((item) => ({
           ...item,
+          ...productMeta(item),
           displayTitle: title(item),
           displayCover: cover(item),
           displayPrice: priceLabel(item)
@@ -54,8 +95,19 @@ Page({
       .finally(() => this.setData({ loading: false }))
   },
   openDetail(e) {
-    const id = e.currentTarget.dataset.id
-    if (id) wx.navigateTo({ url: `/pages/jingcheng/showcase/detail?id=${encodeURIComponent(id)}` })
+    const dataset = (e.currentTarget && e.currentTarget.dataset) || (e.target && e.target.dataset) || {}
+    const id = dataset.id
+    if (!id) {
+      wx.showToast({ title: '商品信息缺少ID', icon: 'none' })
+      return
+    }
+    wx.navigateTo({
+      url: `/pages/jingcheng/showcase/detail?id=${encodeURIComponent(String(id))}`,
+      fail(err) {
+        console.error('open showcase detail failed:', err)
+        wx.showToast({ title: '商品详情打开失败', icon: 'none' })
+      }
+    })
   },
   openMall() {
     wx.navigateTo({ url: '/pages/jingcheng/integral/mall' })

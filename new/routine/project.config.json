@@ -4,6 +4,10 @@
     "ignore": [
       {
         "type": "folder",
+        "value": "tmp"
+      },
+      {
+        "type": "folder",
         "value": "pages/jingcheng/static/images"
       },
       {
@@ -17,6 +21,10 @@
       {
         "type": "folder",
         "value": "static/fonts"
+      },
+      {
+        "type": "folder",
+        "value": "static/audio"
       },
       {
         "type": "file",
@@ -41,6 +49,74 @@
       {
         "type": "file",
         "value": "static/images/member.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/beian.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/code-bg.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/all_cat.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/address.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/menu.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/one.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/two.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/three.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/spot.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/right-icon.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/jvip.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/mores.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/sort-img.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/edit.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/rank1_icon.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/rank2_icon.png"
+      },
+      {
+        "type": "file",
+        "value": "static/images/rank3_icon.png"
       },
       {
         "type": "file",

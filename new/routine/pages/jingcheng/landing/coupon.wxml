@@ -21,10 +21,13 @@
     <view class="hero-visual">
       <image class="hero-visual-image" src="{{assetBase + 'hero-digital-gift-v1.jpg'}}" mode="aspectFill"></image>
       <view class="visual-vignette"></view>
+      <view class="coupon-halo"></view>
+      <view class="coupon-spark spark-left"></view>
+      <view class="coupon-spark spark-right"></view>
       <view class="coupon-copy">
-        <view class="coupon-copy-label">联盟现金券最高</view>
+        <view class="coupon-copy-shine"></view>
+        <view class="coupon-copy-label">联盟现金券</view>
         <view class="coupon-copy-value"><text>¥</text>{{config.pageInfo.couponMax}}</view>
-        <view class="coupon-copy-note">无门槛抵扣 · 联盟商家通用</view>
       </view>
     </view>
 
@@ -32,7 +35,6 @@
 
     <view class="process-panel">
       <view wx:for="{{config.processSteps}}" wx:key="number" class="process-item">
-        <view class="process-number">{{item.number}}</view>
         <image class="process-icon" src="{{assetBase + item.icon}}" mode="aspectFit"></image>
         <view class="process-title">{{item.title}}</view>
         <view class="process-desc">{{item.desc}}</view>
@@ -57,11 +59,10 @@
 
   <!-- 02 五大品类：真实商品按后台分类和型号自动归组。 -->
   <view id="section-products" class="red-section product-zone fade-section {{visibleSectionMap.products ? 'visible' : ''}}">
-    <view class="section-marker">02 / 04</view>
     <view class="section-title light">五大品类 · 热门商品专区</view>
-    <view class="section-subtitle light">商品与价格来自 fzlsaas 展示商品库，权益按真实价格自动匹配</view>
+    <view class="subsidy-rule"><text>国补名额以个人实际领到的国补优惠券为准</text></view>
     <view class="category-stack">
-      <union-product-block wx:for="{{categoryBlocks}}" wx:key="key" block="{{item}}" bindselect="openProduct"></union-product-block>
+      <union-product-block wx:for="{{categoryBlocks}}" wx:key="key" block="{{item}}" active="{{visibleSectionMap.products}}" bindselect="openProduct"></union-product-block>
     </view>
     <view class="section-cta"><union-cta bindclaim="claimCoupon"></union-cta></view>
     <view class="stack-note">现金券 + 积分可叠加享受，具体以审批结果为准</view>
@@ -69,17 +70,21 @@
 
   <!-- 03 积分商城：展示真实积分商品，并用动态板强化可兑换感知。 -->
   <view id="section-points" class="red-section points-zone fade-section {{visibleSectionMap.points ? 'visible' : ''}}">
-    <view class="section-marker">03 / 04 · 积分商城 & 实时动态</view>
     <view class="section-title light">积分商城 · 热门兑好物</view>
     <view class="gold-ribbon compact">到店购机赠送积分 · 积分长期有效</view>
 
     <view class="live-board">
-      <view class="live-label">实<br/>时<br/>动<br/>态</view>
-      <swiper class="live-swiper" vertical autoplay circular interval="2300" duration="500">
-        <swiper-item wx:for="{{config.liveFeed}}" wx:key="id">
-          <view class="live-line"><text class="live-user">{{item.userMasked}}</text><text class="live-content">{{item.content}}</text><text class="live-time">{{item.timeText}}</text></view>
-        </swiper-item>
-      </swiper>
+      <view class="live-feed-window">
+        <view class="live-feed-track {{liveFeedTransition ? 'is-moving' : ''}}" style="transform:translateY(-{{liveFeedOffset}}rpx);">
+          <view wx:for="{{liveFeedLoop}}" wx:key="loopKey" class="live-line">
+            <view class="live-line-main">
+              <view class="live-line-title"><text class="live-user">{{item.userName}}</text><text class="live-event">{{item.event}}</text></view>
+              <view wx:if="{{item.voucherAmount || item.pointsText}}" class="live-benefits"><text wx:if="{{item.voucherAmount}}">券 ¥{{item.voucherAmount}}</text><text wx:if="{{item.pointsText}}">{{item.pointsPrefix}}{{item.pointsText}} 积分</text></view>
+            </view>
+            <text class="live-time">{{item.timeText}}</text>
+          </view>
+        </view>
+      </view>
     </view>
 
     <view class="stats-panel">
@@ -96,7 +101,7 @@
 
     <view class="subsection-ribbon">超值好物 · 积分兑换</view>
     <view wx:if="{{pointsGoods.length}}" class="gift-grid">
-      <view wx:for="{{pointsGoods}}" wx:key="id" class="gift-card" data-id="{{item.id}}" bindtap="openPointGood" hover-class="card-pressed">
+      <view wx:for="{{pointsGoods}}" wx:key="id" class="gift-card gift-card-{{index % 4}} {{visibleSectionMap.points ? 'card-entered' : ''}}" data-id="{{item.id}}" bindtap="openPointGood" hover-class="card-pressed">
         <image wx:if="{{item.image}}" class="gift-image" src="{{item.image}}" mode="aspectFit"></image>
         <view wx:else class="gift-image gift-placeholder">积分好礼</view>
         <view class="gift-name">{{item.title}}</view>
@@ -116,7 +121,6 @@
 
   <!-- 04 核销商家：列表来自 fzlsaas 商家库，仅展示可核销商家。 -->
   <view id="section-merchants" class="red-section merchant-zone fade-section {{visibleSectionMap.merchants ? 'visible' : ''}}">
-    <view class="section-marker">04 / 04</view>
     <view class="section-title light">可核销商家</view>
     <view class="gold-ribbon compact">联盟商家通用 · 无门槛抵扣</view>
 
@@ -134,7 +138,7 @@
     </view>
 
     <view wx:if="{{otherMerchants.length}}" class="merchant-grid">
-      <view wx:for="{{otherMerchants}}" wx:key="id" class="merchant-card" data-id="{{item.id}}" bindtap="openMerchant" hover-class="card-pressed">
+      <view wx:for="{{otherMerchants}}" wx:key="id" class="merchant-card merchant-card-{{index % 4}} {{visibleSectionMap.merchants ? 'card-entered' : ''}}" data-id="{{item.id}}" bindtap="openMerchant" hover-class="card-pressed">
         <view class="merchant-media">
           <image wx:if="{{item.cover}}" class="merchant-cover" src="{{item.cover}}" mode="aspectFill"></image>
           <view wx:else class="merchant-cover merchant-placeholder">联盟商家</view>

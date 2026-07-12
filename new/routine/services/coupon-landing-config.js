@@ -1,7 +1,7 @@
 module.exports = {
   pageTitle: '米东区联盟现金券',
   pageInfo: {
-    brand: '米东区联盟',
+    brand: '米东区联盟消费券',
     badge: '到店购机 · 赠券到店花',
     titleTop: '到店购机',
     couponMax: 800,
@@ -24,7 +24,7 @@ module.exports = {
   ],
   processSteps: [
     { icon: 'icon_step_buy.svg', number: '01', title: '选购产品', desc: '手机 / 平板 / 穿戴 / 电脑 / 大疆' },
-    { icon: 'icon_step_check.svg', number: '02', title: '核对资格', desc: '按真实成交价匹配活动档位' },
+    { icon: 'icon_step_check.svg', number: '02', title: '核对资格', desc: '按商品售价匹配活动档位' },
     { icon: 'icon_step_coupon.svg', number: '03', title: '发放权益', desc: '现金券与会员积分同步到账' },
     { icon: 'icon_step_store.svg', number: '04', title: '联盟核销', desc: '到联盟商家消费直接抵扣' }
   ],

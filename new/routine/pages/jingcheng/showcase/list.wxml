@@ -10,7 +10,14 @@
       <image wx:if="{{item.displayCover}}" class="cover" src="{{item.displayCover}}" mode="aspectFill" />
       <view wx:else class="cover placeholder">商品</view>
       <view class="name">{{item.displayTitle}}</view>
-      <view class="price">{{item.displayPrice}}</view>
+      <view class="subtitle">{{item.subtitle}}</view>
+      <view wx:if="{{item.tags.length}}" class="tags">
+        <view wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="tag">{{tag}}</view>
+      </view>
+      <view class="card-bottom">
+        <view class="price">{{item.displayPrice}}</view>
+        <view wx:if="{{item.skuSummary}}" class="sku-summary">{{item.skuSummary}}</view>
+      </view>
     </view>
   </view>
   <view wx:elif="{{!loading}}" class="empty">

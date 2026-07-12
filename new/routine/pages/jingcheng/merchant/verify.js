@@ -80,7 +80,7 @@ Page({
     try {
       if (!this._dingAudio) {
         this._dingAudio = wx.createInnerAudioContext()
-        this._dingAudio.src = '/static/audio/ding.wav'
+        this._dingAudio.src = '/pages/jingcheng/static/audio/ding.wav'
       }
       this._dingAudio.stop()
       this._dingAudio.seek(0)
