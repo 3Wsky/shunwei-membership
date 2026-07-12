@@ -19,7 +19,7 @@
     </view>
 
     <view class="hero-visual">
-      <image class="hero-visual-image" src="{{assetBase + 'hero-digital-gift-v1.jpg'}}" mode="aspectFill"></image>
+      <image class="hero-visual-image" src="/static/images/home/signin-gift-v2.png" mode="aspectFit"></image>
       <view class="visual-vignette"></view>
       <view class="coupon-halo"></view>
       <view class="coupon-spark spark-left"></view>
