@@ -1,0 +1,19 @@
+<view wx:if="{{visible}}" class="manager-mask" bindtap="close" catchtouchmove="stopTap">
+  <view class="manager-card" catchtap="stopTap">
+    <view class="manager-ribbon">客户经理为你服务</view>
+    <view class="manager-close" bindtap="close">×</view>
+    <view class="manager-head">
+      <image wx:if="{{card.avatar}}" class="manager-avatar" src="{{card.avatar}}" mode="aspectFill"></image>
+      <view wx:else class="manager-avatar fallback">{{card.initial || '锦'}}</view>
+      <view class="manager-copy">
+        <view class="manager-name-row"><text class="manager-name">{{card.displayName}}</text><text class="manager-role">{{card.jobTitle}}</text></view>
+        <view class="manager-store">{{card.storeName}}</view>
+        <view class="manager-phone">手机号　{{card.contactPhone || card.storePhone || '到店咨询'}}</view>
+      </view>
+    </view>
+    <view class="manager-address" bindtap="location">门店地址　{{card.storeAddress}} <text>›</text></view>
+    <image wx:if="{{card.wechatQrcode}}" class="manager-qrcode" src="{{card.wechatQrcode}}" mode="aspectFit" bindtap="previewQr"></image>
+    <view wx:if="{{card.wechatQrcode}}" class="qrcode-note">点击二维码可放大查看</view>
+    <button class="manager-call" bindtap="call">立即咨询 <text>›</text></button>
+  </view>
+</view>

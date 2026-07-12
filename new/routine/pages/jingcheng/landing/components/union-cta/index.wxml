@@ -1,0 +1,8 @@
+<view class="cta-wrap {{compact ? 'compact' : ''}}">
+  <button class="cta-button" bindtap="handleTap" hover-class="cta-pressed">
+    <view class="cta-shine"></view>
+    <text>{{label}}</text>
+    <view class="cta-arrow">›</view>
+  </button>
+  <view wx:if="{{note}}" class="cta-note">{{note}}</view>
+</view>

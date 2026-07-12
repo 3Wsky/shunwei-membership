@@ -1,5 +1,12 @@
 {
-  "navigationBarTitleText": "米东区联盟消费券",
+  "navigationBarTitleText": "米东区联盟现金券",
+  "navigationBarBackgroundColor": "#A20712",
+  "navigationBarTextStyle": "white",
   "enablePullDownRefresh": true,
-  "backgroundColor": "#F6F2EB"
+  "backgroundColor": "#8D0610",
+  "usingComponents": {
+    "union-cta": "./components/union-cta/index",
+    "union-product-block": "./components/union-product-block/index",
+    "union-manager-popup": "./components/union-manager-popup/index"
+  }
 }

@@ -1,0 +1,21 @@
+<view class="category-block">
+  <view class="category-title-wrap">
+    <view class="category-ornament">· ·</view>
+    <view class="category-title">{{block.name}}</view>
+    <view class="category-ornament">· ·</view>
+  </view>
+  <view class="category-subtitle">{{block.subtitle}}</view>
+
+  <view wx:if="{{block.products.length}}" class="product-grid">
+    <view wx:for="{{block.products}}" wx:key="id" class="product-card" data-id="{{item.id}}" bindtap="selectProduct" hover-class="card-pressed">
+      <view wx:if="{{item.tag}}" class="product-tag">{{item.tag}}</view>
+      <image wx:if="{{item.image}}" class="product-image" src="{{item.image}}" mode="aspectFit"></image>
+      <view wx:else class="product-image product-placeholder">数码好物</view>
+      <view class="product-name">{{item.name}}</view>
+      <view class="product-price">{{item.priceText}}</view>
+      <view class="product-coupon">送 <text>{{item.couponText}}</text> 元现金券</view>
+      <view class="product-points">+ {{item.pointsText}} 积分</view>
+    </view>
+  </view>
+  <view wx:else class="category-empty">更多{{block.name}}产品正在整理中</view>
+</view>
