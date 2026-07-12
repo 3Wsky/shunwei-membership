@@ -1,0 +1,9 @@
+.success-mask { position: fixed; z-index: 600; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40rpx; box-sizing: border-box; background: rgba(10,18,29,.56); }
+.success-card { width: 100%; max-width: 620rpx; padding: 54rpx 38rpx 34rpx; border-radius: 30rpx; box-sizing: border-box; background: linear-gradient(160deg,#fff 0%,#f4fcf7 100%); box-shadow: 0 30rpx 80rpx rgba(0,0,0,.24); animation: verify-success-enter 300ms cubic-bezier(.2,.86,.28,1) both; text-align: center; }
+.success-ring { width: 120rpx; height: 120rpx; display: flex; align-items: center; justify-content: center; margin: 0 auto 20rpx; border-radius: 50%; background: #dff5e8; }
+.success-check { width: 86rpx; height: 86rpx; border-radius: 50%; color: #fff; background: linear-gradient(135deg,#53c884,#26995b); box-shadow: 0 10rpx 22rpx rgba(38,153,91,.26); font-size: 56rpx; font-weight: 800; line-height: 86rpx; }
+.success-title { color: #1d392a; font-size: 38rpx; font-weight: 800; line-height: 52rpx; }
+.success-desc { margin-top: 12rpx; color: #69786f; font-size: 26rpx; line-height: 40rpx; }
+.success-note { margin-top: 24rpx; padding: 16rpx; border-radius: 14rpx; color: #6f8979; background: #edf8f1; font-size: 22rpx; line-height: 34rpx; }
+.success-button { height: 84rpx; margin-top: 30rpx; border-radius: 16rpx; color: #fff; background: linear-gradient(135deg,#26995b,#167c45); box-shadow: 0 10rpx 20rpx rgba(31,136,78,.22); font-size: 28rpx; font-weight: 700; line-height: 84rpx; }
+@keyframes verify-success-enter { from { opacity: 0; transform: translateY(24rpx) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }

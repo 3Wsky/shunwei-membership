@@ -1,0 +1,32 @@
+<view class="page">
+  <jc-auth-sync></jc-auth-sync>
+  <view wx:if="{{loading}}" class="state">正在加载名片…</view>
+  <view wx:elif="{{needLogin}}" class="state">
+    <view>请先登录后编辑名片</view>
+    <button bindtap="goLogin">去登录</button>
+  </view>
+  <block wx:else>
+    <view class="hero">
+      <view class="hero-title">客户经理名片</view>
+      <view class="hero-subtitle">客户会在购机咨询与活动页面看到这张名片</view>
+    </view>
+
+    <view class="form-card">
+      <view class="field"><text>展示名称</text><input data-field="displayName" value="{{form.displayName}}" bindinput="onInput" maxlength="64" placeholder="例如：张经理" /></view>
+      <view class="field"><text>职位</text><input data-field="jobTitle" value="{{form.jobTitle}}" bindinput="onInput" maxlength="64" placeholder="例如：专属客户经理" /></view>
+      <view class="field"><text>头像链接</text><input data-field="avatar" value="{{form.avatar}}" bindinput="onInput" maxlength="512" placeholder="可填写头像图片 URL" /></view>
+      <view class="field"><text>服务介绍</text><textarea data-field="bio" value="{{form.bio}}" bindinput="onInput" maxlength="500" placeholder="例如：购机咨询、会员权益、售后协助" auto-height /></view>
+      <view class="field"><text>微信二维码链接</text><input data-field="wechatQrcode" value="{{form.wechatQrcode}}" bindinput="onInput" maxlength="512" placeholder="可填写二维码图片 URL" /></view>
+      <view class="switch-row"><view><text>发布名片</text><label>关闭后客户将看不到您的名片</label></view><switch checked="{{form.isPublished}}" bindchange="onPublishChange" color="#B88622" /></view>
+    </view>
+
+    <view class="store-card">
+      <view class="store-title">门店信息（由后台维护）</view>
+      <view>{{store.name || '暂未绑定门店'}}</view>
+      <view wx:if="{{store.businessHours}}">营业时间：{{store.businessHours}}</view>
+      <view wx:if="{{store.address}}">地址：{{store.address}}</view>
+      <view wx:if="{{store.phone}}">电话：{{store.phone}}</view>
+    </view>
+    <button class="save-button" loading="{{saving}}" bindtap="save">保存名片</button>
+  </block>
+</view>

@@ -1,0 +1,20 @@
+:host { display: block; }
+.cancel-entry { position: fixed; z-index: 120; right: 0; bottom: 0; left: 0; padding: 18rpx 32rpx calc(18rpx + env(safe-area-inset-bottom)); box-sizing: border-box; background: rgba(255,255,255,.98); border-top: 1rpx solid #edf0f5; box-shadow: 0 -8rpx 28rpx rgba(15,35,70,.08); }
+.cancel-tip { display: flex; align-items: center; color: #8791a1; font-size: 22rpx; line-height: 32rpx; }
+.tip-dot { width: 12rpx; height: 12rpx; flex: 0 0 12rpx; margin-right: 10rpx; border-radius: 50%; background: #d0a33f; }
+.cancel-button { height: 84rpx; margin-top: 14rpx; border-radius: 16rpx; color: #7f641c; background: linear-gradient(135deg,#fcf5e5,#fffdfa); border: 1rpx solid rgba(201,162,39,.45); box-sizing: border-box; font-size: 28rpx; font-weight: 700; line-height: 82rpx; text-align: center; }
+.dialog-mask { position: fixed; z-index: 500; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40rpx; box-sizing: border-box; background: rgba(15,22,34,.52); }
+.dialog-card { width: 100%; max-width: 620rpx; padding: 48rpx 38rpx 34rpx; border-radius: 28rpx; box-sizing: border-box; background: #fff; box-shadow: 0 30rpx 80rpx rgba(0,0,0,.22); animation: dialog-enter 220ms cubic-bezier(.2,.86,.28,1) both; }
+.dialog-icon { width: 68rpx; height: 68rpx; margin: 0 auto 18rpx; border-radius: 50%; color: #9a741d; background: #fff4d9; font-size: 45rpx; font-weight: 800; line-height: 68rpx; text-align: center; }
+.dialog-title { color: #24211c; font-size: 34rpx; font-weight: 800; line-height: 46rpx; text-align: center; }
+.dialog-desc { margin-top: 16rpx; color: #73706b; font-size: 26rpx; line-height: 40rpx; text-align: center; }
+.dialog-notice { margin-top: 20rpx; padding: 14rpx 16rpx; border-radius: 12rpx; color: #927334; background: #fff8e9; font-size: 22rpx; line-height: 32rpx; text-align: center; }
+.dialog-actions { display: flex; gap: 16rpx; margin-top: 30rpx; }
+.dialog-button { height: 82rpx; flex: 1; border-radius: 14rpx; box-sizing: border-box; font-size: 27rpx; font-weight: 700; line-height: 82rpx; text-align: center; }
+.secondary { color: #726d65; background: #f4f2ee; }
+.primary { color: #fff; background: linear-gradient(135deg,#d8ad4b,#bc8830); box-shadow: 0 8rpx 18rpx rgba(177,125,38,.24); }
+.disabled { opacity: .62; }
+.result-card { padding-top: 54rpx; }
+.result-check { width: 86rpx; height: 86rpx; margin: 0 auto 18rpx; border-radius: 50%; color: #fff; background: linear-gradient(135deg,#57bf83,#2d9f60); font-size: 56rpx; font-weight: 800; line-height: 86rpx; text-align: center; }
+.result-button { width: 100%; margin-top: 30rpx; }
+@keyframes dialog-enter { from { opacity: 0; transform: translateY(24rpx) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }

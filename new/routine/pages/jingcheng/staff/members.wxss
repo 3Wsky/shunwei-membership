@@ -24,6 +24,11 @@ page {
   box-shadow: 0 12rpx 36rpx rgba(26, 31, 54, 0.16);
 }
 
+.card-entry {
+  margin-bottom: 18rpx;
+  background: linear-gradient(135deg, #C58A1C 0%, #8F5B08 100%);
+}
+
 .manager-entry text {
   display: block;
   font-size: 30rpx;

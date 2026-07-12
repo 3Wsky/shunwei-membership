@@ -58,7 +58,7 @@
     <view class="section-badge">{{todayRecords.length}}条</view>
   </view>
   <view wx:if="{{todayRecords.length}}" class="record-list">
-    <view wx:for="{{todayRecords}}" wx:key="id" class="record-row">
+    <view wx:for="{{todayRecords}}" wx:key="id" class="record-row {{index === 0 && highlightLatest ? 'record-row-new' : ''}}">
       <view class="record-icon"><text class="iconfont icon-yonghu"></text></view>
       <view class="record-left">
         <view class="record-name">{{item.customerNickname || ('UID ' + item.customerUid)}}</view>
@@ -93,6 +93,22 @@
         <view class="sc-value">￥{{monthAmount}}</view>
         <view class="sc-desc">{{monthCount}} 次</view>
       </view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{successResult}}" class="success-mask" catchtouchmove="preventMove">
+  <view class="success-panel">
+    <view class="success-check"><text class="iconfont icon-duihao2"></text></view>
+    <view class="success-title">核销已完成</view>
+    <view class="success-subtitle">本次核销已生效，记录已同步至今日明细</view>
+    <view class="success-result-card">
+      <view class="success-result-label">核销信息</view>
+      <view wx:for="{{successResult.lines}}" wx:key="*this" class="success-result-line">{{item}}</view>
+    </view>
+    <view class="success-actions">
+      <view class="success-button ghost" bindtap="closeSuccessResult">完成</view>
+      <view class="success-button primary" bindtap="continueVerify">继续核销</view>
     </view>
   </view>
 </view>

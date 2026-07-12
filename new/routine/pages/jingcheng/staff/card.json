@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "编辑我的名片",
+  "usingComponents": {
+    "jc-auth-sync": "/components/jc-auth-sync/index"
+  }
+}

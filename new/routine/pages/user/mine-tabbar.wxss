@@ -1,0 +1,12 @@
+/* 与首页、分类和积分商城复用相同的贴底导航视觉。 */
+.mine-tabbar-spacer { height: 156rpx; }
+.mine-tabbar { position: fixed; z-index: 100; right: 0; bottom: 0; left: 0; min-height: 104rpx; padding: 8rpx 26rpx calc(8rpx + env(safe-area-inset-bottom)); box-sizing: border-box; display: flex; align-items: center; justify-content: space-around; border-top: 1rpx solid rgba(234, 225, 216, .9); background: rgba(255, 255, 255, .97); box-shadow: 0 -8rpx 22rpx rgba(78, 55, 34, .08); }
+.mine-tab-item { position: relative; width: 25%; height: 92rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #8e857d; transition: opacity 140ms ease, transform 140ms ease; }
+.mine-tab-icon { width: 48rpx; height: 48rpx; display: flex; align-items: center; justify-content: center; border-radius: 17rpx; }
+.mine-tab-icon .iconfont { font-size: 34rpx; }
+.mine-tab-text { margin-top: 1rpx; font-size: 20rpx; line-height: 28rpx; }
+.mine-tab-item.active { color: #f15d2b; }
+.mine-tab-item.active .mine-tab-icon { color: #fff; background: linear-gradient(135deg, #ff8750, #ff5f2b); box-shadow: 0 7rpx 14rpx rgba(255, 106, 42, .2); }
+.mine-tab-item.active .mine-tab-text { font-weight: 700; }
+.mine-tab-active-dot { position: absolute; bottom: 0; width: 18rpx; height: 5rpx; border-radius: 3rpx; background: #ff6a2a; }
+.mine-tab-item.tab-pressed { opacity: .72; transform: translateY(2rpx); }

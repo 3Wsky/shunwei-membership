@@ -92,4 +92,17 @@
       </view>
     </view>
   </view>
+
+  <view wx:if="{{exchangeSuccess}}" class="exchange-mask success-mask" catchtouchmove="noop">
+    <view class="exchange-dialog exchange-success-dialog" catchtap="noop">
+      <view class="success-check">✓</view>
+      <view class="exchange-heading">兑换成功</view>
+      <view class="exchange-subheading">礼品已放入「我的礼品」，到店时再出示核销码即可。</view>
+      <view class="success-reminder">无需现在核销，请在方便到店时打开礼品详情。</view>
+      <view class="exchange-actions">
+        <view class="exchange-button cancel" bindtap="closeExchangeSuccess">继续浏览</view>
+        <view class="exchange-button confirm" bindtap="viewMyGifts">查看我的礼品</view>
+      </view>
+    </view>
+  </view>
 </view>

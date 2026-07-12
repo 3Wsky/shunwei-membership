@@ -1,5 +1,6 @@
 <view class="page">
   <jc-auth-sync></jc-auth-sync>
+  <view class="manager-entry card-entry" bindtap="openCard"><view><text>编辑我的名片</text><label>维护客户看到的姓名、服务介绍和微信二维码</label></view><view class="badge">去编辑 ›</view></view>
   <view wx:if="{{isManager}}" class="manager-entry" bindtap="openApprovals"><view><text>店长审批</text><label>审核店员提交的会员权益申请</label></view><view class="badge">{{pendingCount}} 条待办 ›</view></view>
   <view class="search"><input value="{{keyword}}" bindinput="onInput" confirm-type="search" bindconfirm="onSearch" placeholder="搜索昵称、UID或手机号"/><button bindtap="onSearch">查询</button></view>
   <view class="summary">

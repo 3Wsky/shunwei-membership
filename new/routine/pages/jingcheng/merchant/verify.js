@@ -67,10 +67,13 @@ Page({
     quickAmounts: [],
     showIntegralModal: false,
     integralInfo: null,
-    pendingIntegralCode: ''
+    pendingIntegralCode: '',
+    successResult: null,
+    highlightLatest: false
   },
   onShow: function () { this.load() },
   onUnload: function () {
+    if (this._highlightTimer) clearTimeout(this._highlightTimer)
     if (this._dingAudio) { try { this._dingAudio.destroy() } catch (e) {} this._dingAudio = null }
   },
   onPullDownRefresh: function () { this.load().finally(function () { wx.stopPullDownRefresh() }) },
@@ -332,23 +335,20 @@ Page({
       }
     }.bind(this))
   },
-  // 核销成功统一弹窗：带「继续核销」一键再扫，连续核销不用来回点
+  // 核销成功结果卡：保留连续核销入口，并让刚新增的记录高亮显示。
   showSuccessModal: function (content) {
-    var self = this
-    wx.showModal({
-      title: '核销成功',
-      content: content,
-      showCancel: true,
-      cancelText: '完成',
-      confirmText: '继续核销',
-      success: function (res) {
-        self.load()
-        if (res.confirm) {
-          setTimeout(function () { self.scanCustomer() }, 250)
-        }
-      },
-      fail: function () { self.load() }
-    })
+    var lines = String(content || '核销已完成').split('\n').filter(Boolean)
+    this.setData({ successResult: { lines: lines }, highlightLatest: true })
+    this.load()
+    if (this._highlightTimer) clearTimeout(this._highlightTimer)
+    this._highlightTimer = setTimeout(function () {
+      this.setData({ highlightLatest: false })
+    }.bind(this), 2400)
+  },
+  closeSuccessResult: function () { this.setData({ successResult: null }) },
+  continueVerify: function () {
+    this.setData({ successResult: null })
+    setTimeout(function () { this.scanCustomer() }.bind(this), 220)
   },
   // 网络恢复后自动回查：凭原核销码确认这笔是否已成功核销，免去核销员手动核对
   recheckCashVerify: function (token) {

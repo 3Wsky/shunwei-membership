@@ -792,3 +792,20 @@ page {
   background: linear-gradient(135deg, #F8DC8E 0%, #E6B84E 100%);
   box-shadow: 0 8rpx 22rpx rgba(201, 162, 39, 0.34);
 }
+
+.record-row-new { animation: record-flash 2.2s ease both; }
+.success-mask { position: fixed; z-index: 300; inset: 0; display: flex; align-items: center; justify-content: center; padding: 36rpx; box-sizing: border-box; background: rgba(8, 20, 38, 0.62); }
+.success-panel { width: 100%; padding: 54rpx 34rpx 32rpx; box-sizing: border-box; border-radius: 30rpx; background: linear-gradient(160deg, #FFFFFF, #F3FFF8); box-shadow: 0 24rpx 70rpx rgba(3, 20, 35, 0.28); animation: success-pop 360ms cubic-bezier(.2,.85,.28,1.18) both; text-align: center; }
+.success-check { width: 116rpx; height: 116rpx; margin: 0 auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #FFFFFF; background: linear-gradient(135deg, #39C98A, #159A61); box-shadow: 0 12rpx 24rpx rgba(21, 154, 97, 0.25); }
+.success-check .iconfont { font-size: 62rpx; }
+.success-title { margin-top: 22rpx; color: #123526; font-size: 38rpx; font-weight: 900; }
+.success-subtitle { margin-top: 10rpx; color: #789184; font-size: 23rpx; }
+.success-result-card { margin-top: 28rpx; padding: 20rpx 22rpx; border-radius: 18rpx; background: #F0FAF4; border: 1rpx solid #D6F0E0; text-align: left; }
+.success-result-label { margin-bottom: 8rpx; color: #7B9A88; font-size: 21rpx; font-weight: 700; letter-spacing: 1rpx; }
+.success-result-line { color: #24533B; font-size: 27rpx; line-height: 44rpx; font-weight: 700; }
+.success-actions { display: flex; gap: 18rpx; margin-top: 30rpx; }
+.success-button { flex: 1; height: 84rpx; display: flex; align-items: center; justify-content: center; border-radius: 44rpx; font-size: 28rpx; font-weight: 800; }
+.success-button.ghost { color: #5A7164; background: #EDF3EF; }
+.success-button.primary { color: #FFFFFF; background: linear-gradient(135deg, #1F6BFF, #1555D6); box-shadow: 0 8rpx 18rpx rgba(31, 107, 255, 0.24); }
+@keyframes success-pop { from { opacity: 0; transform: scale(.88) translateY(28rpx); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes record-flash { 0%,100% { background: #FFFFFF; } 24% { background: #E5FFF1; } 55% { background: #F4FFF9; } }

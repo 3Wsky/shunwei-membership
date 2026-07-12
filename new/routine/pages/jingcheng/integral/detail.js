@@ -16,7 +16,8 @@ Page({
     balance: 0,
     loading: true,
     submitting: false,
-    exchangeDialog: false
+    exchangeDialog: false,
+    exchangeSuccess: false
   },
   onLoad(options) {
     this.setData({ id: Number((options && options.id) || 0) })
@@ -72,10 +73,17 @@ Page({
     this.setData({ submitting: true })
     request('/api/integral-mall/exchange', { method: 'POST', data: { productId: this.data.id } })
       .then(() => {
-        wx.showToast({ title: '兑换成功', icon: 'success' })
         this.load()
+        this.setData({ exchangeSuccess: true })
       })
       .catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
       .finally(() => this.setData({ submitting: false }))
+  },
+  closeExchangeSuccess() {
+    this.setData({ exchangeSuccess: false })
+  },
+  viewMyGifts() {
+    this.setData({ exchangeSuccess: false })
+    wx.navigateTo({ url: '/pages/points_mall/exchange_record' })
   }
 })

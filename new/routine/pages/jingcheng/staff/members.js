@@ -120,5 +120,6 @@ Page({
     var item = this.data.list[e.currentTarget.dataset.index]
     wx.navigateTo({ url: '/pages/jingcheng/staff/apply?member=' + encodeURIComponent(JSON.stringify(item)) })
   },
+  openCard: function () { wx.navigateTo({ url: '/pages/jingcheng/staff/card' }) },
   openApprovals: function () { wx.navigateTo({ url: '/pages/jingcheng/manager/approvals' }) }
 })

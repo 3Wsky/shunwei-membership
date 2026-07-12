@@ -1,0 +1,39 @@
+/* 核销完成：让状态切换本身成为一次明确、克制的成功反馈。 */
+.gift-status-card.verified.data-v-4aac0955 {
+  animation: verified-card-enter 420ms cubic-bezier(.2, .86, .28, 1) both;
+}
+
+.gift-status-card.verified .verified-state.data-v-4aac0955 {
+  animation: verified-state-enter 500ms 90ms cubic-bezier(.2, .86, .28, 1) both;
+}
+
+.gift-status-card.verified .verified-state .iconfont.data-v-4aac0955 {
+  display: inline-flex;
+  animation: verified-check-pop 540ms 130ms cubic-bezier(.18, 1.35, .3, 1) both;
+}
+
+.gift-status-card.verified .gift-code.data-v-4aac0955 {
+  animation: verified-code-leave 280ms ease both;
+}
+
+@keyframes verified-card-enter {
+  0% { opacity: .35; transform: translateY(18rpx) scale(.975); }
+  65% { opacity: 1; transform: translateY(-2rpx) scale(1.008); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes verified-state-enter {
+  0% { opacity: 0; transform: translateY(12rpx); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes verified-check-pop {
+  0% { opacity: 0; transform: scale(.35) rotate(-18deg); }
+  72% { opacity: 1; transform: scale(1.16) rotate(4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes verified-code-leave {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(.96); }
+}

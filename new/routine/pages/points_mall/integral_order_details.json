@@ -4,6 +4,8 @@
     "home": "/components/home/index",
     "order-goods": "/components/orderGoods/index",
     "authorize": "/components/Authorize",
-    "zb-code": "/components/zb-code/zb-code"
+    "zb-code": "/components/zb-code/zb-code",
+    "jc-cancel-exchange": "/components/jc-cancel-exchange/index",
+    "jc-verify-success": "/components/jc-verify-success/index"
   }
 }

@@ -1,0 +1,26 @@
+<view class="cancel-entry">
+  <view class="cancel-tip"><text class="tip-dot"></text>兑换后 24 小时内，未核销的礼品可撤销并退回积分</view>
+  <view class="cancel-button" bindtap="openDialog">撤销兑换 · 退回积分</view>
+</view>
+
+<view wx:if="{{dialogVisible}}" class="dialog-mask" catchtouchmove="preventMove" bindtap="closeDialog">
+  <view class="dialog-card" catchtap="preventMove">
+    <view class="dialog-icon">!</view>
+    <view class="dialog-title">确认撤销兑换</view>
+    <view class="dialog-desc">撤销后，本次兑换使用的积分将原路退回，礼品库存也会同步恢复。</view>
+    <view class="dialog-notice">仅限兑换后 24 小时内且未到店核销的礼品。</view>
+    <view class="dialog-actions">
+      <view class="dialog-button secondary" bindtap="closeDialog">暂不撤销</view>
+      <view class="dialog-button primary {{submitting ? 'disabled' : ''}}" bindtap="confirmCancel">{{submitting ? '处理中…' : '确认撤销'}}</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{resultVisible}}" class="dialog-mask" catchtouchmove="preventMove">
+  <view class="dialog-card result-card">
+    <view class="result-check">✓</view>
+    <view class="dialog-title">已撤销兑换</view>
+    <view class="dialog-desc">积分已退回，礼品库存已恢复。</view>
+    <view class="dialog-button primary result-button" bindtap="backToGifts">返回我的礼品</view>
+  </view>
+</view>

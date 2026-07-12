@@ -423,6 +423,42 @@ page {
   transform: scale(0.97);
 }
 
+.exchange-success-dialog {
+  padding-top: 52rpx;
+}
+
+.success-check {
+  width: 92rpx;
+  height: 92rpx;
+  margin: 0 auto 18rpx;
+  border-radius: 50%;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #5AC88B, #28A968);
+  box-shadow: 0 12rpx 26rpx rgba(40, 169, 104, 0.28);
+  font-size: 60rpx;
+  font-weight: 800;
+  line-height: 90rpx;
+  text-align: center;
+  animation: success-check-pop 460ms cubic-bezier(.18, 1.35, .3, 1) both;
+}
+
+.success-reminder {
+  margin-top: 24rpx;
+  padding: 16rpx 18rpx;
+  border-radius: 14rpx;
+  color: #6F806F;
+  background: #F2F9F4;
+  font-size: 23rpx;
+  line-height: 34rpx;
+  text-align: center;
+}
+
+@keyframes success-check-pop {
+  from { opacity: 0; transform: scale(.42) rotate(-18deg); }
+  70% { opacity: 1; transform: scale(1.14) rotate(3deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
 @keyframes exchange-dialog-pop {
   from { transform: translateY(26rpx) scale(0.96); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }

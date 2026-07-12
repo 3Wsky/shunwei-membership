@@ -11,6 +11,7 @@
       "root": "pages/jingcheng",
       "pages": [
         "staff/members",
+        "staff/card",
         "staff/apply",
         "manager/approvals",
         "wallet/index",

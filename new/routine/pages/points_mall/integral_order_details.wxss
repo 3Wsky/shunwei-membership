@@ -1,3 +1,5 @@
+@import "./integral-verified-motion.wxss";
+
 /* ---------------------------------------------------------------- */
 /* 【UX/UI 视觉与交互设计师】 兑换订单详情页 极致轻奢风重构 (对齐 24_UI) */
 /* ---------------------------------------------------------------- */
@@ -485,4 +487,19 @@ page {
 .order-details .footer .bnt:active {
   transform: scale(0.96) !important;
   opacity: 0.9 !important;
+}
+
+/* 待核销礼品以撤销卡为唯一底部操作，必须盖过无按钮的通用 footer。 */
+.order-details .cancelBar.data-v-4aac0955 {
+  z-index: 120 !important;
+  min-height: calc(156rpx + env(safe-area-inset-bottom)) !important;
+}
+
+.order-details .cancelBar .cancelBar-tip.data-v-4aac0955 {
+  padding-right: 6rpx !important;
+}
+
+/* 由 jc-cancel-exchange 提供正式确认流程，避免旧的系统弹窗与操作条重复。 */
+.order-details .cancelBar.data-v-4aac0955 {
+  display: none !important;
 }

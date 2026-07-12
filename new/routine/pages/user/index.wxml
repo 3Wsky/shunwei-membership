@@ -356,7 +356,7 @@
                       ><text
                         class="iconfont icon-jiantou"
                       ></text></block></view></block></block></block></view></view></block
-      ><view class="uni-p-b-98"></view></scroll-view
+      ><view class="uni-p-b-98"></view><view class="mine-tabbar-spacer"></view></scroll-view
     ><edit-user-modal
       vue-id="5c2bbbc2-1"
       isShow="{{editModal}}"
@@ -365,9 +365,10 @@
       bind:editSuccess="__e"
       bind:__l="__l"
     ></edit-user-modal></view
-  ><page-footer
-    style="{{(colorStyle)}}"
-    vue-id="5c2bbbc2-2"
-    bind:__l="__l"
-  ></page-footer
+  ><view class="mine-tabbar">
+    <navigator class="mine-tab-item" open-type="switchTab" url="/pages/index/index" hover-class="tab-pressed"><view class="mine-tab-icon"><text class="iconfont icon-shouye"></text></view><view class="mine-tab-text">首页</view></navigator>
+    <navigator class="mine-tab-item" open-type="switchTab" url="/pages/goods_cate/goods_cate" hover-class="tab-pressed"><view class="mine-tab-icon"><text class="iconfont icon-fenlei"></text></view><view class="mine-tab-text">分类</view></navigator>
+    <navigator class="mine-tab-item" url="/pages/jingcheng/integral/mall" hover-class="tab-pressed"><view class="mine-tab-icon"><text class="iconfont icon-jifenshangcheng"></text></view><view class="mine-tab-text">积分商城</view></navigator>
+    <view class="mine-tab-item active"><view class="mine-tab-icon"><text class="iconfont icon-geren"></text></view><view class="mine-tab-text">我的</view><view class="mine-tab-active-dot"></view></view>
+  </view
 ></view>
