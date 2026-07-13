@@ -32,10 +32,10 @@
 
     <block wx:if="{{configData.wechat_auth_switch}}">
       <block wx:if="{{bindPhone}}">
-        <button class="auth-button" open-type="getPhoneNumber" aria-label="授权登录" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e"><text>授权登录</text></button>
+        <button class="auth-button" hover-class="auth-button-pressed" hover-stay-time="120" open-type="getPhoneNumber" aria-label="授权登录" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e"><view class="auth-shimmer"></view><text>授权登录</text><view class="auth-spark">✦</view></button>
       </block>
       <block wx:else>
-        <button class="auth-button" aria-label="授权登录" data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}" bindtap="__e"><text>授权登录</text></button>
+        <button class="auth-button" hover-class="auth-button-pressed" hover-stay-time="120" aria-label="授权登录" data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}" bindtap="__e"><view class="auth-shimmer"></view><text>授权登录</text><view class="auth-spark">✦</view></button>
       </block>
     </block>
 
