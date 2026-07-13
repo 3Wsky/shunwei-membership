@@ -46,6 +46,9 @@
       <view class="de-sub">数量有限，先兑先得。更多权益请关注锦程数码会员中心。</view>
     </view>
   </view>
+  <view wx:if="{{detailImages.length}}" class="detail-images">
+    <image wx:for="{{detailImages}}" wx:key="*this" class="detail-image" src="{{item}}" mode="widthFix" lazy-load="true" />
+  </view>
 
   <view class="bottom-spacer"></view>
   <view class="bottom-bar">

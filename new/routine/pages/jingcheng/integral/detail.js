@@ -5,6 +5,7 @@ Page({
     id: 0,
     image: '',
     images: [],
+    detailImages: [],
     title: '',
     info: '',
     description: '',
@@ -34,6 +35,7 @@ Page({
       this.setData({
         image: d.image || '',
         images: d.images || [],
+        detailImages: d.detailImages || [],
         title: d.title || '积分商品',
         info: d.info || '',
         description: d.description || '',

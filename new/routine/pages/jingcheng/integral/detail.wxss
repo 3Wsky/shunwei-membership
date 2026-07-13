@@ -200,6 +200,18 @@ page {
   max-width: 100%;
 }
 
+.detail-images {
+  margin: 18rpx 28rpx 0;
+  overflow: hidden;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+}
+
+.detail-image {
+  display: block;
+  width: 100%;
+}
+
 .desc-empty {
   text-align: center;
   padding: 30rpx 10rpx;
