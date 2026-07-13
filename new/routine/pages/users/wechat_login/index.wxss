@@ -1,41 +1,49 @@
 page { background: #FFF9F0; }
-
-.wrapper {
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  color: #3B2719;
-  background: #FFF9F0;
-}
-
-.system-height { position: relative; z-index: 4; }
-.title-bar { position: relative; z-index: 4; height: 92rpx; display: flex; align-items: center; justify-content: center; color: #302016; background: #FFF9F0; font-size: 34rpx; font-weight: 700; letter-spacing: 2rpx; }
-.nav-button { position: absolute; top: 8rpx; left: 24rpx; width: 72rpx; height: 72rpx; display: flex; align-items: center; justify-content: center; box-sizing: border-box; border: 1rpx solid rgba(202, 160, 104, .42); border-radius: 50%; background: rgba(255, 253, 249, .9); box-shadow: 0 8rpx 24rpx rgba(111, 75, 37, .07); }
+.wrapper { position: relative; min-height: 100vh; overflow: hidden; color: #3A2618; background: #FFF9F0; }
+.system-height { position: relative; z-index: 5; }
+.title-bar { position: relative; z-index: 5; height: 92rpx; display: flex; align-items: center; justify-content: center; color: #302016; background: #FFF9F0; font-size: 34rpx; font-weight: 700; letter-spacing: 2rpx; }
+.nav-button { position: absolute; top: 8rpx; left: 24rpx; width: 72rpx; height: 72rpx; display: flex; align-items: center; justify-content: center; box-sizing: border-box; border: 1rpx solid rgba(202,160,104,.42); border-radius: 50%; background: rgba(255,253,249,.92); box-shadow: 0 8rpx 24rpx rgba(111,75,37,.07); }
 .nav-button image { width: 31rpx; height: 31rpx; }
 
-.visual-page { position: relative; width: 750rpx; padding-bottom: env(safe-area-inset-bottom); background: #FFF9F0; }
-.visual-slice { display: block; width: 750rpx; }
-.hero-slice { height: 421rpx; }
-.card-slice-wrap { position: relative; width: 750rpx; height: 531rpx; }
-.card-slice { position: absolute; top: 0; left: 0; height: 531rpx; }
-.footer-slice { height: 222rpx; }
+.visual-canvas { position: relative; width: 750rpx; height: 1554rpx; padding-bottom: env(safe-area-inset-bottom); background: #FFF9F0; }
+.template-slice { position: absolute; left: 0; width: 750rpx; }
+.template-top { top: 0; height: 528rpx; }
+.template-card { top: 528rpx; height: 766rpx; }
+.template-footer { top: 1294rpx; height: 260rpx; }
 
-.auth-hit-button,
-.skip-hit-button { position: absolute; z-index: 3; margin: 0; padding: 0; overflow: visible; box-sizing: border-box; border: 0; color: transparent; background: transparent; line-height: 1; transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease; }
-.auth-hit-button::after,
-.skip-hit-button::after { border: 0; }
-.auth-hit-button text,
-.skip-hit-button text { color: transparent; }
+.brand-block { position: absolute; z-index: 2; top: 64rpx; left: 0; width: 750rpx; display: flex; flex-direction: column; align-items: center; }
+.brand-emblem { width: 132rpx; height: 132rpx; padding: 7rpx; overflow: hidden; box-sizing: border-box; border: 1rpx solid rgba(213,162,87,.55); border-radius: 40rpx; background: #FFFDFA; box-shadow: 0 17rpx 40rpx rgba(157,99,31,.14); }
+.brand-emblem image { width: 100%; height: 100%; border-radius: 33rpx; background: #FFF; transform: scale(1.3); }
+.brand-diamond { width: 12rpx; height: 12rpx; margin-top: -5rpx; background: #E3AE58; transform: rotate(45deg); }
+.brand-name { margin-top: 25rpx; color: #3A2618; font-size: 48rpx; font-weight: 800; line-height: 60rpx; letter-spacing: 3rpx; }
+.brand-subtitle { margin-top: 9rpx; color: #7D6554; font-size: 27rpx; line-height: 38rpx; letter-spacing: 5rpx; }
+.brand-divider { width: 430rpx; margin-top: 22rpx; display: flex; align-items: center; justify-content: center; color: #C28C45; font-size: 19rpx; font-weight: 600; letter-spacing: 6rpx; }
+.brand-divider .divider-line { width: 64rpx; height: 1rpx; background: rgba(195,142,73,.5); }
+.brand-divider .divider-dot { width: 8rpx; height: 8rpx; margin: 0 14rpx; background: #D6A35B; transform: rotate(45deg); }
 
-.auth-hit-button { top: 235rpx; left: 77rpx; width: 594rpx; height: 101rpx; border-radius: 54rpx; }
-.auth-hit-button:active { background: rgba(146, 35, 10, .12); box-shadow: inset 0 0 0 2rpx rgba(255, 240, 210, .5); transform: scale(.98); }
-.skip-hit-button { top: 431rpx; left: 247rpx; width: 256rpx; height: 76rpx; border-radius: 38rpx; }
-.skip-hit-button:active { background: rgba(191, 142, 78, .09); transform: scale(.96); }
+.card-copy { position: absolute; z-index: 2; top: 574rpx; left: 96rpx; }
+.card-kicker { color: #C58D40; font-size: 21rpx; font-weight: 600; line-height: 30rpx; letter-spacing: 4rpx; }
+.kicker-line { width: 58rpx; height: 4rpx; margin-top: 12rpx; border-radius: 4rpx; background: #D39A4C; }
+.card-title { margin-top: 20rpx; color: #382416; font-size: 42rpx; font-weight: 800; line-height: 55rpx; letter-spacing: 1rpx; }
+.card-desc { margin-top: 13rpx; color: #806A5A; font-size: 23rpx; line-height: 36rpx; }
 
-.protocol-panel { position: relative; z-index: 4; margin: -6rpx 54rpx 18rpx; padding: 18rpx 24rpx; border: 1rpx solid rgba(211, 179, 138, .38); border-radius: 18rpx; color: #917D6B; background: rgba(255, 253, 248, .94); font-size: 21rpx; line-height: 34rpx; text-align: center; box-shadow: 0 10rpx 26rpx rgba(103, 68, 34, .06); }
+.auth-button { position: absolute; z-index: 4; top: 984rpx; left: 67rpx; width: 616rpx; height: 114rpx; margin: 0; padding: 0; border: 0; border-radius: 58rpx; color: #FFF; background: transparent; font-size: 36rpx; font-weight: 700; line-height: 114rpx; letter-spacing: 2rpx; transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease; }
+.auth-button::after, .skip-button::after { border: 0; }
+.auth-button:active { background: rgba(140,30,8,.12); box-shadow: inset 0 0 0 2rpx rgba(255,242,214,.52); transform: scale(.98); }
+.security-tip { position: absolute; z-index: 3; top: 1126rpx; left: 0; width: 750rpx; display: flex; align-items: center; justify-content: center; color: #8D7867; font-size: 21rpx; }
+.security-check { width: 32rpx; height: 32rpx; margin-right: 10rpx; border-radius: 50%; color: #FFF; background: linear-gradient(135deg,#E8C27F,#D9A34B); font-size: 19rpx; line-height: 32rpx; text-align: center; }
+.skip-button { position: absolute; z-index: 4; top: 1191rpx; left: 255rpx; width: 240rpx; height: 82rpx; margin: 0; padding: 0; border: 0; border-radius: 41rpx; color: #806D5D; background: transparent; font-size: 27rpx; line-height: 82rpx; transition: transform .12s ease, background-color .12s ease; }
+.skip-button:active { background: rgba(191,142,78,.1); transform: scale(.96); }
+
+.footer-brand { position: absolute; z-index: 2; top: 1363rpx; left: 0; width: 750rpx; display: flex; flex-direction: column; align-items: center; color: #9B774E; font-size: 22rpx; letter-spacing: 4rpx; }
+.footer-mark { width: 350rpx; margin-bottom: 16rpx; display: flex; align-items: center; justify-content: center; }
+.footer-mark .footer-line { width: 98rpx; height: 1rpx; background: rgba(189,141,75,.3); }
+.footer-mark .footer-dot { width: 8rpx; height: 8rpx; margin: 0 15rpx; background: #BD8740; transform: rotate(45deg); }
+.footer-mark text { width: 38rpx; height: 44rpx; box-sizing: border-box; border: 2rpx solid #D69B48; border-radius: 8rpx 8rpx 16rpx 16rpx; color: #C68C3D; background: rgba(255,239,209,.8); font-family: serif; font-size: 24rpx; font-weight: 700; line-height: 39rpx; text-align: center; }
+
+.protocol-panel { position: absolute; z-index: 6; top: 1270rpx; left: 54rpx; right: 54rpx; padding: 15rpx 20rpx; border: 1rpx solid rgba(211,179,138,.38); border-radius: 18rpx; color: #917D6B; background: rgba(255,253,248,.96); font-size: 20rpx; line-height: 32rpx; text-align: center; }
 .protocol-panel .main-color { color: #B37834; }
 .protocol-panel .trembling { animation: shake .6s; }
 .protocol-panel checkbox .wx-checkbox-input { width: 28rpx; height: 28rpx; margin-right: 7rpx; border-color: #D8C8B7; border-radius: 8rpx; }
 .protocol-panel checkbox .wx-checkbox-input.wx-checkbox-input-checked { border-color: #C18A48; background: #C18A48; }
-
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8rpx); } 75% { transform: translateX(8rpx); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8rpx); } 75% { transform: translateX(8rpx); } }

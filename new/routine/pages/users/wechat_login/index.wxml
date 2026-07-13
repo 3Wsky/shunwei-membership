@@ -2,50 +2,49 @@
   <view class="system-height" style="height:{{statusBarHeight}};"></view>
   <view class="title-bar">
     <block wx:if="{{!isHome}}">
-      <view data-event-opts="{{[['tap',[['back',['$event']]]]]}}" class="nav-button" bindtap="__e">
-        <image src="../static/left.png"></image>
-      </view>
+      <view data-event-opts="{{[['tap',[['back',['$event']]]]]}}" class="nav-button" bindtap="__e"><image src="../static/left.png"></image></view>
     </block>
     <block wx:else>
-      <view data-event-opts="{{[['tap',[['home',['$event']]]]]}}" class="nav-button" bindtap="__e">
-        <image src="../static/home.png"></image>
-      </view>
+      <view data-event-opts="{{[['tap',[['home',['$event']]]]]}}" class="nav-button" bindtap="__e"><image src="../static/home.png"></image></view>
     </block>
     <text>会员登录</text>
   </view>
 
-  <view class="visual-page">
-    <image class="visual-slice hero-slice" src="./static/login-hero.jpg" mode="widthFix"></image>
+  <view class="visual-canvas">
+    <image class="template-slice template-top" src="./static/login-template-top.jpg" mode="scaleToFill"></image>
+    <image class="template-slice template-card" src="./static/login-template-card.jpg" mode="scaleToFill"></image>
+    <image class="template-slice template-footer" src="./static/login-template-footer.jpg" mode="scaleToFill" lazy-load="true"></image>
 
-    <view class="card-slice-wrap">
-      <image class="visual-slice card-slice" src="./static/login-card.jpg" mode="widthFix"></image>
+    <view class="brand-block">
+      <view class="brand-emblem"><image src="{{configData.wap_login_logo}}" mode="aspectFit"></image></view>
+      <view class="brand-diamond"></view>
+      <view class="brand-name">锦程祥瑞数码</view>
+      <view class="brand-subtitle">您的专属手机管家</view>
+      <view class="brand-divider"><view class="divider-line"></view><view class="divider-dot"></view><text>MEMBER SERVICE</text><view class="divider-dot"></view><view class="divider-line"></view></view>
+    </view>
 
-      <block wx:if="{{configData.wechat_auth_switch}}">
-        <block wx:if="{{bindPhone}}">
-          <button
-            class="auth-hit-button"
-            open-type="getPhoneNumber"
-            aria-label="授权登录"
-            data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}"
-            bindgetphonenumber="__e"
-          ><text>授权登录</text></button>
-        </block>
-        <block wx:else>
-          <button
-            class="auth-hit-button"
-            aria-label="授权登录"
-            data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}"
-            bindtap="__e"
-          ><text>授权登录</text></button>
-        </block>
+    <view class="card-copy">
+      <view class="card-kicker">WELCOME BACK</view>
+      <view class="kicker-line"></view>
+      <view class="card-title">欢迎登录会员中心</view>
+      <view class="card-desc">授权后即可查看积分、现金券与专属会员权益</view>
+    </view>
+
+    <block wx:if="{{configData.wechat_auth_switch}}">
+      <block wx:if="{{bindPhone}}">
+        <button class="auth-button" open-type="getPhoneNumber" aria-label="授权登录" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e"><text>授权登录</text></button>
       </block>
+      <block wx:else>
+        <button class="auth-button" aria-label="授权登录" data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}" bindtap="__e"><text>授权登录</text></button>
+      </block>
+    </block>
 
-      <button
-        class="skip-hit-button"
-        aria-label="暂不登录"
-        data-event-opts="{{[['tap',[['onReject',['$event']]]]]}}"
-        bindtap="__e"
-      ><text>暂不登录</text></button>
+    <view class="security-tip"><text class="security-check">✓</text><text>仅用于会员身份验证 · 信息加密保护</text></view>
+    <button class="skip-button" aria-label="暂不登录" data-event-opts="{{[['tap',[['onReject',['$event']]]]]}}" bindtap="__e">暂不登录</button>
+
+    <view class="footer-brand">
+      <view class="footer-mark"><view class="footer-line"></view><view class="footer-dot"></view><text>V</text><view class="footer-dot"></view><view class="footer-line"></view></view>
+      <text>锦程祥瑞数码会员服务</text>
     </view>
 
     <block wx:if="{{!canGetPrivacySetting}}">
@@ -53,24 +52,15 @@
         <checkbox-group data-event-opts="{{[['tap',[['ChangeIsDefault',['$event']]]]]}}" catchtap="__e">
           <checkbox class="{{inAnimation?'trembling':''}}" checked="{{protocol?true:false}}" data-event-opts="{{[['animationend',[['e0',['$event']]]]]}}" bindanimationend="__e"></checkbox>
           <text data-event-opts="{{[['tap',[['ChangeIsDefault',['$event']]]]]}}" catchtap="__e">{{$root.m4}}</text>
-          <text data-event-opts="{{[['tap',[['privacy',[4]]]]]}}" class="main-color" catchtap="__e">{{$root.m5}}</text>
-          {{''+$root.m6}}
+          <text data-event-opts="{{[['tap',[['privacy',[4]]]]]}}" class="main-color" catchtap="__e">{{$root.m5}}</text>{{''+$root.m6}}
           <text data-event-opts="{{[['tap',[['privacy',[3]]]]]}}" class="main-color" catchtap="__e">{{$root.m7}}</text>
         </checkbox-group>
       </view>
     </block>
-
-    <image class="visual-slice footer-slice" src="./static/login-footer.jpg" mode="widthFix" lazy-load="true"></image>
   </view>
 
-  <block wx:if="{{isUp}}">
-    <mobile-login vue-id="42503e73-1" isUp="{{isUp}}" canClose="{{canClose}}" authKey="{{authKey}}" data-event-opts="{{[['^close',[['maskClose']]],['^wechatPhone',[['wechatPhone']]]]}}" bind:close="__e" bind:wechatPhone="__e" bind:__l="__l"></mobile-login>
-  </block>
-  <block wx:if="{{isPhoneBox}}">
-    <routine-phone vue-id="42503e73-2" logoUrl="{{logoUrl}}" isPhoneBox="{{isPhoneBox}}" authKey="{{authKey}}" data-event-opts="{{[['^loginSuccess',[['bindPhoneClose']]]]}}" bind:loginSuccess="__e" bind:__l="__l"></routine-phone>
-  </block>
+  <block wx:if="{{isUp}}"><mobile-login vue-id="42503e73-1" isUp="{{isUp}}" canClose="{{canClose}}" authKey="{{authKey}}" data-event-opts="{{[['^close',[['maskClose']]],['^wechatPhone',[['wechatPhone']]]]}}" bind:close="__e" bind:wechatPhone="__e" bind:__l="__l"></mobile-login></block>
+  <block wx:if="{{isPhoneBox}}"><routine-phone vue-id="42503e73-2" logoUrl="{{logoUrl}}" isPhoneBox="{{isPhoneBox}}" authKey="{{authKey}}" data-event-opts="{{[['^loginSuccess',[['bindPhoneClose']]]]}}" bind:loginSuccess="__e" bind:__l="__l"></routine-phone></block>
   <edit-user-modal vue-id="42503e73-3" isShow="{{isShow}}" data-event-opts="{{[['^closeEdit',[['closeEdit']]],['^editSuccess',[['editSuccess']]]]}}" bind:closeEdit="__e" bind:editSuccess="__e" bind:__l="__l"></edit-user-modal>
-  <block wx:if="{{canGetPrivacySetting}}">
-    <privacy-agreement-popup bind:onReject="__e" bind:onAgree="__e" vue-id="42503e73-4" data-event-opts="{{[['^onReject',[['onReject']]],['^onAgree',[['onAgree']]]]}}" bind:__l="__l"></privacy-agreement-popup>
-  </block>
+  <block wx:if="{{canGetPrivacySetting}}"><privacy-agreement-popup bind:onReject="__e" bind:onAgree="__e" vue-id="42503e73-4" data-event-opts="{{[['^onReject',[['onReject']]],['^onAgree',[['onAgree']]]]}}" bind:__l="__l"></privacy-agreement-popup></block>
 </view>
