@@ -39,21 +39,19 @@
           <block wx:if="{{configData.wechat_auth_switch}}">
             <block wx:if="{{bindPhone}}">
               <button class="wechat-btn" open-type="getPhoneNumber" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e">
-                <image src="../static/weixin.png"></image>
-                <text>微信授权登录</text>
+                <text>手机号快捷登录</text>
               </button>
             </block>
             <block wx:else>
               <button data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}" class="wechat-btn" bindtap="__e">
-                <image src="../static/weixin.png"></image>
-                <text>微信授权登录</text>
+                <text>手机号快捷登录</text>
               </button>
             </block>
           </block>
 
           <view class="secure-tip">
             <text class="secure-mark">✓</text>
-            <text>微信安全授权 · 信息加密保护</text>
+            <text>仅用于会员身份验证 · 信息加密保护</text>
           </view>
           <view data-event-opts="{{[['tap',[['onReject',['$event']]]]]}}" class="cancel-login" bindtap="__e">暂不登录</view>
         </view>
