@@ -60,11 +60,23 @@ function priceRange(list, fallbackPrice) {
   return min === max ? '¥' + min : '¥' + min + ' - ¥' + max
 }
 
+function configName(version, color, colors) {
+  const raw = cleanText(version)
+  if (!raw) return ''
+  const allColors = uniqueText((colors || []).concat(color || [])).sort((a, b) => b.length - a.length)
+  const matchedColor = allColors.find((item) => raw === item || raw.indexOf(item) !== -1)
+  if (!matchedColor) return raw
+  return cleanText(raw.replace(matchedColor, '')) || raw
+}
+
 function skuRows(product) {
   const list = Array.isArray(product.skuPrices) ? product.skuPrices : []
+  const colors = uniqueText((product.colors || []).concat((product.colorItems || []).map((item) => item.name)))
   return list.map((item) => ({
     version: item.version || [item.config, item.color].filter(Boolean).join(' '),
-    config: item.config || '',
+    // 旧采集数据可能只保存了“128GB 曜金黑”这类完整 SKU 名称。
+    // 展示时去掉颜色，保证版本选择只显示一次“128GB”。
+    config: cleanText(item.config) || configName(item.version, item.color, colors.concat(item.colors || [])),
     color: item.color || '',
     image: item.image || '',
     sbomCode: item.sbomCode || '',
@@ -115,13 +127,12 @@ function buildHighlights(product) {
   }))
 }
 
-function buildSummary(product, groups) {
-  const configs = uniqueText((product.skuPrices || []).map((item) => item.config))
-  const colors = uniqueText(product.colors || (product.skuPrices || []).map((item) => item.color))
+function buildSummary(product, rows) {
+  const configs = uniqueText(rows.map((item) => item.config))
+  const colors = uniqueText((product.colors || []).concat(rows.map((item) => item.color)))
   return [
     colors.length ? colors.length + '款颜色' : '',
     configs.length ? configs.length + '种配置' : '',
-    groups.reduce((sum, group) => sum + group.count, 0) ? groups.reduce((sum, group) => sum + group.count, 0) + '个SKU' : '',
     product.priceStatus === 'available' ? '价格已同步' : ''
   ].filter(Boolean)
 }
@@ -134,12 +145,11 @@ function colorOptions(product, rows) {
   })).filter((item) => item.name)
 }
 
-function configOptions(rows, color) {
-  const matched = color ? rows.filter((row) => row.color === color) : rows
-  const source = matched.length ? matched : rows
-  const names = uniqueText(source.map((row) => row.config || row.version))
+function configOptions(rows) {
+  // 配置与颜色是两个独立维度：同一配置只显示一次，价格对所有颜色一致。
+  const names = uniqueText(rows.map((row) => row.config || row.version))
   return names.map((name) => {
-    const row = source.find((item) => (item.config || item.version) === name) || {}
+    const row = rows.find((item) => (item.config || item.version) === name) || {}
     return {
       name,
       price: row.price || '',
@@ -231,7 +241,7 @@ Page({
         const groups = skuGroups(product)
         const colors = colorOptions(product, rows)
         const activeColor = colors[0] ? colors[0].name : ''
-        const configs = configOptions(rows, activeColor)
+        const configs = configOptions(rows)
         const activeConfig = configs[0] ? configs[0].name : ''
         const selectedSku = findSelectedSku(rows, activeColor, activeConfig)
         this.setData({
@@ -241,7 +251,7 @@ Page({
           priceLabel: priceRange(product.skuPrices, product.price),
           gallery: gallery(product),
           highlights: buildHighlights(product),
-          skuSummary: buildSummary(product, groups),
+          skuSummary: buildSummary(product, rows),
           colorItems: Array.isArray(product.colorItems) ? product.colorItems : [],
           skuRows: rows,
           skuGroups: groups,
@@ -260,15 +270,9 @@ Page({
   },
   selectColor(e) {
     const color = e.currentTarget.dataset.name || ''
-    const configs = configOptions(this.data.skuRows, color)
-    const activeConfig = configs.some((item) => item.name === this.data.activeConfig)
-      ? this.data.activeConfig
-      : (configs[0] ? configs[0].name : '')
     this.setData({
       activeColor: color,
-      configOptions: configs,
-      activeConfig,
-      selectedSku: findSelectedSku(this.data.skuRows, color, activeConfig)
+      selectedSku: findSelectedSku(this.data.skuRows, color, this.data.activeConfig)
     })
   },
   selectConfig(e) {
