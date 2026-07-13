@@ -1,9 +1,4 @@
 <view class="wrapper" style="{{colorStyle}}">
-  <view class="page-backdrop">
-    <view class="backdrop-line line-one"></view>
-    <view class="backdrop-line line-two"></view>
-  </view>
-
   <view class="system-height" style="height:{{statusBarHeight}};"></view>
   <view class="title-bar">
     <block wx:if="{{!isHome}}">
@@ -39,12 +34,12 @@
           <block wx:if="{{configData.wechat_auth_switch}}">
             <block wx:if="{{bindPhone}}">
               <button class="wechat-btn" open-type="getPhoneNumber" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e">
-                <text>手机号快捷登录</text>
+                <text>授权登录</text>
               </button>
             </block>
             <block wx:else>
               <button data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}" class="wechat-btn" bindtap="__e">
-                <text>手机号快捷登录</text>
+                <text>授权登录</text>
               </button>
             </block>
           </block>

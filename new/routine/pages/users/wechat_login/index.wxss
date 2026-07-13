@@ -8,11 +8,6 @@ page { background: #FAF7F2; }
   background: linear-gradient(180deg, #FFFDF9 0%, #FAF6F0 55%, #F7F1EA 100%);
 }
 
-.page-backdrop { position: absolute; top: 0; right: 0; left: 0; height: 440rpx; overflow: hidden; pointer-events: none; }
-.backdrop-line { position: absolute; height: 1rpx; background: linear-gradient(90deg, transparent, rgba(201, 145, 75, 0.28), transparent); transform: rotate(-17deg); }
-.line-one { top: 160rpx; right: -90rpx; left: -80rpx; }
-.line-two { top: 260rpx; right: -130rpx; left: 40rpx; }
-
 .system-height { position: relative; z-index: 2; }
 .title-bar { position: relative; z-index: 3; height: 86rpx; display: flex; align-items: center; justify-content: center; color: #38302A; font-size: 30rpx; font-weight: 700; }
 .nav-button { position: absolute; top: 8rpx; left: 20rpx; width: 70rpx; height: 70rpx; display: flex; align-items: center; justify-content: center; border: 1rpx solid #EEE5DB; border-radius: 24rpx; background: rgba(255, 255, 255, 0.82); }
@@ -36,7 +31,6 @@ page { background: #FAF7F2; }
 .wechat_login .btn-wrapper button { margin: 0; padding: 0; }
 .wechat-btn { width: 100%; height: 84rpx; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 20rpx; color: #FFFFFF; background: linear-gradient(135deg, #FF8350, #FF602C); box-shadow: 0 11rpx 24rpx rgba(255, 105, 45, 0.22); font-size: 28rpx; font-weight: 700; line-height: 84rpx; }
 .wechat-btn::after { border: 0; }
-.wechat-btn image { width: 36rpx; height: 36rpx; margin-right: 13rpx; }
 .secure-tip { margin-top: 18rpx; display: flex; align-items: center; justify-content: center; color: #9A8F85; font-size: 20rpx; }
 .secure-mark { width: 28rpx; height: 28rpx; margin-right: 7rpx; border-radius: 50%; color: #4F9B76; background: #E4F3EB; font-size: 17rpx; line-height: 28rpx; text-align: center; }
 .cancel-login { margin-top: 22rpx; color: #94887E; font-size: 24rpx; text-align: center; }
