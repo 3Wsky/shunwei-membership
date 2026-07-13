@@ -1,4 +1,8 @@
 <view class="wrapper" style="{{colorStyle}}">
+  <view class="ambient-glow glow-top"></view>
+  <view class="ambient-glow glow-card"></view>
+  <view class="curve-decoration curve-right"><view></view><view></view><view></view></view>
+
   <view class="system-height" style="height:{{statusBarHeight}};"></view>
   <view class="title-bar">
     <block wx:if="{{!isHome}}">
@@ -19,14 +23,18 @@
       <view class="brand-emblem">
         <image class="brand-logo" src="{{configData.wap_login_logo}}" mode="aspectFit"></image>
       </view>
+      <view class="brand-diamond"></view>
       <view class="brand-name">锦程祥瑞数码</view>
       <view class="brand-subtitle">您的专属手机管家</view>
-      <view class="brand-divider"><view></view><text>MEMBER SERVICE</text><view></view></view>
+      <view class="brand-divider"><view class="divider-line"></view><view class="divider-diamond"></view><text>MEMBER SERVICE</text><view class="divider-diamond"></view><view class="divider-line"></view></view>
     </view>
 
     <view class="login-card">
+      <view class="member-watermark"><view class="watermark-crown">♛</view><text>V</text></view>
       <view class="card-kicker">WELCOME BACK</view>
+      <view class="kicker-line"></view>
       <view class="card-title">欢迎登录会员中心</view>
+      <view class="card-desc">授权后即可查看积分、现金券与专属会员权益</view>
 
       <view class="wechat_login">
         <view class="btn-wrapper">
@@ -34,11 +42,13 @@
             <block wx:if="{{bindPhone}}">
               <button class="wechat-btn" open-type="getPhoneNumber" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e">
                 <text>授权登录</text>
+                <view class="button-spark">✦</view>
               </button>
             </block>
             <block wx:else>
               <button data-event-opts="{{[['tap',[['getAuthLogin',['$event']]]]]}}" class="wechat-btn" bindtap="__e">
                 <text>授权登录</text>
+                <view class="button-spark">✦</view>
               </button>
             </block>
           </block>
@@ -47,7 +57,11 @@
             <text class="secure-mark">✓</text>
             <text>仅用于会员身份验证 · 信息加密保护</text>
           </view>
-          <view data-event-opts="{{[['tap',[['onReject',['$event']]]]]}}" class="cancel-login" bindtap="__e">暂不登录</view>
+          <view class="cancel-row">
+            <view class="cancel-line"></view>
+            <view data-event-opts="{{[['tap',[['onReject',['$event']]]]]}}" class="cancel-login" bindtap="__e">暂不登录</view>
+            <view class="cancel-line"></view>
+          </view>
         </view>
       </view>
 
@@ -64,8 +78,14 @@
       </block>
     </view>
 
-    <view class="page-foot">锦程祥瑞数码会员服务</view>
+    <view class="page-foot">
+      <view class="foot-mark"><view class="foot-line"></view><view class="foot-diamond"></view><text>V</text><view class="foot-diamond"></view><view class="foot-line"></view></view>
+      <view class="foot-text">锦程祥瑞数码会员服务</view>
+    </view>
   </view>
+
+  <view class="bottom-ribbon ribbon-back"></view>
+  <view class="bottom-ribbon ribbon-front"></view>
 
   <block wx:if="{{isUp}}">
     <mobile-login vue-id="42503e73-1" isUp="{{isUp}}" canClose="{{canClose}}" authKey="{{authKey}}" data-event-opts="{{[['^close',[['maskClose']]],['^wechatPhone',[['wechatPhone']]]]}}" bind:close="__e" bind:wechatPhone="__e" bind:__l="__l"></mobile-login>
