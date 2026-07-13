@@ -219,6 +219,7 @@ Page({
     activeColor: '',
     activeConfig: '',
     selectedSku: null,
+    wearableStyle: '',
     paramList: [],
     specEntries: [],
     detailImages: [],
@@ -260,6 +261,7 @@ Page({
           activeColor,
           activeConfig,
           selectedSku,
+          wearableStyle: cleanText(product.styleName),
           paramList: meaningfulParams(product, rows),
           specEntries: Object.keys(specs).map((key) => ({ key, value: specs[key] })),
           detailImages: Array.isArray(product.detailImages) ? product.detailImages : []

@@ -12,6 +12,10 @@
     <view wx:if="{{skuSummary.length}}" class="summary-row">
       <view wx:for="{{skuSummary}}" wx:key="*this" class="summary-tag">{{item}}</view>
     </view>
+    <view wx:if="{{product.systemType || product.editionType}}" class="summary-row">
+      <view wx:if="{{product.systemType}}" class="summary-tag">电脑系统 · {{product.systemType}}</view>
+      <view wx:if="{{product.editionType}}" class="summary-tag">平板版本 · {{product.editionType}}</view>
+    </view>
   </view>
   <view wx:if="{{highlights.length}}" class="section">
     <view class="section-title">商品亮点</view>
@@ -19,9 +23,13 @@
       <view wx:for="{{highlights}}" wx:key="text" class="highlight-chip {{item.className}}">{{item.text}}</view>
     </view>
   </view>
-  <view wx:if="{{colorOptions.length || configOptions.length}}" class="section sku-picker">
-    <view class="section-title">颜色 / 配置</view>
-    <view wx:if="{{colorOptions.length}}" class="option-block">
+  <view wx:if="{{wearableStyle || colorOptions.length || configOptions.length}}" class="section sku-picker">
+    <view class="section-title">{{wearableStyle ? '款式' : '颜色 / 配置'}}</view>
+    <view wx:if="{{wearableStyle}}" class="option-block">
+      <view class="option-title">款式</view>
+      <view class="option-grid"><view class="option-cell active">{{wearableStyle}}</view></view>
+    </view>
+    <view wx:if="{{!wearableStyle && colorOptions.length}}" class="option-block">
       <view class="option-title">颜色</view>
       <view class="option-grid">
         <view wx:for="{{colorOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectColor" class="option-cell color-option {{activeColor === item.name ? 'active' : ''}}">
@@ -30,7 +38,7 @@
         </view>
       </view>
     </view>
-    <view wx:if="{{configOptions.length}}" class="option-block">
+    <view wx:if="{{!wearableStyle && configOptions.length}}" class="option-block">
       <view class="option-title">版本</view>
       <view class="option-grid">
         <view wx:for="{{configOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectConfig" class="option-cell version-option {{activeConfig === item.name ? 'active' : ''}}">
@@ -38,7 +46,7 @@
         </view>
       </view>
     </view>
-    <view wx:if="{{selectedSku}}" class="selected-sku">
+    <view wx:if="{{selectedSku && !wearableStyle}}" class="selected-sku">
       <text>已选 {{selectedSku.color}} · {{selectedSku.config || selectedSku.version}}</text>
       <text class="selected-price">{{selectedSku.price}}</text>
     </view>
@@ -82,12 +90,16 @@
       <view class="drawer-info">
         <view class="drawer-price">{{(selectedSku && selectedSku.price) || priceLabel}}</view>
         <view class="drawer-title">{{title}}</view>
-        <view wx:if="{{selectedSku}}" class="drawer-selected">已选 {{selectedSku.color}} · {{selectedSku.config || selectedSku.version}}</view>
+        <view wx:if="{{wearableStyle || selectedSku}}" class="drawer-selected">已选 {{wearableStyle || (selectedSku.color + ' · ' + (selectedSku.config || selectedSku.version))}}</view>
       </view>
       <view class="drawer-close" bindtap="closeSkuDrawer">×</view>
     </view>
     <scroll-view class="drawer-scroll" scroll-y="true">
-      <view wx:if="{{colorOptions.length}}" class="option-block drawer-option-block">
+      <view wx:if="{{wearableStyle}}" class="option-block drawer-option-block">
+        <view class="option-title">款式</view>
+        <view class="option-grid"><view class="option-cell active">{{wearableStyle}}</view></view>
+      </view>
+      <view wx:if="{{!wearableStyle && colorOptions.length}}" class="option-block drawer-option-block">
         <view class="option-title">颜色</view>
         <view class="option-grid">
           <view wx:for="{{colorOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectColor" class="option-cell color-option {{activeColor === item.name ? 'active' : ''}}">
@@ -96,7 +108,7 @@
           </view>
         </view>
       </view>
-      <view wx:if="{{configOptions.length}}" class="option-block drawer-option-block">
+      <view wx:if="{{!wearableStyle && configOptions.length}}" class="option-block drawer-option-block">
         <view class="option-title">版本</view>
         <view class="option-grid">
           <view wx:for="{{configOptions}}" wx:key="name" data-name="{{item.name}}" bindtap="selectConfig" class="option-cell version-option {{activeConfig === item.name ? 'active' : ''}}">
