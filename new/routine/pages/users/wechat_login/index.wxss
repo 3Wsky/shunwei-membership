@@ -38,11 +38,11 @@ page { background: #FFF9F0; }
 .skip-button { position: absolute; z-index: 4; top: 1024rpx; left: 255rpx; width: 240rpx; height: 82rpx; margin: 0; padding: 0; border: 0; border-radius: 41rpx; color: #806D5D; background: transparent; font-size: 27rpx; line-height: 82rpx; transition: transform .12s ease, background-color .12s ease; }
 .skip-button:active { background: rgba(191,142,78,.1); transform: scale(.96); }
 
-.footer-brand { position: absolute; z-index: 3; top: 1196rpx; left: 0; width: 750rpx; display: flex; flex-direction: column; align-items: center; color: #9B774E; font-size: 22rpx; letter-spacing: 4rpx; }
-.footer-mark { width: 350rpx; margin-bottom: 16rpx; display: flex; align-items: center; justify-content: center; }
+.footer-brand { position: absolute; z-index: 3; top: 1172rpx; left: 0; width: 750rpx; display: flex; flex-direction: column; align-items: center; color: #9B774E; font-size: 19rpx; letter-spacing: 3rpx; }
+.footer-mark { width: 350rpx; margin-bottom: 10rpx; display: flex; align-items: center; justify-content: center; }
 .footer-mark .footer-line { width: 98rpx; height: 1rpx; background: rgba(189,141,75,.3); }
 .footer-mark .footer-dot { width: 8rpx; height: 8rpx; margin: 0 15rpx; background: #BD8740; transform: rotate(45deg); }
-.footer-badge { width: 45rpx; height: 43rpx; }
+.footer-badge { width: 60rpx; height: 57rpx; }
 .bottom-fade { position: absolute; z-index: 2; right: 0; bottom: -1rpx; left: 0; height: 170rpx; pointer-events: none; background: linear-gradient(180deg, rgba(255,249,240,0) 0%, rgba(255,249,240,.72) 42%, #FFF9F0 78%, #FFF9F0 100%); }
 
 .protocol-panel { position: absolute; z-index: 6; top: 1103rpx; left: 54rpx; right: 54rpx; padding: 15rpx 20rpx; border: 1rpx solid rgba(211,179,138,.38); border-radius: 18rpx; color: #917D6B; background: rgba(255,253,248,.96); font-size: 20rpx; line-height: 32rpx; text-align: center; }
