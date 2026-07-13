@@ -27,7 +27,6 @@
     <view class="login-card">
       <view class="card-kicker">WELCOME BACK</view>
       <view class="card-title">欢迎登录会员中心</view>
-      <view class="card-desc">授权后即可查看积分、现金券与专属会员权益</view>
 
       <view class="wechat_login">
         <view class="btn-wrapper">
