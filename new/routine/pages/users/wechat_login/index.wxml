@@ -43,9 +43,11 @@
     <button class="skip-button" aria-label="暂不登录" data-event-opts="{{[['tap',[['onReject',['$event']]]]]}}" bindtap="__e">暂不登录</button>
 
     <view class="footer-brand">
-      <view class="footer-mark"><view class="footer-line"></view><view class="footer-dot"></view><text>V</text><view class="footer-dot"></view><view class="footer-line"></view></view>
+      <view class="footer-mark"><view class="footer-line"></view><view class="footer-dot"></view><image class="footer-badge" src="./static/footer-v-badge.png" mode="aspectFit"></image><view class="footer-dot"></view><view class="footer-line"></view></view>
       <text>锦程祥瑞数码会员服务</text>
     </view>
+
+    <view class="bottom-fade"></view>
 
     <block wx:if="{{!canGetPrivacySetting}}">
       <view class="protocol-panel">
