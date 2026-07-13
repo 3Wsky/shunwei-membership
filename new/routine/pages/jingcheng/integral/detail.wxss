@@ -186,6 +186,7 @@ page {
 .desc-card {
   margin: 0 28rpx;
   padding: 30rpx;
+  overflow: hidden;
   border-radius: 24rpx;
   background: #FFFFFF;
   border: 1rpx solid rgba(201, 162, 39, 0.08);
@@ -197,7 +198,10 @@ page {
 
 .desc-card rich-text image,
 .desc-card rich-text img {
+  display: block;
+  width: 100%;
   max-width: 100%;
+  height: auto;
 }
 
 .detail-images {

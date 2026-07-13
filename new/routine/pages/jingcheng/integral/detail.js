@@ -1,5 +1,14 @@
 const { request } = require('../../../services/jc-request')
 
+function fitDescriptionImages(html) {
+  return String(html || '').replace(/<img\b([^>]*?)\/?\s*>/gi, function (_, attrs) {
+    const cleaned = attrs
+      .replace(/\s+(?:style|width|height)\s*=\s*(["'])[^"']*\1/gi, '')
+      .replace(/\s+(?:style|width|height)\s*=\s*[^\s>]+/gi, '')
+    return '<img' + cleaned + ' style="display:block;width:100%;max-width:100%;height:auto;box-sizing:border-box;" />'
+  })
+}
+
 Page({
   data: {
     id: 0,
@@ -38,7 +47,7 @@ Page({
         detailImages: d.detailImages || [],
         title: d.title || '积分商品',
         info: d.info || '',
-        description: d.description || '',
+        description: fitDescriptionImages(d.description),
         price: Number(d.price || 0),
         stock: Number(d.stock || 0),
         sales: Number(d.sales || 0),
