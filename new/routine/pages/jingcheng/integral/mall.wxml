@@ -37,7 +37,7 @@
       <view class="card-body">
         <view class="name">{{item.title}}</view>
         <view class="card-foot">
-          <view class="price"><text class="price-num">{{item.price}}</text> 积分</view>
+          <view class="price"><block wx:if="{{item.pricePending}}"><text>暂不可兑换</text></block><block wx:else><text class="price-num">{{item.price}}</text> 积分</block></view>
           <view class="go"><text class="iconfont icon-ic_rightarrow"></text></view>
         </view>
       </view>

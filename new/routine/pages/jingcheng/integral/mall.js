@@ -24,11 +24,19 @@ Page({
     ]).then(([balance, products]) => {
       this.setData({
         balance,
-        products: (products || []).map((item) => ({
-          ...item,
-          image: item.image || '',
-          title: item.title || '积分商品'
-        }))
+        products: (products || []).map((item) => {
+          const price = Number(item.price || 0)
+          const pricePending = price <= 0 || !!item.pricePending
+          return {
+            ...item,
+            price,
+            pricePending,
+            canExchange: !pricePending && !!item.canExchange,
+            stockHint: pricePending ? '暂不可兑换' : (item.stockHint || ''),
+            image: item.image || '',
+            title: item.title || '积分商品'
+          }
+        })
       })
     }).finally(() => this.setData({ loading: false }))
   },

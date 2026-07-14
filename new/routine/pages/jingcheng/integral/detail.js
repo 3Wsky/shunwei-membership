@@ -19,6 +19,7 @@ Page({
     info: '',
     description: '',
     price: 0,
+    pricePending: false,
     stock: 0,
     sales: 0,
     canExchange: false,
@@ -41,6 +42,8 @@ Page({
     }
     this.setData({ loading: true })
     const detail = request('/api/integral-mall/product/' + this.data.id).then((d) => {
+      const price = Number(d.price || 0)
+      const pricePending = price <= 0 || !!d.pricePending
       this.setData({
         image: d.image || '',
         images: d.images || [],
@@ -48,11 +51,12 @@ Page({
         title: d.title || '积分商品',
         info: d.info || '',
         description: fitDescriptionImages(d.description),
-        price: Number(d.price || 0),
+        price,
+        pricePending,
         stock: Number(d.stock || 0),
         sales: Number(d.sales || 0),
-        canExchange: !!d.canExchange,
-        stockHint: d.stockHint || ''
+        canExchange: !pricePending && !!d.canExchange,
+        stockHint: pricePending ? '暂不可兑换' : (d.stockHint || '')
       })
     }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
     this.loadBalance()

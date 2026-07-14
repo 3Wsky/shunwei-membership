@@ -11,7 +11,7 @@
 
   <view class="info-card">
     <view class="price-row">
-      <view class="price"><text class="price-num">{{price}}</text> 积分</view>
+      <view class="price"><block wx:if="{{pricePending}}"><text>暂不可兑换</text></block><block wx:else><text class="price-num">{{price}}</text> 积分</block></view>
       <view class="stock">库存 {{stock}}</view>
     </view>
     <view class="title">{{title}}</view>
