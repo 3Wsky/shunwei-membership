@@ -19,7 +19,7 @@
     </view>
 
     <view class="hero-visual">
-      <image class="hero-visual-image" src="{{assetBase + 'hero-digital-gift-mobile.jpg'}}" mode="aspectFill"></image>
+      <image class="hero-visual-image" src="/pages/jingcheng/landing/assets/hero-digital-gift-mobile.jpg" mode="aspectFill"></image>
       <view class="visual-vignette"></view>
       <view class="coupon-halo"></view>
       <view class="coupon-spark spark-left"></view>
