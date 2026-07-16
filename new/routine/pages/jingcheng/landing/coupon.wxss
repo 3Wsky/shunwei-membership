@@ -167,4 +167,4 @@ button::after{border:0}
 }
 @keyframes spin{to{transform:rotate(360deg)}
 }
-.subsidy-rule{position:relative;z-index:2;width:max-content;max-width:650rpx;margin:14rpx auto 0;padding:9rpx 20rpx;border:1rpx solid rgba(255,214,129,.55);border-radius:18rpx;color:#ffe0a0;background:rgba(92,0,7,.26);font-size:20rpx;line-height:29rpx;text-align:center;box-sizing:border-box}.subsidy-rule text{display:block}.subsidy-rule text+text{margin-top:2rpx;color:#f5cfc1;font-size:17rpx}
+.subsidy-rule{position:relative;z-index:2;width:max-content;max-width:650rpx;margin:14rpx auto 0;padding:9rpx 20rpx;border:1rpx solid rgba(255,214,129,.55);border-radius:18rpx;color:#ffe0a0;background:rgba(92,0,7,.26);font-size:20rpx;line-height:29rpx;text-align:center;box-sizing:border-box}.subsidy-rule text{display:block}

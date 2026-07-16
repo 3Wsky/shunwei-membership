@@ -61,8 +61,7 @@
   <view id="section-products" class="red-section product-zone fade-section {{visibleSectionMap.products ? 'visible' : ''}}">
     <view class="section-title light">五大品类 · 热门商品专区</view>
     <view class="subsidy-rule">
-      <text>手机类商品单价不超过 6000 元参与国补，电脑类商品不受该价格门槛限制</text>
-      <text>实际资格和补贴金额以个人领券结果为准</text>
+      <text>实际国补资格跟补贴金额以个人获取到的国补金额为准</text>
     </view>
     <view class="category-stack">
       <union-product-block wx:for="{{categoryBlocks}}" wx:key="key" block="{{item}}" active="{{visibleSectionMap.products}}" bindselect="openProduct"></union-product-block>
