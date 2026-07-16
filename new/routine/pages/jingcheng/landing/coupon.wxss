@@ -19,6 +19,17 @@ page{background:#8d0610;color:#4a2a22;font-family:-apple-system,BlinkMacSystemFo
 .hero-title-main text{display:inline-block;margin:0 7rpx;color:#ffe69a;font-size:92rpx;line-height:100rpx;text-shadow:0 7rpx 0 #a50c15,0 0 30rpx rgba(255,211,88,.65)}
 .gold-ribbon{position:relative;z-index:2;width:610rpx;min-height:64rpx;margin:16rpx auto 0;padding:12rpx 30rpx;border:2rpx solid #fff0b2;border-radius:18rpx;background:linear-gradient(180deg,#fff1b9,#ffc447);color:#7a1915;font-size:27rpx;line-height:38rpx;font-weight:900;text-align:center;box-sizing:border-box;box-shadow:0 8rpx 20rpx rgba(75,0,4,.25)}
 .gold-ribbon.compact{width:570rpx;min-height:58rpx;font-size:24rpx;line-height:32rpx}
+.hero-visual{position:relative;z-index:2;height:468rpx;margin:28rpx 0 0;overflow:hidden;border:3rpx solid rgba(255,222,147,.72);border-radius:24rpx;background:#aa0710;box-shadow:0 18rpx 45rpx rgba(62,0,3,.35)}
+.hero-visual-image{position:absolute;inset:0;width:100%;height:100%}
+.visual-vignette{position:absolute;inset:0;background:linear-gradient(180deg,rgba(92,0,4,.08),transparent 52%,rgba(92,0,4,.3));box-shadow:inset 0 0 54rpx rgba(70,0,3,.3)}
+.coupon-halo{position:absolute;left:50%;top:42rpx;width:390rpx;height:360rpx;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,246,193,.5) 0,rgba(255,210,110,.18) 38%,rgba(255,205,84,0) 72%);filter:blur(3rpx);pointer-events:none}
+.coupon-spark{position:absolute;z-index:2;width:14rpx;height:14rpx;border-radius:50%;background:#fff4c0;box-shadow:0 0 14rpx 7rpx rgba(255,207,78,.7);animation:couponSpark 2.2s ease-in-out infinite}
+.spark-left{left:150rpx;top:94rpx}.spark-right{right:142rpx;top:170rpx;animation-delay:1.1s}
+.coupon-copy{position:absolute;z-index:3;left:50%;top:103rpx;width:250rpx;overflow:hidden;transform:translateX(-50%);color:#a00b15;text-align:center;text-shadow:0 2rpx 0 rgba(255,255,255,.6);pointer-events:none}
+.coupon-copy-shine{position:absolute;top:-32rpx;left:-110rpx;width:42rpx;height:170rpx;background:rgba(255,255,255,.48);transform:rotate(24deg);animation:couponShine 4.8s ease-in-out infinite}
+.coupon-copy-label,.coupon-copy-value{position:relative;z-index:1}.coupon-copy-label{font-size:20rpx;line-height:30rpx;font-weight:900;letter-spacing:2rpx}
+.coupon-copy-value{display:flex;align-items:baseline;justify-content:center;gap:4rpx;margin-top:0;color:#a00b15;font-size:68rpx;line-height:78rpx;font-weight:900;letter-spacing:0}
+.coupon-copy-value text{margin:0;color:#ad1820;font-size:31rpx;line-height:1;font-weight:900}
 .hero-cta,.section-cta{position:relative;z-index:3;width:620rpx;margin:38rpx auto 0}
 .process-panel{position:relative;z-index:2;margin-top:42rpx;padding:28rpx 14rpx 22rpx;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8rpx;border:3rpx solid #f5c569;border-radius:24rpx;background:linear-gradient(180deg,#fff9ed,#ffedcd);box-shadow:0 16rpx 32rpx rgba(71,0,4,.28)}
 .process-item{position:relative;min-width:0;text-align:center}
@@ -149,6 +160,8 @@ button::after{border:0}
 @keyframes floatToken{0%,100%{margin-top:0;opacity:.75}
 50%{margin-top:-14rpx;opacity:1}
 }
+@keyframes couponShine{0%,65%{left:-110rpx;opacity:0}72%{opacity:1}88%,100%{left:310rpx;opacity:0}}
+@keyframes couponSpark{0%,100%{transform:scale(.45);opacity:.25}50%{transform:scale(1.25);opacity:1}}
 @keyframes giftFloat{0%,100%{transform:translateY(0) rotate(-2deg)}
 50%{transform:translateY(-12rpx) rotate(2deg)}
 }

@@ -18,6 +18,19 @@
       <view class="gold-ribbon">{{config.pageInfo.subtitle}}</view>
     </view>
 
+    <view class="hero-visual">
+      <image class="hero-visual-image" src="{{assetBase + 'hero-digital-gift-mobile.jpg'}}" mode="aspectFill"></image>
+      <view class="visual-vignette"></view>
+      <view class="coupon-halo"></view>
+      <view class="coupon-spark spark-left"></view>
+      <view class="coupon-spark spark-right"></view>
+      <view class="coupon-copy">
+        <view class="coupon-copy-shine"></view>
+        <view class="coupon-copy-label">联盟现金券</view>
+        <view class="coupon-copy-value"><text>¥</text>{{config.pageInfo.couponMax}}</view>
+      </view>
+    </view>
+
     <view class="hero-cta"><union-cta bindclaim="claimCoupon"></union-cta></view>
 
     <view class="process-panel">
