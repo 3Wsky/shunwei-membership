@@ -80,11 +80,11 @@
       <view class="live-feed-window">
         <view class="live-feed-track {{liveFeedTransition ? 'is-moving' : ''}}" style="transform:translateY(-{{liveFeedOffset}}rpx);">
           <view wx:for="{{liveFeedLoop}}" wx:key="loopKey" class="live-line">
-            <view class="live-line-main">
+            <view class="live-line-head">
               <view class="live-line-title"><text class="live-user">{{item.userName}}</text><text class="live-event">{{item.event}}</text></view>
-              <view wx:if="{{item.voucherAmount || item.pointsText}}" class="live-benefits"><text wx:if="{{item.voucherAmount}}">券 ¥{{item.voucherAmount}}</text><text wx:if="{{item.pointsText}}">{{item.pointsPrefix}}{{item.pointsText}} 积分</text></view>
+              <text class="live-time">{{item.timeText}}</text>
             </view>
-            <text class="live-time">{{item.timeText}}</text>
+            <view wx:if="{{item.voucherAmount || item.pointsText}}" class="live-benefits"><text wx:if="{{item.voucherAmount}}">现金券 ¥{{item.voucherAmount}}</text><text wx:if="{{item.pointsText}}">{{item.pointsPrefix}}{{item.pointsText}} 积分</text></view>
           </view>
         </view>
       </view>
