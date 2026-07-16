@@ -18,19 +18,6 @@
       <view class="gold-ribbon">{{config.pageInfo.subtitle}}</view>
     </view>
 
-    <view class="hero-visual">
-      <image class="hero-visual-image" src="/static/images/home/signin-gift-v2.png" mode="aspectFit"></image>
-      <view class="visual-vignette"></view>
-      <view class="coupon-halo"></view>
-      <view class="coupon-spark spark-left"></view>
-      <view class="coupon-spark spark-right"></view>
-      <view class="coupon-copy">
-        <view class="coupon-copy-shine"></view>
-        <view class="coupon-copy-label">联盟现金券</view>
-        <view class="coupon-copy-value"><text>¥</text>{{config.pageInfo.couponMax}}</view>
-      </view>
-    </view>
-
     <view class="hero-cta"><union-cta bindclaim="claimCoupon"></union-cta></view>
 
     <view class="process-panel">
@@ -185,7 +172,10 @@
     </view>
 
     <view id="finalCta" class="final-cta">
-      <image src="{{assetBase + 'icon_gift_box.svg'}}" mode="aspectFit"></image>
+      <view class="final-gift-stage">
+        <view class="final-gift-halo"></view>
+        <image class="final-gift-image" src="/static/images/home/signin-gift-v2.png" mode="aspectFit"></image>
+      </view>
       <union-cta label="立即领取" note="最高送 800 元联盟现金券" bindclaim="claimCoupon"></union-cta>
     </view>
   </view>
