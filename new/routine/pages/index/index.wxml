@@ -17,7 +17,7 @@
           <view class="banner-card {{item.image ? 'has-image' : ''}}" data-index="{{index}}" bindtap="openBanner" hover-class="tap-feedback" hover-stay-time="120">
             <image wx:if="{{item.image}}" class="banner-background" src="{{item.image}}" mode="aspectFill"></image>
             <view wx:if="{{item.image}}" class="banner-image-shade"></view>
-            <view class="banner-copy">
+            <view class="banner-copy {{item.copyDensity}}">
               <view class="banner-kicker">MEMBER BENEFITS</view>
               <view class="banner-title">{{item.title}}</view>
               <view class="banner-subtitle">{{item.subtitle}}</view>

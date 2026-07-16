@@ -142,11 +142,18 @@ page {
 }
 
 .banner-copy {
-  position: relative;
+  position: absolute;
   z-index: 2;
-  width: 360rpx;
-  padding: 48rpx 0 0 36rpx;
+  top: 0;
+  bottom: 0;
+  left: 36rpx;
+  display: flex;
+  width: 326rpx;
+  padding: 20rpx 0;
   box-sizing: border-box;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .banner-kicker {
@@ -162,20 +169,37 @@ page {
   line-height: 52rpx;
   font-weight: 800;
   color: #2B2118;
+  display: -webkit-box;
+  width: 100%;
+  max-height: 104rpx;
+  overflow: hidden;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .banner-subtitle {
   margin-top: 12rpx;
   font-size: 24rpx;
+  line-height: 34rpx;
   color: #7B6045;
+  display: -webkit-box;
+  width: 100%;
+  max-height: 68rpx;
+  overflow: hidden;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .banner-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 26rpx;
-  height: 54rpx;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin-top: 16rpx;
+  height: 50rpx;
   padding: 0 18rpx 0 22rpx;
   border-radius: 999rpx;
   color: #684018;
@@ -183,6 +207,47 @@ page {
   font-weight: 600;
   background: rgba(255, 255, 255, 0.68);
   border: 1rpx solid rgba(153, 92, 39, 0.32);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.banner-copy.compact .banner-title {
+  font-size: 36rpx;
+  line-height: 44rpx;
+  max-height: 88rpx;
+}
+
+.banner-copy.compact .banner-subtitle {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  line-height: 30rpx;
+  max-height: 60rpx;
+}
+
+.banner-copy.compact .banner-button {
+  margin-top: 12rpx;
+  height: 46rpx;
+  font-size: 22rpx;
+}
+
+.banner-copy.dense .banner-title {
+  font-size: 32rpx;
+  line-height: 39rpx;
+  max-height: 78rpx;
+}
+
+.banner-copy.dense .banner-subtitle {
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  line-height: 27rpx;
+  max-height: 54rpx;
+}
+
+.banner-copy.dense .banner-button {
+  margin-top: 10rpx;
+  height: 42rpx;
+  padding: 0 15rpx 0 18rpx;
+  font-size: 20rpx;
 }
 
 .banner-button-arrow {

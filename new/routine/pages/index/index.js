@@ -176,11 +176,22 @@ function normalizePointGood(item) {
 }
 
 function normalizeHomeBanner(item, index) {
+  var title = cleanText(item.title)
+  var subtitle = cleanText(item.subtitle)
+  var titleLength = title.length
+  var subtitleLength = subtitle.length
+  var copyDensity = ''
+  if (titleLength > 18 || subtitleLength > 46 || titleLength + subtitleLength > 60) {
+    copyDensity = 'dense'
+  } else if (titleLength > 12 || subtitleLength > 28 || titleLength + subtitleLength > 40) {
+    copyDensity = 'compact'
+  }
   return {
     id: item.id || ('homepage-banner-' + index),
-    title: cleanText(item.title),
-    subtitle: cleanText(item.subtitle),
+    title: title,
+    subtitle: subtitle,
     buttonText: cleanText(item.buttonText),
+    copyDensity: copyDensity,
     image: item.image || '',
     targetType: item.targetType === 'tab' ? 'tab' : (item.targetType === 'page' ? 'page' : 'none'),
     targetPath: String(item.targetPath || '').trim()
