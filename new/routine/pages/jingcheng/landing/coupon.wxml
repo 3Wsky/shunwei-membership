@@ -60,7 +60,10 @@
   <!-- 02 五大品类：真实商品按后台分类和型号自动归组。 -->
   <view id="section-products" class="red-section product-zone fade-section {{visibleSectionMap.products ? 'visible' : ''}}">
     <view class="section-title light">五大品类 · 热门商品专区</view>
-    <view class="subsidy-rule"><text>国补名额以个人实际领到的国补优惠券为准</text></view>
+    <view class="subsidy-rule">
+      <text>手机类商品单价不超过 6000 元参与国补，电脑类商品不受该价格门槛限制</text>
+      <text>实际资格和补贴金额以个人领券结果为准</text>
+    </view>
     <view class="category-stack">
       <union-product-block wx:for="{{categoryBlocks}}" wx:key="key" block="{{item}}" active="{{visibleSectionMap.products}}" bindselect="openProduct"></union-product-block>
     </view>

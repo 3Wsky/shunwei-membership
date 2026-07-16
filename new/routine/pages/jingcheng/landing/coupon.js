@@ -28,23 +28,28 @@ function normalizeSubsidy(value) {
   return Number.isFinite(subsidy) && subsidy > 0 ? subsidy : 0
 }
 
+function isOverSubsidyPriceLimit(officialPrice, categoryKey) {
+  return categoryKey !== 'laptop' && officialPrice > 6000
+}
+
 function calculateSubsidy(item, officialPrice, categoryKey) {
-  const eligibleForSubsidy = officialPrice > 0 && officialPrice <= 6000
+  const overSubsidyPriceLimit = isOverSubsidyPriceLimit(officialPrice, categoryKey)
+  const eligibleForSubsidy = officialPrice > 0 && !overSubsidyPriceLimit
   const governmentSubsidy = eligibleForSubsidy
     ? Math.min(Math.floor(officialPrice * 0.15), 500)
     : 0
   const configuredStoreSubsidy = normalizeSubsidy(
     item.storeSubsidy || item.shopSubsidy || item.storeDiscount || item.storeSubsidyAmount
   )
-  // 6000 元以上不享国补，统一展示 500 元店补，避免后台配置把该档位叠加为其它金额。
-  const storeSubsidy = officialPrice > 6000 ? 500 : configuredStoreSubsidy
+  // 手机类商品超过 6000 元时不享国补；电脑不受该价格门槛限制。
+  const storeSubsidy = overSubsidyPriceLimit ? 500 : configuredStoreSubsidy
   const subsidyTotal = governmentSubsidy + storeSubsidy
   const subsidyPrice = officialPrice > 0 ? Math.max(0, officialPrice - subsidyTotal) : 0
   return { governmentSubsidy, storeSubsidy, subsidyTotal, subsidyPrice }
 }
 
 function formatSubsidyPrice(subsidyPrice, officialPrice, categoryKey) {
-  if (officialPrice > 6000) {
+  if (isOverSubsidyPriceLimit(officialPrice, categoryKey)) {
     return '¥' + Math.floor(subsidyPrice / 1000) + '?99起'
   }
   return '¥' + formatNumber(subsidyPrice) + '起'
@@ -95,7 +100,7 @@ function normalizeProduct(item, categoryNameById) {
     priceValue,
     officialPriceText: priceValue > 0 ? '¥' + formatNumber(priceValue) + '起' : '到店咨询',
     subsidyPriceText: priceValue > 0 ? formatSubsidyPrice(subsidy.subsidyPrice, priceValue, categoryKey) : '到店咨询',
-    subsidyLabel: priceValue > 6000 ? '店补后' : '国补/店补后',
+    subsidyLabel: isOverSubsidyPriceLimit(priceValue, categoryKey) ? '店补后' : '国补/店补后',
     governmentSubsidy: subsidy.governmentSubsidy,
     storeSubsidy: subsidy.storeSubsidy,
     subsidyTotal: subsidy.subsidyTotal,
