@@ -79,8 +79,8 @@
       <scroll-view scroll-y="true" class="modal-scroll">
         <view wx:for="{{products}}" wx:key="index" wx:for-item="product" wx:for-index="pIndex" class="product-section">
           <view class="product-section-header">
-            <text class="product-section-title">产品信息 #{{pIndex + 1}}</text>
-            <view wx:if="{{products.length > 1}}" class="product-section-remove" data-index="{{pIndex}}" bindtap="removeProduct">
+            <text class="product-section-title">{{program.mode === 'legacy_consumption' ? ('产品信息 #' + (pIndex + 1)) : 'Pura 90 手机信息'}}</text>
+            <view wx:if="{{program.mode === 'legacy_consumption' && products.length > 1}}" class="product-section-remove" data-index="{{pIndex}}" bindtap="removeProduct">
               <text class="iconfont icon-guanbi6"></text>
               <text>删除</text>
             </view>
@@ -151,7 +151,7 @@
         </view>
 
         <!-- Add Product Button -->
-        <view class="add-product-btn" bindtap="addProduct">
+        <view wx:if="{{program.mode === 'legacy_consumption'}}" class="add-product-btn" bindtap="addProduct">
           <text class="iconfont icon-s-bianji"></text>
           <text>添加产品信息</text>
         </view>

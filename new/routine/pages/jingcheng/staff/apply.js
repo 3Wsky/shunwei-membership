@@ -137,6 +137,7 @@ Page({
     this.verifyCode(pIdx, { imei, sn, silent: true })
   },
   addProduct() {
+    if (this.data.program.mode !== 'legacy_consumption') return
     const products = this.data.products
     if (products.length >= 5) {
       wx.showToast({ title: '最多添加5个产品', icon: 'none' })
@@ -155,6 +156,7 @@ Page({
     this.setData({ products })
   },
   removeProduct(e) {
+    if (this.data.program.mode !== 'legacy_consumption') return
     const idx = Number(e.currentTarget.dataset.index)
     const products = this.data.products
     if (products.length <= 1) return
