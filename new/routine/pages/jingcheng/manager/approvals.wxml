@@ -55,9 +55,9 @@
     </block>
 
     <view class="benefit">
-      <view class="benefit-seg"><text class="iconfont icon-yue2"></text>{{item.rangeText}}</view>
+      <view class="benefit-seg"><text class="iconfont icon-yue2"></text>{{item.isPura90 ? '华为 Pura 90 系列购机赠分' : item.rangeText}}</view>
       <view class="benefit-seg"><text class="iconfont icon-jifenshangcheng"></text>{{item.matchedIntegral}} 积分</view>
-      <view class="benefit-seg"><text class="iconfont icon-shoudanyouhui"></text>￥{{item.matchedVoucher}} 现金券</view>
+      <view wx:if="{{!item.isPura90}}" class="benefit-seg"><text class="iconfont icon-shoudanyouhui"></text>￥{{item.matchedVoucher}} 现金券</view>
     </view>
 
     <view class="buttons">

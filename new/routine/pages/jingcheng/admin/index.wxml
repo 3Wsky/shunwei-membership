@@ -28,7 +28,7 @@
     <view wx:for="{{pending}}" wx:key="requestId" class="approval-item">
       <view class="ai-top">
         <text class="ai-id">#{{item.requestId}}</text>
-        <text class="ai-tier">{{item.matchedTierCode}}</text>
+        <text class="ai-tier">{{item.matchedTierCode === 'PURA90_42W' ? '华为 Pura 90 系列' : item.matchedTierCode}}</text>
         <text wx:if="{{item.createdText}}" class="ai-time">{{item.createdText}}</text>
       </view>
       <view wx:if="{{item.requestNo}}" class="ai-sub">单号 {{item.requestNo}}</view>
@@ -71,11 +71,11 @@
       </view>
       <view class="ai-row">
         <text class="ai-label">档位</text>
-        <text>{{item.matchedTierCode || '-'}}</text>
+        <text>{{item.matchedTierCode === 'PURA90_42W' ? '华为 Pura 90 系列购机积分活动' : (item.matchedTierCode || '-')}}</text>
       </view>
       <view class="ai-row">
         <text class="ai-label">发放权益</text>
-        <text>{{item.matchedIntegral}} 积分 + ¥{{item.matchedVoucher}} 现金券</text>
+        <text>{{item.matchedTierCode === 'PURA90_42W' ? (item.matchedIntegral + ' 积分') : (item.matchedIntegral + ' 积分 + ¥' + item.matchedVoucher + ' 现金券')}}</text>
       </view>
 
       <!-- 产品完整信息（结构化 + IMEI/SN 命中 & 已用徽章） -->

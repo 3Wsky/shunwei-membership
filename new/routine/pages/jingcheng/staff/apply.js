@@ -9,6 +9,7 @@ function toPrice(value) {
 
 function tierRangeText(rule) {
   if (!rule) return ''
+  if (rule.title) return rule.title
   return rule.maxAmount ? rule.minAmount + '-' + rule.maxAmount + '元档' : rule.minAmount + '元以上档'
 }
 
@@ -17,6 +18,7 @@ Page({
     ocrEnabled: OCR_SN_SCAN_ENABLED,
     member: {},
     rules: [],
+    program: { mode: 'pura90_42w' },
     submitting: false,
     scanning: false,
     showProduct: false,
@@ -38,6 +40,8 @@ Page({
   },
   onLoad(options) {
     try { this.setData({ member: JSON.parse(decodeURIComponent(options.member || '')) }) } catch (_) {}
+    request('/api/approval/program').then((program) => this.setData({ program: program || { mode: 'pura90_42w' } }))
+      .catch(() => {})
     request('/api/approval/tier-options').then((rules) => this.setData({ rules: rules || [] }))
       .catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
   },
@@ -45,13 +49,15 @@ Page({
     const idx = Number(e.currentTarget.dataset.index)
     const rule = this.data.rules[idx]
     if (!rule) return
-    const range = rule.maxAmount
+    const range = rule.title || (rule.maxAmount
       ? rule.minAmount + '-' + rule.maxAmount + '元档'
-      : rule.minAmount + '元以上档'
+      : rule.minAmount + '元以上档')
     this.setData({
       showProduct: true,
       selectedIndex: idx,
-      selectedText: range + ' · ' + rule.giftIntegral + '积分 · ¥' + rule.voucherAmount + '现金券',
+      selectedText: this.data.program.mode === 'legacy_consumption'
+        ? range + ' · ' + rule.giftIntegral + '积分 · ¥' + rule.voucherAmount + '现金券'
+        : range + ' · 审批通过赠送 ' + rule.giftIntegral + '积分',
       products: [
         {
           type: '手机',

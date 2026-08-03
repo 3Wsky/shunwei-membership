@@ -38,14 +38,15 @@
   <!-- Benefit Tier Area -->
   <view class="heading">
     <view class="heading-bar"></view>
-    <text>请选择固定权益档位</text>
+    <text>{{program.mode === 'legacy_consumption' ? '请选择固定权益档位' : '华为 Pura 90 系列购机积分活动'}}</text>
   </view>
   <view class="tier-grid">
     <view wx:for="{{rules}}" wx:key="id" class="tier-card {{showProduct && selectedIndex === index ? 'active' : ''}}">
-      <view class="tier-badge">{{item.maxAmount ? item.minAmount + '-' + item.maxAmount + '元档' : item.minAmount + '元以上档'}}</view>
+      <view class="tier-badge">{{item.title || (item.maxAmount ? item.minAmount + '-' + item.maxAmount + '元档' : item.minAmount + '元以上档')}}</view>
       <view class="tier-integral">{{item.giftIntegral}}<text>积分</text></view>
       <view class="tier-divider"></view>
-      <view class="tier-voucher">￥{{item.voucherAmount}}<text>现金券</text></view>
+      <view wx:if="{{program.mode === 'legacy_consumption'}}" class="tier-voucher">￥{{item.voucherAmount}}<text>现金券</text></view>
+      <view wx:else class="tier-voucher">仅赠送积分<text>不发放现金券</text></view>
       <view class="tier-btn-select" data-index="{{index}}" bindtap="openProduct">
         <text>立即选择</text>
         <view class="check-icon-circle" wx:if="{{showProduct && selectedIndex === index}}">

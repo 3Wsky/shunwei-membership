@@ -64,7 +64,8 @@ Page({
             rangeText: rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档'),
             productText: it.receiptNo || '未填写产品信息',
             hasProduct: !!it.receiptNo,
-            productItems: productItems
+            productItems: productItems,
+            isPura90: it.matched_tier_code === 'PURA90_42W'
           })
         })
         this.setData({ list: items })
