@@ -24,7 +24,7 @@ Page({
     showProduct: false,
     selectedIndex: -1,
     selectedText: '',
-    productTypes: ['手机', '平板', '电脑', '智能穿戴'],
+    productTypes: ['手机'],
     products: [
       {
         type: '手机',
@@ -40,7 +40,19 @@ Page({
   },
   onLoad(options) {
     try { this.setData({ member: JSON.parse(decodeURIComponent(options.member || '')) }) } catch (_) {}
-    request('/api/approval/program').then((program) => this.setData({ program: program || { mode: 'pura90_42w' } }))
+    request('/api/approval/program').then((program) => {
+      const nextProgram = program || { mode: 'pura90_42w' }
+      const isLegacy = nextProgram.mode === 'legacy_consumption'
+      const products = isLegacy ? this.data.products : this.data.products.map((product) => Object.assign({}, product, {
+        type: '手机',
+        sn: ''
+      }))
+      this.setData({
+        program: nextProgram,
+        productTypes: isLegacy ? ['手机', '平板', '电脑', '智能穿戴'] : ['手机'],
+        products
+      })
+    })
       .catch(() => {})
     request('/api/approval/tier-options').then((rules) => this.setData({ rules: rules || [] }))
       .catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
@@ -77,6 +89,7 @@ Page({
   chooseType(e) {
     const pIdx = Number(e.currentTarget.dataset.pindex)
     const type = e.currentTarget.dataset.type
+    if (this.data.program.mode !== 'legacy_consumption' && type !== '手机') return
     const products = this.data.products
     products[pIdx].type = type
     products[pIdx].verified = false

@@ -44,9 +44,8 @@
     <view wx:for="{{rules}}" wx:key="id" class="tier-card {{showProduct && selectedIndex === index ? 'active' : ''}}">
       <view class="tier-badge">{{item.title || (item.maxAmount ? item.minAmount + '-' + item.maxAmount + '元档' : item.minAmount + '元以上档')}}</view>
       <view class="tier-integral">{{item.giftIntegral}}<text>积分</text></view>
-      <view class="tier-divider"></view>
+      <view wx:if="{{program.mode === 'legacy_consumption'}}" class="tier-divider"></view>
       <view wx:if="{{program.mode === 'legacy_consumption'}}" class="tier-voucher">￥{{item.voucherAmount}}<text>现金券</text></view>
-      <view wx:else class="tier-voucher">仅赠送积分<text>不发放现金券</text></view>
       <view class="tier-btn-select" data-index="{{index}}" bindtap="openProduct">
         <text>立即选择</text>
         <view class="check-icon-circle" wx:if="{{showProduct && selectedIndex === index}}">
@@ -87,12 +86,14 @@
             </view>
           </view>
 
-          <view class="field-label">产品类型</view>
-          <view class="type-row">
-            <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{product.type === item ? 'active' : ''}}" data-pindex="{{pIndex}}" data-type="{{item}}" bindtap="chooseType">
-              <text>{{item}}</text>
+          <block wx:if="{{program.mode === 'legacy_consumption'}}">
+            <view class="field-label">产品类型</view>
+            <view class="type-row">
+              <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{product.type === item ? 'active' : ''}}" data-pindex="{{pIndex}}" data-type="{{item}}" bindtap="chooseType">
+                <text>{{item}}</text>
+              </view>
             </view>
-          </view>
+          </block>
 
           <view wx:if="{{ocrEnabled}}" class="scan-row">
             <view class="scan-tip">拍照自动识别产品信息</view>
@@ -104,8 +105,8 @@
           <view class="input-card">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
-              <view class="input-card-title">产品型号</view>
-              <input class="field-input-new" value="{{product.model}}" data-pindex="{{pIndex}}" bindinput="onModel" placeholder="请输入产品型号" placeholder-class="ph" maxlength="30"/>
+              <view class="input-card-title">{{program.mode === 'legacy_consumption' ? '产品型号' : 'Pura 90 系列型号'}}</view>
+              <input class="field-input-new" value="{{product.model}}" data-pindex="{{pIndex}}" bindinput="onModel" placeholder="{{program.mode === 'legacy_consumption' ? '请输入产品型号' : '请输入 Pura 90 系列型号'}}" placeholder-class="ph" maxlength="30"/>
             </view>
             <text class="iconfont icon-s-bianji input-card-icon"></text>
           </view>
@@ -124,8 +125,8 @@
             <text class="iconfont icon-hexiaoma input-card-icon"></text>
           </view>
 
-          <!-- 非手机（平板/电脑/智能穿戴等）：SN 码为主标识 -->
-          <view wx:if="{{product.type !== '手机'}}" class="input-card {{product.verified ? 'verified' : ''}}">
+          <!-- 旧版活动的非手机商品以 SN 码为主标识 -->
+          <view wx:if="{{program.mode === 'legacy_consumption' && product.type !== '手机'}}" class="input-card {{product.verified ? 'verified' : ''}}">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
               <view class="input-card-title">
