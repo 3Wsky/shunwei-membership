@@ -49,6 +49,7 @@
     </view>
 
     <view class="member-card card" bindtap="goMember" hover-class="tap-feedback" hover-stay-time="120">
+      <image class="member-card-bg" src="/static/images/home/member-card-bg-v2.jpg" mode="aspectFill"></image>
       <view class="member-watermark one"></view>
       <view class="member-watermark two"></view>
       <view class="member-main">

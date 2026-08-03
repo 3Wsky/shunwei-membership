@@ -398,15 +398,19 @@ page {
   padding: 24rpx 24rpx 16rpx;
   box-sizing: border-box;
   background-color: #FBF1E5;
-  background-image: url('/static/images/home/member-card-bg-v2.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   color: #2A2521;
   position: relative;
   overflow: hidden;
   border: 1rpx solid rgba(190, 145, 96, 0.12);
   box-shadow: 0 8rpx 24rpx rgba(116, 83, 50, 0.09), inset 0 1rpx 0 rgba(255, 255, 255, 0.94);
+}
+
+.member-card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .member-card::before {
