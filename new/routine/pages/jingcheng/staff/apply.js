@@ -66,6 +66,7 @@ Page({
       : rule.minAmount + '元以上档')
     this.setData({
       showProduct: true,
+      submitting: false,
       selectedIndex: idx,
       selectedText: this.data.program.mode === 'legacy_consumption'
         ? range + ' · ' + rule.giftIntegral + '积分 · ¥' + rule.voucherAmount + '现金券'
@@ -247,7 +248,7 @@ Page({
     if (imei) query.imei = imei
     if (sn) query.sn = sn
 
-    request('/api/staff/sn-lookup', { data: query }).then(function (r) {
+    return request('/api/staff/sn-lookup', { data: query }).then(function (r) {
       wx.hideLoading()
       var list = that.data.products
       list[pIdx].checking = false
@@ -261,7 +262,7 @@ Page({
           showCancel: false,
           confirmText: '我知道了'
         })
-        return
+        return { found: !!(r && r.found), used: true }
       }
       if (r && r.found) {
         // 命中仅作核对（防别人家的码）：标记已核对，不回填型号/价格，型号价格由店员手动填写
@@ -272,8 +273,12 @@ Page({
           list[pIdx].price = String(catalogPrice)
         }
         that.setData({ products: list, scanning: false })
-        if (catalogPrice > 0) return wx.showToast({ title: '已核对，已锁定产品库价格', icon: 'none' })
-        wx.showToast({ title: '已核对（请手动填写型号价格）', icon: 'none' })
+        if (catalogPrice > 0) {
+          wx.showToast({ title: '已核对，已锁定产品库价格', icon: 'none' })
+        } else {
+          wx.showToast({ title: '已核对（请手动填写型号价格）', icon: 'none' })
+        }
+        return { found: true, used: false }
       } else {
         list[pIdx].verified = false
         that.setData({ products: list, scanning: false })
@@ -283,31 +288,43 @@ Page({
           showCancel: false,
           confirmText: '我知道了'
         })
+        return { found: false, used: false }
       }
-    }).catch(function () {
+    }).catch(function (err) {
       wx.hideLoading()
       var list = that.data.products
       list[pIdx].checking = false
       list[pIdx].verified = false
       that.setData({ products: list, scanning: false })
-      if (!opts.silent) wx.showToast({ title: '核对失败，请重试', icon: 'none' })
+      if (!opts.silent) wx.showToast({ title: (err && err.message) || '核对失败，请重试', icon: 'none' })
+      return { found: false, used: false, error: err }
     })
   },
   submit() {
-    if (this.data.submitting) return
+    if (this.data.submitting) {
+      wx.showToast({ title: '正在提交，请稍候', icon: 'none' })
+      return
+    }
     const rule = this.data.rules[this.data.selectedIndex]
-    if (!rule) return
+    if (!rule) {
+      wx.showToast({ title: '审批档位未加载，请退出重进', icon: 'none' })
+      return
+    }
 
     const products = this.data.products
     let unverifiedCount = 0
     for (let i = 0; i < products.length; i++) {
       const p = products[i]
-      if (!p.model.trim()) {
+      if (!String(p.model || '').trim()) {
         wx.showToast({ title: `请填写产品 #${i + 1} 的型号`, icon: 'none' })
         return
       }
-      if (!p.price.trim()) {
+      if (!String(p.price || '').trim()) {
         wx.showToast({ title: `请填写产品 #${i + 1} 的价格`, icon: 'none' })
+        return
+      }
+      if (p.checking) {
+        wx.showToast({ title: '正在核对 IMEI，请稍候', icon: 'none' })
         return
       }
       const isPhone = p.type === '手机'
@@ -320,8 +337,20 @@ Page({
       if (!p.verified) unverifiedCount++
     }
 
-    // 有未核对（产品库未命中）的码 → 提示，让店员选择重新核对或坚持提交
+    // Pura 90 后端要求产品库必须命中；点击提交时主动再核对一次，
+    // 解决管理员刚补录串码后，当前页面仍保留旧的“未核对”状态而无法提交的问题。
     if (unverifiedCount > 0) {
+      if (this.data.program.mode === 'pura90_42w') {
+        const pIdx = products.findIndex((p) => !p.verified)
+        const product = products[pIdx]
+        const imei = String(product && product.imei || '').trim()
+        this.verifyCode(pIdx, { imei, silent: false }).then((result) => {
+          if (result && result.found && !result.used) {
+            setTimeout(() => this.submit(), 0)
+          }
+        })
+        return
+      }
       this.confirmUnverifiedThenSubmit(products, rule)
       return
     }
@@ -365,7 +394,10 @@ Page({
       })
       return
     }
-    if (Number(matchedRule.id) !== Number(selectedRule.id)) {
+    // 兼容数字档位 ID 和 Pura 90 的字符串档位 ID。
+    // 原先统一 Number() 会把 PURA90_42W 变成 NaN，而 NaN !== NaN 永远成立，
+    // 导致同一个 Pura 90 档位也被误判为“档位已修正”，无法走正常提交路径。
+    if (String(matchedRule.id) !== String(selectedRule.id)) {
       const lockedCount = products.filter((product) => toPrice(product.catalogPrice) > 0).length
       wx.showModal({
         title: '权益档位已修正',
@@ -381,6 +413,10 @@ Page({
     this.doSubmit(products, matchedRule, consumeAmount)
   },
   doSubmit(products, rule, consumeAmount) {
+    if (this.data.submitting) {
+      wx.showToast({ title: '正在提交，请稍候', icon: 'none' })
+      return
+    }
     const parts = products.map((p, idx) => {
       const itemParts = []
       if (p.type) itemParts.push(p.type)
@@ -403,10 +439,32 @@ Page({
     if (receiptNo.length > 240) receiptNo = receiptNo.slice(0, 240)
 
     this.setData({ submitting: true })
+    wx.showLoading({ title: '正在提交…', mask: true })
+
+    const finishSubmit = () => {
+      if (this._submitTimeout) {
+        clearTimeout(this._submitTimeout)
+        this._submitTimeout = null
+      }
+      wx.hideLoading()
+      this.setData({ submitting: false })
+    }
+    this._submitTimeout = setTimeout(() => {
+      if (!this.data.submitting) return
+      finishSubmit()
+      wx.showModal({
+        title: '提交超时',
+        content: '网络响应超时，请检查网络后重新提交。',
+        showCancel: false,
+        confirmText: '我知道了'
+      })
+    }, 22000)
+
     request('/api/approval/submit', {
       method: 'POST',
       data: { customerUid: this.data.member.uid, tierRuleId: rule.id, consumeAmount, receiptNo }
     }).then((result) => {
+      finishSubmit()
       this.setData({ showProduct: false })
       const done = () => {
         wx.showToast({ title: '已提交店长审批', icon: 'success' })
@@ -423,7 +481,14 @@ Page({
       } else {
         done()
       }
-    }).catch((err) => wx.showToast({ title: err.message, icon: 'none' }))
-      .finally(() => this.setData({ submitting: false }))
+    }).catch((err) => {
+      finishSubmit()
+      wx.showModal({
+        title: '提交失败',
+        content: (err && err.message) || '提交失败，请重试',
+        showCancel: false,
+        confirmText: '重新检查'
+      })
+    })
   }
 })

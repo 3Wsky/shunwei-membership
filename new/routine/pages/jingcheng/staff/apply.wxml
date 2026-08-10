@@ -159,7 +159,9 @@
 
       <view class="modal-actions">
         <view class="modal-btn cancel" bindtap="closeProduct">取消</view>
-        <view class="modal-btn submit {{submitting ? 'disabled' : ''}}" bindtap="submit">提交申请</view>
+        <view class="modal-btn submit {{submitting ? 'disabled' : ''}}" catchtap="submit">
+          {{submitting ? '正在提交…' : '提交申请'}}
+        </view>
       </view>
       <view class="modal-tip">
         <text class="iconfont icon-shuoming2"></text>
