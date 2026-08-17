@@ -23,6 +23,7 @@ function parseProducts(receiptNo) {
     var model = ''
     var price = ''
     var sn = ''
+    var imei = ''
     segments.forEach(function(seg) {
       seg = seg.trim()
       if (['手机', '平板', '电脑', '智能穿戴'].indexOf(seg) >= 0) {
@@ -31,13 +32,15 @@ function parseProducts(receiptNo) {
         price = seg
       } else if (seg.indexOf('SN:') === 0) {
         sn = seg.substring(3).trim()
+      } else if (seg.indexOf('IMEI:') === 0) {
+        imei = seg.substring(5).trim()
       } else if (seg) {
         model = seg
       }
     })
     // 隐藏品类：型号含大疆/DJI/无人机 → 类型显示「大疆」（前台不放大疆选项，按型号自动归类）
     if (/大疆|DJI|无人机/i.test(model)) type = '大疆'
-    items.push({ type: type, model: model || '未知型号', price: price || '未知价格', sn: sn })
+    items.push({ type: type, model: model || '未知型号', price: price || '未知价格', sn: sn, imei: imei })
   })
   return items.length > 0 ? items : null
 }
@@ -60,12 +63,15 @@ Page({
         const items = (list || []).map((it) => {
           const rule = map[Number(it.consumeAmount)]
           const productItems = parseProducts(it.receiptNo)
+          const isCustom = it.bizType === 'custom_integral_grant' || it.matchedTierCode === 'CUSTOM'
+          const isPura90 = it.matchedTierCode === 'PURA90_42W' || it.matched_tier_code === 'PURA90_42W'
           return Object.assign({}, it, {
-            rangeText: rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档'),
+            rangeText: isCustom ? '自定义积分申请' : (rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档')),
             productText: it.receiptNo || '未填写产品信息',
             hasProduct: !!it.receiptNo,
             productItems: productItems,
-            isPura90: it.matched_tier_code === 'PURA90_42W'
+            isPura90: isPura90,
+            isCustom: isCustom
           })
         })
         this.setData({ list: items })
@@ -78,7 +84,7 @@ Page({
     const action = e.currentTarget.dataset.action
     wx.showModal({
       title: action === 'approve' ? '通过申请' : '驳回申请',
-      content: `会员：${item.customerName || 'UID ' + item.customerUid} · ${item.rangeText}\n申请人：${item.clerkName || 'UID ' + item.clerkUid}\n${item.matchedIntegral}积分 + ¥${item.matchedVoucher}现金券`,
+      content: `会员：${item.customerName || 'UID ' + item.customerUid} · ${item.rangeText}\n申请人：${item.clerkName || 'UID ' + item.clerkUid}\n${item.isCustom || item.isPura90 ? item.matchedIntegral + '积分' : item.matchedIntegral + '积分 + ¥' + item.matchedVoucher + '现金券'}`,
       editable: true,
       placeholderText: '请输入审批备注（选填）',
       confirmText: action === 'approve' ? '确认通过' : '确认驳回',

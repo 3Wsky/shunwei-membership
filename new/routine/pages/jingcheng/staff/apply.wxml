@@ -57,6 +57,25 @@
     </view>
   </view>
 
+  <!-- Custom Integral Card -->
+  <view class="heading">
+    <view class="heading-bar"></view>
+    <text>自定义积分申请</text>
+  </view>
+  <view class="tier-grid">
+    <view class="tier-card {{showProduct && customMode ? 'active' : ''}}">
+      <view class="tier-badge">自定义积分</view>
+      <view class="tier-integral">手填<text>积分</text></view>
+      <view class="tier-btn-select" bindtap="openCustom">
+        <text>立即选择</text>
+        <view class="check-icon-circle" wx:if="{{showProduct && customMode}}">
+          <text class="iconfont icon-xuanzhong6"></text>
+        </view>
+      </view>
+      <view class="tier-watermark"><text class="iconfont icon-liwu"></text></view>
+    </view>
+  </view>
+
   <!-- Bottom Tip -->
   <view class="tip">
     <text class="iconfont icon-shuoming2"></text>
@@ -79,14 +98,14 @@
       <scroll-view scroll-y="true" class="modal-scroll">
         <view wx:for="{{products}}" wx:key="index" wx:for-item="product" wx:for-index="pIndex" class="product-section">
           <view class="product-section-header">
-            <text class="product-section-title">{{program.mode === 'legacy_consumption' ? ('产品信息 #' + (pIndex + 1)) : 'Pura 90 手机信息'}}</text>
-            <view wx:if="{{program.mode === 'legacy_consumption' && products.length > 1}}" class="product-section-remove" data-index="{{pIndex}}" bindtap="removeProduct">
+            <text class="product-section-title">{{customMode || program.mode === 'legacy_consumption' ? ('产品信息 #' + (pIndex + 1)) : 'Pura 90 手机信息'}}</text>
+            <view wx:if="{{(program.mode === 'legacy_consumption' || customMode) && products.length > 1}}" class="product-section-remove" data-index="{{pIndex}}" bindtap="removeProduct">
               <text class="iconfont icon-guanbi6"></text>
               <text>删除</text>
             </view>
           </view>
 
-          <block wx:if="{{program.mode === 'legacy_consumption'}}">
+          <block wx:if="{{program.mode === 'legacy_consumption' || customMode}}">
             <view class="field-label">产品类型</view>
             <view class="type-row">
               <view wx:for="{{productTypes}}" wx:key="*this" class="type-chip {{product.type === item ? 'active' : ''}}" data-pindex="{{pIndex}}" data-type="{{item}}" bindtap="chooseType">
@@ -105,8 +124,8 @@
           <view class="input-card">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
-              <view class="input-card-title">{{program.mode === 'legacy_consumption' ? '产品型号' : 'Pura 90 系列型号'}}</view>
-              <input class="field-input-new" value="{{product.model}}" data-pindex="{{pIndex}}" bindinput="onModel" placeholder="{{program.mode === 'legacy_consumption' ? '请输入产品型号' : '请输入 Pura 90 系列型号'}}" placeholder-class="ph" maxlength="30"/>
+              <view class="input-card-title">{{customMode || program.mode === 'legacy_consumption' ? '产品型号' : 'Pura 90 系列型号'}}</view>
+              <input class="field-input-new" value="{{product.model}}" data-pindex="{{pIndex}}" bindinput="onModel" placeholder="{{customMode || program.mode === 'legacy_consumption' ? '请输入产品型号' : '请输入 Pura 90 系列型号'}}" placeholder-class="ph" maxlength="30"/>
             </view>
             <text class="iconfont icon-s-bianji input-card-icon"></text>
           </view>
@@ -125,8 +144,8 @@
             <text class="iconfont icon-hexiaoma input-card-icon"></text>
           </view>
 
-          <!-- 旧版活动的非手机商品以 SN 码为主标识 -->
-          <view wx:if="{{program.mode === 'legacy_consumption' && product.type !== '手机'}}" class="input-card {{product.verified ? 'verified' : ''}}">
+          <!-- 旧版活动 / 自定义积分的非手机商品以 SN 码为主标识 -->
+          <view wx:if="{{(program.mode === 'legacy_consumption' || customMode) && product.type !== '手机'}}" class="input-card {{product.verified ? 'verified' : ''}}">
             <view class="input-card-left-line"></view>
             <view class="input-card-content">
               <view class="input-card-title">
@@ -151,9 +170,24 @@
         </view>
 
         <!-- Add Product Button -->
-        <view wx:if="{{program.mode === 'legacy_consumption'}}" class="add-product-btn" bindtap="addProduct">
+        <view wx:if="{{program.mode === 'legacy_consumption' || customMode}}" class="add-product-btn" bindtap="addProduct">
           <text class="iconfont icon-s-bianji"></text>
           <text>添加产品信息</text>
+        </view>
+
+        <!-- Custom Integral Input -->
+        <view wx:if="{{customMode}}" class="product-section">
+          <view class="product-section-header">
+            <text class="product-section-title">到账积分</text>
+          </view>
+          <view class="input-card">
+            <view class="input-card-left-line"></view>
+            <view class="input-card-content">
+              <view class="input-card-title">申请到账积分</view>
+              <input class="field-input-new" type="number" value="{{customIntegral}}" bindinput="onCustomIntegral" placeholder="请输入到账积分（1-1000000）" placeholder-class="ph" maxlength="7"/>
+            </view>
+            <text class="iconfont icon-jifenshangcheng input-card-icon"></text>
+          </view>
         </view>
       </scroll-view>
 

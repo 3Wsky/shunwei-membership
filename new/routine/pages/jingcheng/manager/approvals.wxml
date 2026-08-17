@@ -38,6 +38,10 @@
                 <text class="p-label">型号：</text>
                 <text class="p-val">{{prod.model}}</text>
               </view>
+              <view class="product-row" wx:if="{{prod.imei}}">
+                <text class="p-label">IMEI：</text>
+                <text class="p-val mono">{{prod.imei}}</text>
+              </view>
               <view class="product-row" wx:if="{{prod.sn}}">
                 <text class="p-label">SN：</text>
                 <text class="p-val mono">{{prod.sn}}</text>
@@ -57,7 +61,7 @@
     <view class="benefit">
       <view class="benefit-seg"><text class="iconfont icon-yue2"></text>{{item.isPura90 ? '华为 Pura 90 系列购机赠分' : item.rangeText}}</view>
       <view class="benefit-seg"><text class="iconfont icon-jifenshangcheng"></text>{{item.matchedIntegral}} 积分</view>
-      <view wx:if="{{!item.isPura90}}" class="benefit-seg"><text class="iconfont icon-shoudanyouhui"></text>￥{{item.matchedVoucher}} 现金券</view>
+      <view wx:if="{{!item.isPura90 && !item.isCustom}}" class="benefit-seg"><text class="iconfont icon-shoudanyouhui"></text>￥{{item.matchedVoucher}} 现金券</view>
     </view>
 
     <view class="buttons">

@@ -13,6 +13,31 @@ function tierRangeText(rule) {
   return rule.maxAmount ? rule.minAmount + '-' + rule.maxAmount + '元档' : rule.minAmount + '元以上档'
 }
 
+const CUSTOM_INTEGRAL_MAX = 1000000
+
+function buildReceiptNo(products) {
+  const parts = products.map((p, idx) => {
+    const itemParts = []
+    if (p.type) itemParts.push(p.type)
+    if (p.model) itemParts.push(String(p.model).trim())
+    const actualPrice = toPrice(p.catalogPrice) || toPrice(p.price)
+    if (actualPrice) itemParts.push('¥' + actualPrice)
+    const isPhone = p.type === '手机'
+    const imei1 = String(p.imei || '').trim()
+    const sn = String(p.sn || '').trim()
+    // 手机只录 IMEI1；非手机录 SN（后台按 SN 录入）
+    if (isPhone && imei1) {
+      itemParts.push('IMEI:' + imei1)
+    } else if (!isPhone && sn) {
+      itemParts.push('SN:' + sn)
+    }
+    return `[产品${idx + 1}] ` + itemParts.join('/')
+  })
+  let receiptNo = parts.join('; ')
+  if (receiptNo.length > 240) receiptNo = receiptNo.slice(0, 240)
+  return receiptNo
+}
+
 Page({
   data: {
     ocrEnabled: OCR_SN_SCAN_ENABLED,
@@ -24,6 +49,8 @@ Page({
     showProduct: false,
     selectedIndex: -1,
     selectedText: '',
+    customMode: false,
+    customIntegral: '',
     productTypes: ['手机'],
     products: [
       {
@@ -67,6 +94,8 @@ Page({
     this.setData({
       showProduct: true,
       submitting: false,
+      customMode: false,
+      customIntegral: '',
       selectedIndex: idx,
       selectedText: this.data.program.mode === 'legacy_consumption'
         ? range + ' · ' + rule.giftIntegral + '积分 · ¥' + rule.voucherAmount + '现金券'
@@ -87,10 +116,34 @@ Page({
   },
   closeProduct() { if (!this.data.submitting) this.setData({ showProduct: false }) },
   noop() {},
+  // 自定义积分申请：产品四类全开、积分数店员手填、不参与档位匹配
+  openCustom() {
+    this.setData({
+      showProduct: true,
+      submitting: false,
+      customMode: true,
+      customIntegral: '',
+      selectedIndex: -1,
+      selectedText: '自定义积分 · 审批通过后按填写数值发放积分',
+      products: [
+        {
+          type: '手机',
+          model: '',
+          sn: '',
+          imei: '',
+          price: '',
+          catalogPrice: 0,
+          verified: false,
+          checking: false
+        }
+      ]
+    })
+  },
+  onCustomIntegral(e) { this.setData({ customIntegral: e.detail.value }) },
   chooseType(e) {
     const pIdx = Number(e.currentTarget.dataset.pindex)
     const type = e.currentTarget.dataset.type
-    if (this.data.program.mode !== 'legacy_consumption' && type !== '手机') return
+    if (!this.data.customMode && this.data.program.mode !== 'legacy_consumption' && type !== '手机') return
     const products = this.data.products
     products[pIdx].type = type
     products[pIdx].verified = false
@@ -138,7 +191,7 @@ Page({
     this.verifyCode(pIdx, { imei, sn, silent: true })
   },
   addProduct() {
-    if (this.data.program.mode !== 'legacy_consumption') return
+    if (this.data.program.mode !== 'legacy_consumption' && !this.data.customMode) return
     const products = this.data.products
     if (products.length >= 5) {
       wx.showToast({ title: '最多添加5个产品', icon: 'none' })
@@ -157,7 +210,7 @@ Page({
     this.setData({ products })
   },
   removeProduct(e) {
-    if (this.data.program.mode !== 'legacy_consumption') return
+    if (this.data.program.mode !== 'legacy_consumption' && !this.data.customMode) return
     const idx = Number(e.currentTarget.dataset.index)
     const products = this.data.products
     if (products.length <= 1) return
@@ -305,6 +358,10 @@ Page({
       wx.showToast({ title: '正在提交，请稍候', icon: 'none' })
       return
     }
+    if (this.data.customMode) {
+      this.submitCustom()
+      return
+    }
     const rule = this.data.rules[this.data.selectedIndex]
     if (!rule) {
       wx.showToast({ title: '审批档位未加载，请退出重进', icon: 'none' })
@@ -355,6 +412,107 @@ Page({
       return
     }
     this.confirmTierThenSubmit(products, rule)
+  },
+  // 自定义积分：所有码必须产品库命中（无「坚持提交」兜底），积分为 1~100 万整数
+  submitCustom() {
+    const products = this.data.products
+    for (let i = 0; i < products.length; i++) {
+      const p = products[i]
+      if (!String(p.model || '').trim()) {
+        wx.showToast({ title: `请填写产品 #${i + 1} 的型号`, icon: 'none' })
+        return
+      }
+      if (!String(p.price || '').trim()) {
+        wx.showToast({ title: `请填写产品 #${i + 1} 的价格`, icon: 'none' })
+        return
+      }
+      if (p.checking) {
+        wx.showToast({ title: '正在核对 IMEI/SN，请稍候', icon: 'none' })
+        return
+      }
+      const isPhone = p.type === '手机'
+      const code = isPhone ? String(p.imei || '').trim() : String(p.sn || '').trim()
+      if (!code) {
+        wx.showToast({ title: isPhone ? `请填写产品 #${i + 1} 的 IMEI 码` : `请填写产品 #${i + 1} 的 SN 码`, icon: 'none' })
+        return
+      }
+    }
+
+    const integralText = String(this.data.customIntegral || '').trim()
+    const integral = Number(integralText)
+    if (!/^\d+$/.test(integralText) || integral < 1 || integral > CUSTOM_INTEGRAL_MAX) {
+      wx.showToast({ title: '到账积分需为 1-1000000 的整数', icon: 'none' })
+      return
+    }
+
+    // 未核对的先自动核对一次：命中且未被用过就继续提交，否则由核对弹窗拦截
+    const pIdx = products.findIndex((p) => !p.verified)
+    if (pIdx >= 0) {
+      const product = products[pIdx]
+      const isPhone = product.type === '手机'
+      this.verifyCode(pIdx, {
+        imei: isPhone ? String(product.imei || '').trim() : '',
+        sn: isPhone ? '' : String(product.sn || '').trim(),
+        silent: false
+      }).then((result) => {
+        if (result && result.found && !result.used) {
+          setTimeout(() => this.submit(), 0)
+        }
+      })
+      return
+    }
+
+    this.doSubmitCustom(products, integral)
+  },
+  doSubmitCustom(products, integral) {
+    if (this.data.submitting) {
+      wx.showToast({ title: '正在提交，请稍候', icon: 'none' })
+      return
+    }
+    const consumeAmount = products.reduce((sum, product) => {
+      return sum + (toPrice(product.catalogPrice) || toPrice(product.price))
+    }, 0)
+    const receiptNo = buildReceiptNo(products)
+
+    this.setData({ submitting: true })
+    wx.showLoading({ title: '正在提交…', mask: true })
+
+    const finishSubmit = () => {
+      if (this._submitTimeout) {
+        clearTimeout(this._submitTimeout)
+        this._submitTimeout = null
+      }
+      wx.hideLoading()
+      this.setData({ submitting: false })
+    }
+    this._submitTimeout = setTimeout(() => {
+      if (!this.data.submitting) return
+      finishSubmit()
+      wx.showModal({
+        title: '提交超时',
+        content: '网络响应超时，请检查网络后重新提交。',
+        showCancel: false,
+        confirmText: '我知道了'
+      })
+    }, 22000)
+
+    request('/api/approval/submit', {
+      method: 'POST',
+      data: { customerUid: this.data.member.uid, customIntegral: integral, consumeAmount, receiptNo }
+    }).then(() => {
+      finishSubmit()
+      this.setData({ showProduct: false })
+      wx.showToast({ title: '已提交店长审批', icon: 'success' })
+      setTimeout(() => wx.navigateBack(), 1200)
+    }).catch((err) => {
+      finishSubmit()
+      wx.showModal({
+        title: '提交失败',
+        content: (err && err.message) || '提交失败，请重试',
+        showCancel: false,
+        confirmText: '重新检查'
+      })
+    })
   },
   confirmUnverifiedThenSubmit(products, rule) {
     const that = this
@@ -417,26 +575,7 @@ Page({
       wx.showToast({ title: '正在提交，请稍候', icon: 'none' })
       return
     }
-    const parts = products.map((p, idx) => {
-      const itemParts = []
-      if (p.type) itemParts.push(p.type)
-      if (p.model) itemParts.push(String(p.model).trim())
-      const actualPrice = toPrice(p.catalogPrice) || toPrice(p.price)
-      if (actualPrice) itemParts.push('¥' + actualPrice)
-      const isPhone = p.type === '手机'
-      const imei1 = String(p.imei || '').trim()
-      const sn = String(p.sn || '').trim()
-      // 手机只录 IMEI1；非手机录 SN（后台按 SN 录入）
-      if (isPhone && imei1) {
-        itemParts.push('IMEI:' + imei1)
-      } else if (!isPhone && sn) {
-        itemParts.push('SN:' + sn)
-      }
-      return `[产品${idx + 1}] ` + itemParts.join('/')
-    })
-
-    let receiptNo = parts.join('; ')
-    if (receiptNo.length > 240) receiptNo = receiptNo.slice(0, 240)
+    const receiptNo = buildReceiptNo(products)
 
     this.setData({ submitting: true })
     wx.showLoading({ title: '正在提交…', mask: true })
