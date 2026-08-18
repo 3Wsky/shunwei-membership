@@ -210,4 +210,29 @@
       </view>
     </view>
   </view>
+
+  <view wx:if="{{showTypePicker}}" class="type-picker-mask" catchtouchmove="true" catchtap="closeTypePicker">
+    <view class="type-picker" catchtap="noop">
+      <view class="type-picker-handle"></view>
+      <view class="modal-head">
+        <view class="modal-icon"><text class="iconfont icon-liwu"></text></view>
+        <view class="modal-head-text">
+          <view class="modal-title">选择产品类型</view>
+          <view class="modal-sub">手机核对 IMEI，其它类型核对 SN</view>
+        </view>
+        <view class="modal-close" catchtap="closeTypePicker"><text class="iconfont icon-guanbi6"></text></view>
+      </view>
+      <view
+        wx:for="{{productTypes}}"
+        wx:key="*this"
+        class="type-picker-item {{item === products[typePickerIndex].type ? 'active' : ''}}"
+        data-type="{{item}}"
+        catchtap="confirmType"
+      >
+        <text>{{item}}</text>
+        <text wx:if="{{item === products[typePickerIndex].type}}" class="iconfont icon-xuanzhong6"></text>
+      </view>
+      <view class="type-picker-cancel" catchtap="closeTypePicker">取消</view>
+    </view>
+  </view>
 </view>

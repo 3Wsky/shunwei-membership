@@ -52,6 +52,8 @@ Page({
     selectedText: '',
     customMode: false,
     customIntegral: '',
+    showTypePicker: false,
+    typePickerIndex: 0,
     productTypes: ['手机'],
     products: [
       {
@@ -115,7 +117,10 @@ Page({
       ]
     })
   },
-  closeProduct() { if (!this.data.submitting) this.setData({ showProduct: false }) },
+  closeProduct() {
+    if (this.data.submitting) return
+    this.setData({ showProduct: false, showTypePicker: false })
+  },
   noop() {},
   // 自定义积分申请：产品四类全开、积分数店员手填、不参与档位匹配
   openCustom() {
@@ -124,6 +129,7 @@ Page({
       submitting: false,
       customMode: true,
       customIntegral: '',
+      showTypePicker: false,
       selectedIndex: -1,
       selectedText: '申请礼赠 · 终审通过后礼遇积分到账',
       productTypes: CUSTOM_PRODUCT_TYPES,
@@ -145,20 +151,27 @@ Page({
   pickType(e) {
     const pIdx = Number(e.currentTarget.dataset.pindex)
     if (!this.data.customMode) return
-    const that = this
-    wx.showActionSheet({
-      itemList: CUSTOM_PRODUCT_TYPES,
-      success(res) {
-        const type = CUSTOM_PRODUCT_TYPES[res.tapIndex]
-        if (!type) return
-        const products = that.data.products
-        if (!products[pIdx]) return
-        products[pIdx].type = type
-        products[pIdx].verified = false
-        products[pIdx].catalogPrice = 0
-        that.setData({ products })
-      }
+    this.setData({
+      showTypePicker: true,
+      typePickerIndex: pIdx,
+      productTypes: CUSTOM_PRODUCT_TYPES
     })
+  },
+  closeTypePicker() {
+    this.setData({ showTypePicker: false })
+  },
+  confirmType(e) {
+    const type = e.currentTarget.dataset.type
+    const pIdx = this.data.typePickerIndex
+    const products = this.data.products
+    if (!type || !products[pIdx]) {
+      this.setData({ showTypePicker: false })
+      return
+    }
+    products[pIdx].type = type
+    products[pIdx].verified = false
+    products[pIdx].catalogPrice = 0
+    this.setData({ products, showTypePicker: false })
   },
   chooseType(e) {
     const pIdx = Number(e.currentTarget.dataset.pindex)
