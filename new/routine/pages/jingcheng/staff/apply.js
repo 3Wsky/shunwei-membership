@@ -124,7 +124,7 @@ Page({
       customMode: true,
       customIntegral: '',
       selectedIndex: -1,
-      selectedText: '自定义积分 · 审批通过后按填写数值发放积分',
+      selectedText: '申请礼赠 · 终审通过后礼遇积分到账',
       products: [
         {
           type: '手机',
@@ -441,7 +441,7 @@ Page({
     const integralText = String(this.data.customIntegral || '').trim()
     const integral = Number(integralText)
     if (!/^\d+$/.test(integralText) || integral < 1 || integral > CUSTOM_INTEGRAL_MAX) {
-      wx.showToast({ title: '到账积分需为 1-1000000 的整数', icon: 'none' })
+      wx.showToast({ title: '礼赠积分需为 1-1000000 的整数', icon: 'none' })
       return
     }
 

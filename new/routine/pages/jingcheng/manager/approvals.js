@@ -66,7 +66,7 @@ Page({
           const isCustom = it.bizType === 'custom_integral_grant' || it.matchedTierCode === 'CUSTOM'
           const isPura90 = it.matchedTierCode === 'PURA90_42W' || it.matched_tier_code === 'PURA90_42W'
           return Object.assign({}, it, {
-            rangeText: isCustom ? '自定义积分申请' : (rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档')),
+            rangeText: isCustom ? '申请礼赠' : (rule ? rangeText(rule) : ('￥' + it.consumeAmount + '档')),
             productText: it.receiptNo || '未填写产品信息',
             hasProduct: !!it.receiptNo,
             productItems: productItems,
