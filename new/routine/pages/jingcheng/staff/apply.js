@@ -14,6 +14,7 @@ function tierRangeText(rule) {
 }
 
 const CUSTOM_INTEGRAL_MAX = 1000000
+const CUSTOM_PRODUCT_TYPES = ['手机', '电脑', '平板', '智能穿戴', '大疆']
 
 function buildReceiptNo(products) {
   const parts = products.map((p, idx) => {
@@ -125,6 +126,7 @@ Page({
       customIntegral: '',
       selectedIndex: -1,
       selectedText: '申请礼赠 · 终审通过后礼遇积分到账',
+      productTypes: CUSTOM_PRODUCT_TYPES,
       products: [
         {
           type: '手机',
@@ -140,6 +142,24 @@ Page({
     })
   },
   onCustomIntegral(e) { this.setData({ customIntegral: e.detail.value }) },
+  pickType(e) {
+    const pIdx = Number(e.currentTarget.dataset.pindex)
+    if (!this.data.customMode) return
+    const that = this
+    wx.showActionSheet({
+      itemList: CUSTOM_PRODUCT_TYPES,
+      success(res) {
+        const type = CUSTOM_PRODUCT_TYPES[res.tapIndex]
+        if (!type) return
+        const products = that.data.products
+        if (!products[pIdx]) return
+        products[pIdx].type = type
+        products[pIdx].verified = false
+        products[pIdx].catalogPrice = 0
+        that.setData({ products })
+      }
+    })
+  },
   chooseType(e) {
     const pIdx = Number(e.currentTarget.dataset.pindex)
     const type = e.currentTarget.dataset.type

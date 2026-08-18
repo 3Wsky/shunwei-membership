@@ -537,6 +537,30 @@ page {
   box-shadow: 0 4rpx 12rpx rgba(31, 107, 255, 0.08);
 }
 
+.type-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80rpx;
+  padding: 0 28rpx;
+  margin-bottom: 20rpx;
+  border-radius: 20rpx;
+  background: #FFFFFF;
+  border: 2rpx solid #1F6BFF;
+  box-shadow: 0 4rpx 12rpx rgba(31, 107, 255, 0.08);
+}
+
+.type-select-value {
+  color: #1F6BFF;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.type-select-hint {
+  color: #8AA0BF;
+  font-size: 24rpx;
+}
+
 /* Input Card Style */
 .input-card {
   position: relative;

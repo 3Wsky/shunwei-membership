@@ -26,7 +26,7 @@ function parseProducts(receiptNo) {
     var imei = ''
     segments.forEach(function(seg) {
       seg = seg.trim()
-      if (['手机', '平板', '电脑', '智能穿戴'].indexOf(seg) >= 0) {
+      if (['手机', '平板', '电脑', '智能穿戴', '大疆'].indexOf(seg) >= 0) {
         type = seg
       } else if (seg.indexOf('¥') === 0 || seg.indexOf('￥') === 0) {
         price = seg
